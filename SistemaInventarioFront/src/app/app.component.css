@@ -1,0 +1,72 @@
+/* CONTENEDOR: se aplica cuando el usuario activa el modo oscuro */
+.dark-mode {
+  background-color: #121219 !important;
+  color: #e6e6e6 !important;
+}
+
+/* Sidebar oscuro (sobrescribe bg-gradient-primary) */
+.dark-mode .sidebar,
+.dark-mode .sidebar .nav-link,
+.dark-mode .sidebar .sidebar-brand {
+  background-color: #0f1724 !important;
+  color: #cfcfe6 !important;
+}
+
+/* Forzar que los gradientes del sidebar no muestren el azul claro */
+.dark-mode .bg-gradient-primary {
+  background: linear-gradient(180deg, #0f1724 10%, #1b2233 100%) !important;
+}
+
+/* Topbar en oscuro */
+.dark-mode .topbar,
+.dark-mode .navbar {
+  background-color: #0e1116 !important;
+  color: #e6e6e6 !important;
+}
+
+/* Cards / tables / contenido principal */
+.dark-mode .card,
+.dark-mode .table,
+.dark-mode .container-fluid,
+.dark-mode .content {
+  background-color: #151726 !important;
+  color: #e6e6e6 !important;
+  border-color: #2a2f3d !important;
+}
+
+/* Nav links hover / active */
+.dark-mode .nav-link,
+.dark-mode .nav-item .nav-link {
+  color: #cfcfe6 !important;
+}
+
+.dark-mode .nav-link:hover,
+.dark-mode .nav-link.active,
+.dark-mode .nav-item.active .nav-link {
+  background-color: rgba(255,255,255,0.06) !important;
+  color: #fff !important;
+}
+
+/* Dropdown menus */
+.dark-mode .dropdown-menu {
+  background-color: #11131a !important;
+  color: #e6e6e6 !important;
+}
+
+/* Footer */
+.dark-mode footer,
+.dark-mode .sticky-footer {
+  background-color: #0d1116 !important;
+  color: #cfcfe6 !important;
+}
+
+/* Imagen perfil borde en oscuro */
+.dark-mode .img-profile {
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Transiciones suaves */
+body, .navbar, .sidebar, footer, .card {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+

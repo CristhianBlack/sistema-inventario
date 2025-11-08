@@ -1,0 +1,170 @@
+<!-- Contenedor principal
+<div class="container mt-4">
+ Título 
+  <div class="text-center mb-4">
+    <h5 class="text-muted">Listado de Categorías</h5>
+    <button class="btn btn-primary" (click)="abrirModalEditar()"> + Nueva Categoría </button>
+  </div>
+
+   Loader mientras se cargan los datos 
+  <div *ngIf="loading" class="text-center my-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-2 text-muted">Cargando categorías...</p>
+  </div>
+
+  Mensaje si no hay categorías
+  <div *ngIf="!loading && categorias.length === 0" class="alert alert-info text-center mt-3">
+    No hay categorías registradas.
+  </div>
+
+  Tabla de categorías 
+  <div class="table-responsive" *ngIf="!loading && categorias.length > 0">
+    <table class="table table-striped table-hover align-middle shadow-sm rounded">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Activo</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+       Recorremos todas las categorías
+        <tr *ngFor="let categoria of categorias">
+          <td>{{ categoria.idCategoria }}</td>
+          <td>{{ categoria.nombreCategoria }}</td>
+          <td>{{ categoria.descripcion }}</td>
+          <td>
+            Mostramos un badge verde o gris según el estado 
+            <span 
+              class="badge" 
+              [class.bg-success]="categoria.activo" 
+              [class.bg-secondary]="!categoria.activo">
+              {{ categoria.activo ? 'Sí' : 'No' }}
+            </span>
+          </td>
+
+          Botones de acción 
+          <td class="text-center">
+            <button 
+              (click)="abrirModalEditar(categoria)"
+              class="btn btn-warning btn-sm me-2"
+              title="Editar categoría">
+              <i class="bi bi-pencil-square"></i> Editar
+            </button>
+
+            <button 
+              (click)="eliminarCategoria(categoria.idCategoria!)"
+              class="btn btn-danger btn-sm"
+              title="Eliminar categoría">
+              <i class="bi bi-trash"></i> Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+   Modal para Agregar / Editar Categoría 
+<div 
+  class="modal fade" id="modalCategoria" tabindex="-1" aria-hidden="true" (hidden.bs.modal)="onModalClosed()">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title">
+          {{ categoriaSeleccionada ? 'Editar Categoría' : 'Agregar Categoría' }}
+        </h5>
+        👇 Botón X usa data-bs-dismiss
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+    <div class="modal-body">
+        <app-categoria-form
+          [categoria]="categoriaSeleccionada"
+          (formGuardado)="cerrarModalYActualizarLista()">
+        </app-categoria-form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>-->
+
+
+<!--*********************************************-->
+
+<div class="container mt-4">
+  <!-- Encabezado -->
+  <div class="text-center mb-4">
+    <h4 class="text-muted">
+      <i class="bi bi-tags-fill me-2"></i> Listado de Categorías
+    </h4>
+    <button class="btn btn-primary" (click)="abrirModalEditar()">
+      <i class="bi bi-plus-circle"></i> Nueva Categoría
+    </button>
+  </div>
+
+  <!-- Loader -->
+  <div *ngIf="loading" class="text-center my-4">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2 text-muted">Cargando categorías...</p>
+  </div>
+
+  <!-- Si no hay categorías -->
+  <div *ngIf="!loading && categorias.length === 0" class="alert alert-info text-center mt-3">
+    No hay categorías registradas.
+  </div>
+
+  <!-- 🔹 Tarjetas -->
+  <div class="row g-4" *ngIf="!loading && categorias.length > 0">
+    <div class="col-md-4" *ngFor="let categoria of categorias">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-body">
+          <h5 class="card-title text-primary">
+            <i class="bi bi-folder-fill me-2"></i>{{ categoria.nombreCategoria }}
+          </h5>
+          <p class="card-text text-muted small">
+            {{ categoria.descripcion || 'Sin descripción' }}
+          </p>
+          <p>
+            <span class="badge" [class.bg-success]="categoria.activo" [class.bg-secondary]="!categoria.activo">
+              {{ categoria.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </p>
+        </div>
+        <div class="card-footer bg-light text-center">
+          <button class="btn btn-warning btn-sm me-2" (click)="abrirModalEditar(categoria)">
+            <i class="bi bi-pencil-square"></i> Editar
+          </button>
+          <button class="btn btn-danger btn-sm" (click)="eliminarCategoria(categoria.idCategoria!)">
+            <i class="bi bi-trash"></i> Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 Modal -->
+  <div #modalCategoria class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-warning text-dark">
+          <h5 class="modal-title">
+            {{ categoriaSeleccionada ? 'Editar Categoría' : 'Agregar Categoría' }}
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <div class="modal-body">
+          <app-categoria-form
+            [categoria]="categoriaSeleccionada"
+            (formGuardado)="cerrarModalYActualizarLista()">
+          </app-categoria-form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

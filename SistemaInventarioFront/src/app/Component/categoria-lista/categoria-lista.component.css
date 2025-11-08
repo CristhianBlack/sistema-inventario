@@ -1,0 +1,33 @@
+/* ✅ Estilos personalizados opcionales */
+
+/* Sombra y bordes suaves para la tabla */
+table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Centramos el spinner */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Suavizamos la transición de hover */
+.table-hover tbody tr:hover {
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Botones un poco más suaves */
+button.btn {
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+button.btn:hover {
+  transform: scale(1.05);
+}
+
+/* Espacio inferior entre elementos */
+.container {
+  margin-bottom: 30px;
+}

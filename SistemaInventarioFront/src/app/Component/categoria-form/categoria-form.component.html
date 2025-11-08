@@ -1,0 +1,81 @@
+<div class="container">
+  <form (ngSubmit)="onSubmit()" #formCategoria="ngForm" novalidate>
+    
+    <!-- Título dinámico -->
+    <div class="text-center mb-4">
+      <h4 class="fw-bold">
+        {{ formModel.idCategoria ? 'Editar Categoría' : 'Nueva Categoría' }}
+      </h4>
+    </div>
+
+    <!-- Campo: Nombre -->
+    <div class="mb-3">
+      <label for="nombreCategoria" class="form-label">Nombre de Categoría</label>
+      <input 
+        type="text"
+        id="nombreCategoria"
+        name="nombreCategoria"
+        class="form-control"
+        [(ngModel)]="formModel.nombreCategoria"
+        required
+        minlength="3"
+        placeholder="Ej: Electrónicos">
+
+      <!-- Mensajes de error -->
+      <div *ngIf="formCategoria.submitted && !formModel.nombreCategoria" class="text-danger small mt-1">
+        El nombre es obligatorio.
+      </div>
+    </div>
+
+    <!-- Campo: Descripción -->
+    <div class="mb-3">
+      <label for="descripcion" class="form-label">Descripción</label>
+      <textarea
+        id="descripcion"
+        name="descripcion"
+        class="form-control"
+        [(ngModel)]="formModel.descripcion"
+        required
+        rows="3"
+        placeholder="Breve descripción de la categoría">
+      </textarea>
+
+      <div *ngIf="formCategoria.submitted && !formModel.descripcion" class="text-danger small mt-1">
+        La descripción es obligatoria.
+      </div>
+    </div>
+
+    <!-- Campo: Activo (opcional) -->
+    <div class="form-check mb-4">
+      <input 
+        class="form-check-input" 
+        type="checkbox" 
+        id="activo" 
+        name="activo"
+        [(ngModel)]="formModel.activo">
+      <label class="form-check-label" for="activo">
+        Activo
+      </label>
+    </div>
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-end">
+      <button 
+        type="button" 
+        class="btn btn-secondary me-2"
+        data-bs-dismiss="modal" >
+        Cancelar
+      </button>
+
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="formCategoria.invalid">
+        {{ formModel.idCategoria ? 'Guardar cambios' : 'Agregar categoría' }}
+      </button>
+    </div>
+
+  </form>
+</div>
+
+
