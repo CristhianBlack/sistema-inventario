@@ -1,0 +1,16 @@
+# === SPRING BOOT ===
+target/
+*.log
+*.class
+*.jar
+*.war
+*.iml
+.idea/
+*.project
+*.classpath
+*.settings/
+
+# === ANGULAR ===
+node_modules/
+dist/
+.angular/
