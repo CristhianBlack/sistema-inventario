@@ -58,7 +58,7 @@ export class CiudadFormComponent implements OnInit{
       });
     }else{
       // Creamos nuestra ciudad
-      console.log('📦 Datos que se envían:', this.formModel);
+      console.log(' Datos que se envían:', this.formModel);
       this.ciudadService.agregarCiudad(this.formModel).subscribe({
         next: () =>{
           this.toastr.success('Ciudad agregada correctamente', 'Éxito');

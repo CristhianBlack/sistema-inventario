@@ -299,7 +299,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
 
-// 👇 Necesario para usar el JS de Bootstrap (modal)
+// Necesario para usar el JS de Bootstrap (modal)
 declare var bootstrap: any;
 
 @Component({
@@ -316,7 +316,7 @@ export class CategoriaListaComponent implements OnInit, OnDestroy, AfterViewInit
 
   loading = false;
 
-  // 👇 Referencia al elemento HTML del modal
+  // Referencia al elemento HTML del modal
   @ViewChild('modalCategoria') modalElement!: ElementRef;
 
   constructor(
@@ -326,7 +326,7 @@ export class CategoriaListaComponent implements OnInit, OnDestroy, AfterViewInit
   ) {}
 
   ngOnInit(): void {
-    console.log('✅ CategoriaListaComponent inicializado');
+    console.log('CategoriaListaComponent inicializado');
     this.obtenerCategorias();
   }
 
@@ -342,18 +342,18 @@ export class CategoriaListaComponent implements OnInit, OnDestroy, AfterViewInit
     this.destroy$.complete();
   }
 
-  // 🔹 Cargar lista de categorías
+  // Cargar lista de categorías
   obtenerCategorias(): void {
     this.loading = true;
     this.categoriaService.obtenerListaCategoria()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (datos) => {
-          console.log('📦 Datos recibidos:', datos);
+          console.log(' Datos recibidos:', datos);
           this.categorias = datos;
         },
         error: (err) => {
-          console.error('❌ Error al obtener categorías:', err);
+          console.error('Error al obtener categorías:', err);
           this.toastr.error('Error al cargar categorías', 'Error');
         },
         complete: () => {
@@ -362,7 +362,7 @@ export class CategoriaListaComponent implements OnInit, OnDestroy, AfterViewInit
       });
   }
 
-  // 🔹 Abrir modal para crear o editar categoría
+  // Abrir modal para crear o editar categoría
   abrirModalEditar(categoria?: Categoria): void {
     this.categoriaSeleccionada = categoria ? { ...categoria } : null;
 
@@ -373,12 +373,12 @@ export class CategoriaListaComponent implements OnInit, OnDestroy, AfterViewInit
         this.modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
         this.modalInstance.show();
       } else {
-        console.error('⚠️ No se encontró el modal en el DOM.');
+        console.error('No se encontró el modal en el DOM.');
       }
     }, 0);
   }
 
-  // 🔹 Cerrar modal y refrescar lista
+  // Cerrar modal y refrescar lista
   cerrarModalYActualizarLista(): void {
     if (this.modalInstance) {
       this.modalInstance.hide();
@@ -387,7 +387,7 @@ export class CategoriaListaComponent implements OnInit, OnDestroy, AfterViewInit
     this.categoriaSeleccionada = null;
   }
 
-  // 🔹 Eliminar una categoría
+  // Eliminar una categoría
   eliminarCategoria(id: number): void {
     Swal.fire({
       title: '¿Eliminar categoría?',
@@ -404,12 +404,12 @@ export class CategoriaListaComponent implements OnInit, OnDestroy, AfterViewInit
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: () => {
-              this.toastr.success('Categoría eliminada correctamente', 'Éxito ✅');
+              this.toastr.success('Categoría eliminada correctamente', 'Éxito');
               this.obtenerCategorias();
             },
             error: (err) => {
               console.error('Error al eliminar categoría:', err);
-              this.toastr.error('No se pudo eliminar la categoría', 'Error ❌');
+              this.toastr.error('No se pudo eliminar la categoría', 'Error');
             }
           });
       }

@@ -15,6 +15,16 @@ import { CategoriaListaComponent } from './Component/categoria-lista/categoria-l
 import { CategoriaFormComponent } from './Component/categoria-form/categoria-form.component';
 import { CiudadListaComponent } from './Component/ciudad-lista/ciudad-lista.component';
 import { CiudadFormComponent } from './Component/ciudad-form/ciudad-form.component';
+import { TipoDocumentoListaComponent } from './Component/tipo-documento-lista/tipo-documento-lista.component';
+import { TipoDocumentoFormComponent } from './Component/tipo-documento-form/tipo-documento-form.component';
+import { TipoPersonaListaComponent } from './Component/tipo-persona-lista/tipo-persona-lista.component';
+import { TipoPersonaFormComponent } from './Component/tipo-persona-form/tipo-persona-form.component';
+import { PersonaListaComponent } from './Component/persona-lista/persona-lista.component';
+import { PersonaFormComponent } from './Component/persona-form/persona-form.component';
+import { RolPersonaListaComponent } from './Component/rol-persona-lista/rol-persona-lista.component';
+import { RolPersonaFormComponent } from './Component/rol-persona-form/rol-persona-form.component';
+
+
 
 
 @NgModule({
@@ -23,7 +33,15 @@ import { CiudadFormComponent } from './Component/ciudad-form/ciudad-form.compone
     CategoriaListaComponent,
     CategoriaFormComponent,
     CiudadListaComponent,
-    CiudadFormComponent
+    CiudadFormComponent,
+    TipoDocumentoListaComponent,
+    TipoDocumentoFormComponent,
+    TipoPersonaListaComponent,
+    TipoPersonaFormComponent,
+    PersonaListaComponent,
+    PersonaFormComponent,
+    RolPersonaListaComponent,
+    RolPersonaFormComponent
   ],
   imports: [
     BrowserModule,

@@ -26,10 +26,6 @@ public class Proveedor {
     @Temporal(TemporalType.DATE)
     private LocalDate fechaCreacion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_ciudad")
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private Ciudad ciudad;
 
     @OneToMany(mappedBy = "proveedor" )
     @JsonIgnore
@@ -37,7 +33,8 @@ public class Proveedor {
     @Column(nullable = false)
     private boolean activo = true;
 
-    @OneToOne(mappedBy = "proveedor")
+    @OneToOne
+    @JoinColumn(name = "id_persona", referencedColumnName = "idPersona")
     private Persona persona;
 
     public Proveedor() {
@@ -89,14 +86,6 @@ public class Proveedor {
 
     public void setFechaCreacion(LocalDate fechaCreacion) {
         this.fechaCreacion = fechaCreacion;
-    }
-
-    public Ciudad getCiudad() {
-        return ciudad;
-    }
-
-    public void setCiudad(Ciudad ciudad) {
-        this.ciudad = ciudad;
     }
 
     public boolean isActivo() {

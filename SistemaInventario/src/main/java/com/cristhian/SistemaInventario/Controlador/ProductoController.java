@@ -56,17 +56,17 @@ public class ProductoController {
     @PostMapping("/Productos")
     public ResponseEntity<?> agregarProducto(@RequestBody ProductoDTO productoDTO){
 
-        // 1️⃣ Validar si el nombre del producto ya existe
+        // Validar si el nombre del producto ya existe
         if(productoService.existsBynombreProducto(productoDTO.getNombreProducto())){
             return new ResponseEntity<>(new Mensaje("El producto ya existe."), HttpStatus.BAD_REQUEST);
         }
 
-        // 2️⃣ Buscar las entidades relacionadas (categoría, unidad, proveedor)
+        // Buscar las entidades relacionadas (categoría, unidad, proveedor)
         Optional<Categoria> categoriaOpt = categoriaService.buscarCategoriaId(productoDTO.getIdCategoria());
         Optional<UnidadMedida> unidadOpt = unidadMedidaService.buscarUnidadId(productoDTO.getIdUnidadMedida());
         Optional<Proveedor> proveedorOpt = proveedorService.buscarProveedorId(productoDTO.getIdProveedor());
 
-        // 3️⃣ Validar existencia de cada relación (si alguna falta, error)
+        // Validar existencia de cada relación (si alguna falta, error)
         if (!categoriaOpt.isPresent()) {
             return new ResponseEntity<>(new Mensaje("No existe la categoría seleccionada."), HttpStatus.BAD_REQUEST);
         }
@@ -77,7 +77,7 @@ public class ProductoController {
             return new ResponseEntity<>(new Mensaje("No existe el proveedor seleccionado."), HttpStatus.BAD_REQUEST);
         }
 
-        // 4️⃣ Creamos y llenamos el producto
+        // Creamos y llenamos el producto
         Producto producto = new Producto();
         producto.setCodigoProducto(productoDTO.getCodigoProducto());
         producto.setNombreProducto(productoDTO.getNombreProducto());
@@ -89,12 +89,12 @@ public class ProductoController {
         producto.setFechaCreacion(productoDTO.getFechaCreacion());
         producto.setActive(productoDTO.isActive());
 
-        // 5️⃣ Asignar relaciones usando Optional (más limpio)
+        //  Asignar relaciones usando Optional (más limpio)
         categoriaOpt.ifPresent(producto::setCategoria);
         unidadOpt.ifPresent(producto::setUnidadMedida);
         proveedorOpt.ifPresent(producto::setProveedor);
 
-        // 6️⃣ Guardar producto
+        // Guardar producto
         productoService.guardarProducto(producto);
 
         return  new ResponseEntity<>(new Mensaje("Producto creado con exito."),HttpStatus.CREATED);
@@ -103,7 +103,7 @@ public class ProductoController {
     @PutMapping("/Productos/{id}")
     public ResponseEntity<Producto> actualizarProducto(@PathVariable int id, @RequestBody ProductoDTO productoDTO){
 
-        // 1️⃣ Validar que el producto exista
+        // Validar que el producto exista
         Optional<Producto> productoOpt = productoService.buscarProducto(id);
         if (!productoOpt.isPresent()) {
             return new ResponseEntity(new Mensaje("No existe el producto."), HttpStatus.NOT_FOUND);
@@ -111,18 +111,18 @@ public class ProductoController {
 
         Producto producto = productoOpt.get();
 
-        // 2️⃣ Validar si el nuevo nombre ya está usado por OTRO producto
+        //  Validar si el nuevo nombre ya está usado por OTRO producto
         if (productoService.existsBynombreProducto(productoDTO.getNombreProducto()) &&
                 !producto.getNombreProducto().equalsIgnoreCase(productoDTO.getNombreProducto())) {
             return new ResponseEntity(new Mensaje("Ya existe otro producto con ese nombre."), HttpStatus.BAD_REQUEST);
         }
 
-        // 3️⃣ Buscar las entidades relacionadas (categoría, unidad, proveedor)
+        //  Buscar las entidades relacionadas (categoría, unidad, proveedor)
         Optional<Categoria> categoriaOpt = categoriaService.buscarCategoriaId(productoDTO.getIdCategoria());
         Optional<UnidadMedida> unidadOpt = unidadMedidaService.buscarUnidadId(productoDTO.getIdUnidadMedida());
         Optional<Proveedor> proveedorOpt = proveedorService.buscarProveedorId(productoDTO.getIdProveedor());
 
-        // 4️⃣ Validar existencia de relaciones
+        //  Validar existencia de relaciones
         if (!categoriaOpt.isPresent()) {
             return new ResponseEntity(new Mensaje("No existe la categoría seleccionada."), HttpStatus.BAD_REQUEST);
         }
@@ -133,7 +133,7 @@ public class ProductoController {
             return new ResponseEntity(new Mensaje("No existe el proveedor seleccionado."), HttpStatus.BAD_REQUEST);
         }
 
-        // 5️⃣ Actualizar los datos del producto
+        //  Actualizar los datos del producto
         producto.setCodigoProducto(productoDTO.getCodigoProducto());
         producto.setNombreProducto(productoDTO.getNombreProducto());
         producto.setPrecioCompra(productoDTO.getPrecioCompra());
@@ -144,12 +144,12 @@ public class ProductoController {
         producto.setFechaCreacion(productoDTO.getFechaCreacion());
         producto.setActive(productoDTO.isActive());
 
-        // 6️⃣ Asignar relaciones
+        //  Asignar relaciones
         categoriaOpt.ifPresent(producto::setCategoria);
         unidadOpt.ifPresent(producto::setUnidadMedida);
         proveedorOpt.ifPresent(producto::setProveedor);
 
-        // 7️⃣ Guardar producto actualizado
+        //  Guardar producto actualizado
         productoService.guardarProducto(producto);
         return new ResponseEntity(new Mensaje("Se actualizo el producto con exito"), HttpStatus.OK);
     }

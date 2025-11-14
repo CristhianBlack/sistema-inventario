@@ -1,0 +1,76 @@
+/* 🎨 Fondo del contenedor del formulario */
+.formulario {
+  background-color: #111827;
+  color: #e5e7eb;
+  border-radius: 16px;
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+/* 🩵 Campos */
+.form-label {
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.form-control,
+.form-select {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  color: #e5e7eb;
+  border-radius: 8px;
+  padding: 10px;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+  background-color: #1e293b;
+}
+
+/* 🩵 Placeholders */
+.form-control::placeholder {
+  color: #6b7280;
+}
+
+/* 🔹 Errores */
+.text-danger {
+  color: #f87171 !important;
+}
+
+/* 🌈 Botón degradado */
+.btn-gradient {
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 24px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* ⚪ Botón cancelar */
+.btn-outline-light {
+  border: 1px solid #9ca3af;
+  color: #d1d5db;
+  transition: 0.3s;
+}
+
+.btn-outline-light:hover {
+  background-color: #374151;
+  color: #fff;
+}
+
+/* 🧩 Responsivo */
+@media (max-width: 768px) {
+  .formulario {
+    padding: 1.5rem;
+  }
+}

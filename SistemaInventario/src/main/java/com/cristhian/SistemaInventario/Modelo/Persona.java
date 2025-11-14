@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -11,10 +12,11 @@ public class Persona {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idPersona;
+    private Integer idPersona;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_tipo_documento")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "personas"})
     private TipoDocumento tipoDocumento;
     @Column(nullable = false, unique = true, length = 20)
     private String documentoPersona;
@@ -38,16 +40,24 @@ public class Persona {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_tipo_persona")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "personas"})
     private TipoPersona tipoPersona;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_ciudad")
-    @JsonIgnoreProperties({"personas", "hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "personas"})
     private Ciudad ciudad;
 
-    @OneToOne
-    @JoinColumn(name = "id_proveedor")
+    @OneToOne(mappedBy = "persona")
+    @JsonIgnoreProperties("persona")
     private Proveedor proveedor;
+
+    @OneToMany(mappedBy = "persona", fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
+    private List<PersonaRol> personaRoles = new ArrayList<>();
+
+    @Column(nullable = false)
+    private boolean activo = true;
 
     // 🔹 Sobrescribimos el método toString()
     @Override
@@ -70,7 +80,7 @@ public class Persona {
     public Persona() {
     }
 
-    public Persona(String documentoPersona, String nombre, String apellido, String segundoApellido, String direccion, String telefono, String email) {
+    public Persona(String documentoPersona, String nombre, String apellido, String segundoApellido, String direccion, String telefono, String email, boolean activo) {
         this.documentoPersona = documentoPersona;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -78,6 +88,7 @@ public class Persona {
         this.direccion = direccion;
         this.telefono = telefono;
         this.email = email;
+        this.activo = activo;
     }
 
     public int getIdPersona() {
@@ -174,5 +185,21 @@ public class Persona {
 
     public void setProveedor(Proveedor proveedor) {
         this.proveedor = proveedor;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+    public List<PersonaRol> getPersonaRoles() {
+        return personaRoles;
+    }
+
+    public void setPersonaRoles(List<PersonaRol> personaRoles) {
+        this.personaRoles = personaRoles;
     }
 }

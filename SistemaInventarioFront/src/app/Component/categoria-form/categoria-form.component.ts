@@ -10,13 +10,13 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class CategoriaFormComponent implements OnInit {
 
-  // ✅ Recibe una categoría cuando se va a editar (puede venir vacía si es "crear")
+  // Recibe una categoría cuando se va a editar (puede venir vacía si es "crear")
   @Input() categoria?: Categoria | null = null;
 
-  // ✅ Emite un evento al guardar, para que el padre (lista) actualice la tabla
+  // Emite un evento al guardar, para que el padre (lista) actualice la tabla
   @Output() formGuardado = new EventEmitter<void>();
 
-  // ✅ Modelo interno usado en el formulario (para no alterar directamente el @Input)
+  // Modelo interno usado en el formulario (para no alterar directamente el @Input)
   formModel: Categoria = new Categoria();
 
   constructor(
@@ -31,8 +31,8 @@ export class CategoriaFormComponent implements OnInit {
     }
   }
 
-   // ✅ Detecta cuando cambia el Input() y actualiza el modelo
-   // 🔄 Detecta cambios en el input y actualiza el formulario
+   // Detecta cuando cambia el Input() y actualiza el modelo
+   // Detecta cambios en el input y actualiza el formulario
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['categoria'] && this.categoria) {
       this.formModel = { ...this.categoria };
@@ -43,7 +43,7 @@ export class CategoriaFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.formModel.idCategoria) {
-      // ✏️ Editar
+      //Editar
       this.categoriaService.editarCategoria(this.formModel.idCategoria, this.formModel).subscribe({
         next: () => {
           this.toastr.success('Categoría actualizada correctamente', 'Éxito');
@@ -55,7 +55,7 @@ export class CategoriaFormComponent implements OnInit {
         }
       });
     } else {
-      // ➕ Agregar
+      // Agregar
       this.categoriaService.agregarCategoria(this.formModel).subscribe({
         next: () => {
           this.toastr.success('Categoría agregada correctamente', 'Éxito');

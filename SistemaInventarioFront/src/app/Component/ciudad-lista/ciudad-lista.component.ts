@@ -6,7 +6,7 @@ import { Ciudad } from 'src/app/Modelos/ciudad';
 import { CiudadService } from 'src/app/Servicios/ciudad.service';
 import Swal from 'sweetalert2';
 
-// 👇 Necesario para usar el JS de Bootstrap (modal)
+// Necesario para usar el JS de Bootstrap (modal)
 declare var bootstrap: any;
 
 @Component({
@@ -24,7 +24,7 @@ export class CiudadListaComponent implements OnInit {
 
   loading = false;
 
-  // 👇 Referencia al elemento HTML del modal
+  // Referencia al elemento HTML del modal
   @ViewChild('modalCiudad') modalElement!: ElementRef;
 
   constructor(
@@ -46,7 +46,7 @@ export class CiudadListaComponent implements OnInit {
     }
   }
 
-  // ✅ Método del ciclo de vida que se ejecuta cuando el componente se destruye
+  //  Método del ciclo de vida que se ejecuta cuando el componente se destruye
   // Se usa para cerrar suscripciones y liberar memoria
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -60,11 +60,11 @@ export class CiudadListaComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (datos) => {
-          console.log('📦 Datos recibidos:', datos);
+          console.log('Datos recibidos:', datos);
           this.ciudades = datos;
         },
         error: (err) => {
-          console.error('❌ Error al obtener ciudades:', err);
+          console.error(' Error al obtener ciudades:', err);
           this.toastr.error('Error al cargar ciudades', 'Error');
         },
         complete: () => {
@@ -73,7 +73,7 @@ export class CiudadListaComponent implements OnInit {
       });
   }
 
-  // 🔹 Abrir modal para crear o editar ciudad
+  //Abrir modal para crear o editar ciudad
   abrirModalEditar(ciudad?: Ciudad): void {
     this.ciudadSeleccionada = ciudad ? { ...ciudad } : null;
 
@@ -84,12 +84,12 @@ export class CiudadListaComponent implements OnInit {
         this.modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
         this.modalInstance.show();
       } else {
-        console.error('⚠️ No se encontró el modal en el DOM.');
+        console.error(' No se encontró el modal en el DOM.');
       }
     }, 0);
   }
 
-  // 🔹 Cerrar modal y refrescar lista
+  //  Cerrar modal y refrescar lista
   cerrarModalYActualizarLista(): void {
     if (this.modalInstance) {
       this.modalInstance.hide();
@@ -98,8 +98,8 @@ export class CiudadListaComponent implements OnInit {
     this.ciudadSeleccionada = null;
   }
 
-  // 🔹 Eliminar una categoría
-  eliminarCategoria(id: number): void {
+  // Eliminar una ciudad
+  eliminarCiudad(id: number): void {
     Swal.fire({
       title: '¿Eliminar categoría?',
       text: 'Esta acción no se puede deshacer.',
@@ -114,13 +114,13 @@ export class CiudadListaComponent implements OnInit {
         this.ciudadService.eliminarciudad(id).pipe(takeUntil(this.destroy$)).subscribe({
             next: () => {
               this.toastr.success(
-                'Ciudad eliminada correctamente','Éxito ✅'
+                'Ciudad eliminada correctamente','Éxito '
               );
               this.obtenerCiudades();
             },
             error: (err) => {
               console.error('Error al eliminar categoría:', err);
-              this.toastr.error('No se pudo eliminar la categoría', 'Error ❌');
+              this.toastr.error('No se pudo eliminar la categoría', 'Error ');
             },
           });
       }

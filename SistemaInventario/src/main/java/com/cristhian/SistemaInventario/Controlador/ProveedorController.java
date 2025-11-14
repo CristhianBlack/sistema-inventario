@@ -65,7 +65,7 @@ public class ProveedorController {
         proveedor.setNitProveedor(proveedorDTO.getNitProveedor());
         proveedor.setDescripcionProveedor(proveedorDTO.getDescripcionProveedor());
         proveedor.setFechaCreacion(proveedorDTO.getFechaCreacion());
-        proveedor.setCiudad(ciudadOptional.get());
+
 
         proveedorService.guardarProveedor(proveedor);
         return new ResponseEntity<>(new Mensaje("Proveedor registrado con exito"), HttpStatus.CREATED);
@@ -92,7 +92,7 @@ public class ProveedorController {
         proveedores.setNitProveedor(proveedorDTO.getNitProveedor());
         proveedores.setDescripcionProveedor(proveedorDTO.getDescripcionProveedor());
         proveedores.setFechaCreacion(proveedorDTO.getFechaCreacion());
-        proveedores.setCiudad(ciudadOptional.get());// obtiene el id de la cidad si esxite
+
 
         this.proveedorService.guardarProveedor(proveedores);
         return new ResponseEntity(new Mensaje("Se actualizo el proveedor con exito."), HttpStatus.OK);

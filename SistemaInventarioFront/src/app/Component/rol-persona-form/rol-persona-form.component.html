@@ -1,0 +1,57 @@
+<div class="container py-4">
+  <form (ngSubmit)="onSubmit(formRolPersona)" #formRolPersona="ngForm" novalidate class="formulario p-4 rounded-4 shadow-lg">
+
+    <!-- 🔹 Encabezado -->
+    <div class="text-center mb-4">
+      <h4 class="text-white fw-bold mb-1">
+        <i class="bi bi-person-rolodex  me-2"></i>
+        {{ formModel.idRolPersona ? 'Editar Rol' : 'Nuevo Rol' }}
+      </h4>
+      <p class="text-muted small">Complete los datos de creacion del rol</p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Nombre -->
+      <div class="mb-3">
+        <label for="nombrePersona" class="form-label">Nombre Rol</label>
+        <input
+          type="text"
+          id="nombreRol"
+          name="nombreRol"
+          class="form-control"
+          [(ngModel)]="formModel.nombreRol"
+          required minlength="3"
+          placeholder="EJ: Empleado"
+        />
+        <div *ngIf="formRolPersona.submitted && !formModel.nombreRol" class="text-danger small mt-1">
+          El nombre es obligatorio
+        </div>
+      </div>
+
+      <!-- descripcion -->
+      <div class="mb-3">
+        <label for="descripcion" class="form-label">Descripcion Rol</label>
+        <input
+          type="text"
+          id="descripcion"
+          name="descripcion"
+          class="form-control"
+          [(ngModel)]="formModel.descripcion"
+          required minlength="3"
+          placeholder="EJ: Este rol sirve para asignar a la persona el rol de empleado."
+        />
+        <div *ngIf="formRolPersona.submitted && !formModel.descripcion" class="text-danger small mt-1">
+          El descripcion es obligatorio
+        </div>
+      </div>
+    </div>
+    <!-- Botones -->
+    <div class="d-flex justify-content-end mt-4">
+      <button type="button" class="btn btn-outline-light me-2" data-bs-dismiss="modal">Cancelar</button>
+      <button type="submit" class="btn btn-gradient" [disabled]="formRolPersona.invalid">
+        <i class="bi bi-save2 me-1"></i>
+        {{ formModel.idRolPersona ? 'Guardar cambios' : 'Agregar Rol' }}
+      </button>
+    </div>
+  </form>
+</div>

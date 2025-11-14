@@ -1,0 +1,167 @@
+/*  Fondo general 
+.persona-container {
+  background-color: #0d1117;
+  min-height: 100vh;
+}*/
+
+/*  Encabezado con gradiente */
+.text-gradient {
+  background: linear-gradient(90deg, #6c63ff, #00bcd4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/*  Botón principal */
+.btn-gradient {
+  background: linear-gradient(45deg, #6c63ff, #00bcd4);
+  border: none;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+}
+
+/*  Tarjetas */
+.persona-card {
+  background: linear-gradient(145deg, #161b22, #0d1117);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.persona-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/*  Avatar circular */
+.avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bg-gradient {
+  background: linear-gradient(45deg, #6c63ff, #00bcd4);
+}
+
+/*  Etiquetas de estado */
+.bg-gradient-success {
+  background: linear-gradient(45deg, #00c853, #4caf50);
+  color: white;
+}
+
+.bg-gradient-secondary {
+  background: linear-gradient(45deg, #9e9e9e, #616161);
+  color: white;
+}
+
+/*  Botones */
+.btn-outline-warning {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.btn-outline-warning:hover {
+  background: #ffc107;
+  color: #000;
+}
+
+.btn-outline-danger {
+  border-color: #f44336;
+  color: #f44336;
+}
+
+.btn-outline-danger:hover {
+  background: #f44336;
+  color: white;
+  transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .persona-card {
+    text-align: center;
+  }
+
+  .d-flex.justify-content-between {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+/*********************************/
+
+/*  Modal oscuro */
+.modal-dark {
+  background-color: #111827;
+  color: #e5e7eb;
+  border: 1px solid #1f2937;
+  max-height: 90vh; /* evita que el modal crezca más de la pantalla */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sombra sutil */
+.modal-dark {
+  box-shadow: 0 8px 30px rgba(59, 130, 246, 0.25);
+}
+
+/*  Cuerpo scrollable */
+.modal-scroll {
+  max-height: 70vh; /* altura interna del scroll */
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/*  Header y Footer fijos */
+.modal-header,
+.modal-footer {
+  background-color: #1e293b;
+  z-index: 10;
+}
+
+/*  Scrollbar personalizada */
+.modal-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  border-radius: 10px;
+}
+
+.modal-scroll::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+/* Efecto de entrada */
+.modal.fade .modal-dialog {
+  transform: translateY(-20px);
+  transition: all 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+  transform: translateY(0);
+}
+
+/* Cierre blanco */
+.btn-close-white {
+  filter: invert(1) brightness(200%);
+  opacity: 0.7;
+}
+
+.btn-close-white:hover {
+  opacity: 1;
+}
+
+
+

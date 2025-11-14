@@ -3,7 +3,7 @@
         
         <!--Titulo dinamico-->
         <div class="text-center mb-4">
-            <h4 class="fw-bold">
+            <h4 class="fw-bold"> <i class="fa-solid fa-city text-white fs-5 me-2"></i>
                 {{formModel.idCiudad ? 'Editar Ciudad' : 'Nueva Ciudad' }}
             </h4>
         </div>
@@ -36,7 +36,7 @@
             <button type="button" class="btn btn-secondary me-2"  data-bs-dismiss="modal" >Cancelar</button>
 
             <button type="submit" class="btn btn-primary" [disabled]="formCiudad.invalid">
-                {{formModel.idCiudad ? 'Guardar cambios' : 'Agregar categoría'}}
+                {{formModel.idCiudad ? 'Guardar cambios' : 'Agregar ciudad'}}
             </button>
         </div>
     </form>

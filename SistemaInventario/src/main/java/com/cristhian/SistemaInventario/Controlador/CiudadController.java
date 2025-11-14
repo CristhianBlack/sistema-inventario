@@ -46,7 +46,7 @@ public class CiudadController {
 
     @PostMapping("/Ciudades")
     public ResponseEntity<?> agregarCiudad(@Valid @RequestBody CiudadDTO ciudadDTO) {
-        logger.info("📦 JSON recibido → ciudad: {}, activo: {}", ciudadDTO.getCiudad(), ciudadDTO.isActivo());
+        logger.info(" JSON recibido → ciudad: {}, activo: {}", ciudadDTO.getCiudad(), ciudadDTO.isActivo());
         logger.info("ciudad a agregar: " + ciudadDTO.getCiudad());
 
         Optional<Ciudad> ciudadexistente = ciudadService.findByCiudadIgnoreCase(ciudadDTO.getCiudad().trim());
@@ -106,8 +106,5 @@ public class CiudadController {
             e.printStackTrace(); // para ver el error exacto en la consola
             return new ResponseEntity<>(new Mensaje("Error interno al eliminar la ciudad"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
-
     }
 }

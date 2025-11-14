@@ -1,5 +1,7 @@
 package com.cristhian.SistemaInventario.Modelo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -18,6 +20,7 @@ public class TipoPersona {
     private boolean activo = true;
 
     @OneToMany(mappedBy = "tipoPersona")
+    @JsonIgnoreProperties("tipoPersona")
     private List<Persona> personas;
 
     public TipoPersona() {

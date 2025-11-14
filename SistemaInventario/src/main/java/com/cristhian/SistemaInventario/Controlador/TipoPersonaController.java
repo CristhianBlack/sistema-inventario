@@ -52,7 +52,7 @@ public class TipoPersonaController {
     }
 
     @PutMapping("/tipoPersonas/{id}")
-    public ResponseEntity<?> acutalizarTipoPersona(@PathVariable int id, @RequestBody TipoPersonaDTO tipoPersonaDTO){
+    public ResponseEntity<?> actualizarTipoPersona(@PathVariable int id, @RequestBody TipoPersonaDTO tipoPersonaDTO){
 
         Optional<TipoPersona> tipoPersonaOpt = tipoPersonaImpl.buscarTipoPersonaId(id);
         if (!tipoPersonaOpt.isPresent()){
