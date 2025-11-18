@@ -9,9 +9,7 @@ import java.util.Optional;
 
 public interface RolPersonaRepository extends JpaRepository<RolPersona, Integer> {
 
-    Optional<Ciudad> findByNombreRol(String nombreRol);
-
-    Optional<RolPersona> findByNombreRolIgnoreCase(String nombreRol);
+    Optional<RolPersona> findByNombreRol(String nombreRol);
 
     //Devuelve los roles Activos
     List<RolPersona> findByActivoTrue();

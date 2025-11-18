@@ -49,16 +49,18 @@ eliminarRolPersona(idPersonaRol: number): Observable<void> {
 
   // Manejo centralizado de errores
     private manejarError(error: HttpErrorResponse) {
-      console.error('Error del servidor:', error);
-      let mensaje = '';
-      if (error.status === 400 && error.error?.mensaje) {
-        mensaje = error.error.mensaje; // mensaje personalizado del backend
-      } else if (error.status === 404) {
-        mensaje = 'Recurso no encontrado';
-      } else if (error.status === 500) {
-        mensaje = 'Error interno del servidor';
-      }
-      console.error(mensaje);
-      return throwError(() => new Error(mensaje));
-    }
+  console.error("🔥 ERROR COMPLETO DEL SERVIDOR:", error);
+
+  // si el backend envía un JSON con "mensaje", úsalo
+  const mensaje =
+    error.error?.mensaje ||
+    error.error ||
+    "Error desconocido en el servidor";
+
+  console.error("🔥 MENSAJE DEL BACKEND:", mensaje);
+
+  // devolvemos el error REAL
+  return throwError(() => error);
+}
+
 }

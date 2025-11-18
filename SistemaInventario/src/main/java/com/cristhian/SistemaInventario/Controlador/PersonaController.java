@@ -1,4 +1,4 @@
-package com.cristhian.SistemaInventario.Controlador;
+package com.cristhian.SistemaInventario.Controlador;/*package com.cristhian.SistemaInventario.Controlador;
 
 import com.cristhian.SistemaInventario.DTO.PersonaDTO;
 import com.cristhian.SistemaInventario.Mensaje.Mensaje;
@@ -240,5 +240,63 @@ public class PersonaController {
             e.printStackTrace();
             return new ResponseEntity<>(new Mensaje("Error interno al eliminar la persona"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+}*/
+
+import com.cristhian.SistemaInventario.DTO.PersonaDTO;
+import com.cristhian.SistemaInventario.Mensaje.Mensaje;
+import com.cristhian.SistemaInventario.Modelo.Persona;
+import com.cristhian.SistemaInventario.Service.IPersonaService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/Inventario")
+@CrossOrigin(origins = "http://localhost:4200")
+public class PersonaController {
+
+    private final IPersonaService personaService;
+
+    public PersonaController(IPersonaService personaService) {
+        this.personaService = personaService;
+    }
+
+    @PostMapping("/Personas")
+    public ResponseEntity<?> crearPersona(@Valid @RequestBody PersonaDTO personaDto) {
+        System.out.println("DEBUG DTO completo: " + personaDto);
+        System.out.println("DEBUG tipoDocumento: " + personaDto.getIdTipoDocumento());
+        System.out.println("DEBUG tipoPersona: " + personaDto.getIdTipoPersona());
+        System.out.println("DEBUG ciudad: " + personaDto.getIdCiudad());
+        System.out.println("DEBUG idsRoles: " + personaDto.getIdsRoles());
+        personaService.crearPersonaConRolDefault(personaDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new Mensaje("Persona creada correctamente"));
+    }
+
+    @PutMapping("/Personas/{id}")
+    public ResponseEntity<?> actualizarPersona(@PathVariable Integer id,
+                                               @Valid @RequestBody PersonaDTO dto) {
+        personaService.actualizarPersona(id, dto);
+        return ResponseEntity.ok(new Mensaje("Persona actualizada correctamente"));
+    }
+
+    @GetMapping("/Personas")
+    public ResponseEntity<List<Persona>> listarPersonas() {
+        return ResponseEntity.ok(personaService.listarPersonas());
+    }
+
+    @GetMapping("/Personas/{id}")
+    public ResponseEntity<?> obtenerPersona(@PathVariable Integer id) {
+        return ResponseEntity.ok(personaService.buscarPorId(id));
+    }
+
+    @DeleteMapping("/Personas/{id}")
+    public ResponseEntity<?> eliminarPersona(@PathVariable Integer id){
+        personaService.eliminarPersona(id);
+        return new ResponseEntity<>(new Mensaje("Se eliminó la persona con éxito"), HttpStatus.OK);
     }
 }

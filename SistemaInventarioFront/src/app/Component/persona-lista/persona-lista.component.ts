@@ -71,7 +71,7 @@ export class PersonaListaComponent implements OnInit{
     });
   }
 
-  // Abrir modal para crear o editar ciudad
+  //Abrir modal para crear o editar ciudad
     abrirModalEditar(persona?: Persona): void {
       this.personaSeleccionada = persona ? { ...persona } : null;
   
@@ -86,6 +86,46 @@ export class PersonaListaComponent implements OnInit{
         }
       }, 0);
     }
+
+     /* abrirModalEditar(persona?: Persona): void {
+  if (!persona?.idPersona) return;
+
+  this.personaService.obtnerPersonaPorID(persona.idPersona).subscribe({
+    next: (data) => {
+      console.log('Datos recibidos:', data);
+      // 🔥 Aquí garantizamos que vienen tipoDocumento, ciudad, tipoPersona, roles
+      this.personaSeleccionada = data;
+
+      setTimeout(() => {
+        const modalEl = this.modalElement?.nativeElement;
+        this.modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+        this.modalInstance.show();
+      });
+    },
+    error: () => {
+      this.toastr.error("Error al cargar la persona");
+    }
+  });
+}*/
+
+/*abrirModalEditar(persona?: Persona): void {
+  this.personaService.obtnerPersonaPorID(persona?.idPersona!).subscribe({
+    next: (data) => {
+      this.personaSeleccionada = data;
+
+      setTimeout(() => {
+        const modalEl = this.modalElement?.nativeElement;
+        this.modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+        this.modalInstance.show();
+      });
+    },
+    error: () => {
+      this.toastr.error("Error al cargar la persona");
+    }
+  });
+}*/
+
+
 
     // Abrir modal del detalle
    abrirModalDetalle(persona: Persona): void {

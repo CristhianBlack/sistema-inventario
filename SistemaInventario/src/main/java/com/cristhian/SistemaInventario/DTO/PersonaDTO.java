@@ -1,5 +1,6 @@
 package com.cristhian.SistemaInventario.DTO;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -24,12 +25,17 @@ public class PersonaDTO {
     @NotBlank(message = "El correo electrónico es obligatorio")
     private String email;
 
-    private int idTipoDocumento;
-    private int idTipoPersona;
-    private int idCiudad;
+    @JsonAlias({ "tipoDocumento", "idTipoDocumento" })
+    private Integer idTipoDocumento;
 
+    @JsonAlias({ "tipoPersona", "idTipoPersona" })
+    private Integer idTipoPersona;
+
+    @JsonAlias({ "ciudad", "idCiudad" })
+    private Integer idCiudad;
     // 🔹 NUEVO: lista de IDs de roles
-    private List<Integer> idsRoles;
+    private List<Integer> idsRoles; // SOLO EL ADMIN LOS ENVÍA
+
 
     // Getters y Setters
     public String getDocumentoPersona() { return documentoPersona; }
@@ -53,15 +59,32 @@ public class PersonaDTO {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public int getIdTipoDocumento() { return idTipoDocumento; }
-    public void setIdTipoDocumento(int idTipoDocumento) { this.idTipoDocumento = idTipoDocumento; }
+    public Integer getIdTipoDocumento() {
+        return idTipoDocumento;
+    }
 
-    public int getIdTipoPersona() { return idTipoPersona; }
-    public void setIdTipoPersona(int idTipoPersona) { this.idTipoPersona = idTipoPersona; }
+    public void setIdTipoDocumento(Integer idTipoDocumento) {
+        this.idTipoDocumento = idTipoDocumento;
+    }
 
-    public int getIdCiudad() { return idCiudad; }
-    public void setIdCiudad(int idCiudad) { this.idCiudad = idCiudad; }
+    public Integer getIdTipoPersona() {
+        return idTipoPersona;
+    }
+
+    public void setIdTipoPersona(Integer idTipoPersona) {
+        this.idTipoPersona = idTipoPersona;
+    }
+
+    public Integer getIdCiudad() {
+        return idCiudad;
+    }
+
+    public void setIdCiudad(Integer idCiudad) {
+        this.idCiudad = idCiudad;
+    }
 
     public List<Integer> getIdsRoles() { return idsRoles; }
     public void setIdsRoles(List<Integer> idsRoles) { this.idsRoles = idsRoles; }
+
+
 }

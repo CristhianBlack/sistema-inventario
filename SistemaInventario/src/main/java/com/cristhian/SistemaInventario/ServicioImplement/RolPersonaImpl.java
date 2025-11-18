@@ -47,7 +47,9 @@ public class RolPersonaImpl implements IRolPersonaService {
     }
 
     @Override
-    public Optional<RolPersona> findByNombreRolIgnoreCase(String nombreRol){
-        return rolPersonaRepository.findByNombreRolIgnoreCase(nombreRol);
+    public Optional<RolPersona> findByNombreRolIgnoreCase(String nombreRol) {
+        return Optional.empty();
     }
+
+
 }

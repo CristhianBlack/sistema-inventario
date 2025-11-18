@@ -202,4 +202,6 @@ public class Persona {
     public void setPersonaRoles(List<PersonaRol> personaRoles) {
         this.personaRoles = personaRoles;
     }
+
+
 }

@@ -4,8 +4,9 @@ import { TipoPersona } from "./tipo-persona";
 
 export class Persona {
 
+    [key: string]: any;   // ← agregado para permitir acceso dinámico
+
     idPersona?: number;
-    tipoDocumento? : TipoDocumento;
     documentoPersona : String = '';
     nombre : String = '';
     apellido : String = '';
@@ -13,9 +14,14 @@ export class Persona {
     direccion : String = '';
     telefono : String = '';
     email : String = '';
-    tipoPersona? : TipoPersona;
-    ciudad? : Ciudad;
+    idTipoDocumento: number | null = null;
+    idCiudad: number | null = null;
+    idTipoPersona: number | null = null;
     activo : boolean = true;
     idsRoles?: number[] = [];
     roles?: any[] = [];
+
+    tipoDocumento? : TipoDocumento;
+    ciudad?: Ciudad;
+    tipoPersona ? : TipoPersona
 }

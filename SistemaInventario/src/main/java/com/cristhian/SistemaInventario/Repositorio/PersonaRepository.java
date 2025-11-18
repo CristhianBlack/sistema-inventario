@@ -11,6 +11,8 @@ import java.util.Optional;
 @Repository
 public interface PersonaRepository extends JpaRepository<Persona, Integer> {
 
-    boolean existsByDocumentoPersona(String documentoPersona);
+    Optional<Persona> existsByDocumentoPersona(String documentoPersona);
     List<Persona> findByActivoTrue();
+
+    Optional<Persona> findByDocumentoPersona(String documentoPersona);
 }

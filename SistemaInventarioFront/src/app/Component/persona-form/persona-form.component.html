@@ -1,7 +1,7 @@
-<div class="container py-4">
+<!--<div class="container py-4">
   <form (ngSubmit)="onSubmit(formPersona)" #formPersona="ngForm" novalidate class="formulario p-4 rounded-4 shadow-lg">
 
-    <!-- 🔹 Encabezado -->
+    <!-- 🔹 Encabezado 
     <div class="text-center mb-4">
       <h4 class="text-primary fw-bold mb-1">
         <i class="bi bi-person-lines-fill me-2"></i>
@@ -11,7 +11,7 @@
     </div>
 
     <div class="row g-4">
-      <!-- Nombre -->
+      <!-- Nombre -
       <div class="col-md-4">
         <label for="nombrePersona" class="form-label">Nombre</label>
         <input
@@ -28,7 +28,7 @@
         </div>
       </div>
 
-      <!-- Apellido -->
+      <!-- Apellido 
       <div class="col-md-4">
         <label for="apellidoPersona" class="form-label">Apellido</label>
         <input
@@ -45,7 +45,7 @@
         </div>
       </div>
 
-      <!-- Segundo Apellido -->
+      <!-- Segundo Apellido 
       <div class="col-md-4">
         <label for="segundoApellido" class="form-label">Segundo Apellido</label>
         <input
@@ -59,27 +59,26 @@
         />
       </div>
 
-      <!-- Tipo Documento -->
+      <!-- Tipo Documento 
       <div class="col-md-4">
         <label for="tipoDocumento" class="form-label">Tipo de Documento</label>
         <select
           id="tipoDocumento"
           name="tipoDocumento"
           class="form-select"
-          [(ngModel)]="formModel.tipoDocumento"
-          [compareWith]="compareById"
+          [(ngModel)]="formModel.idTipoDocumento"
           required>
           <option [ngValue]="null" disabled>Seleccione tipo de documento</option>
-          <option *ngFor="let tipo of tipoDocumentos" [ngValue]="tipo">
+          <option *ngFor="let tipo of tipoDocumentos" [ngValue]="tipo.idTipoDocumento">
             {{ tipo.nombreTipoDocumento }}
           </option>
         </select>
-        <div *ngIf="formPersona.submitted && !formModel.tipoDocumento" class="text-danger small mt-1">
+        <div *ngIf="formPersona.submitted && !formModel.idTipoDocumento" class="text-danger small mt-1">
           El tipo de documento es obligatorio
         </div>
       </div>
 
-      <!-- Documento -->
+      <!-- Documento 
       <div class="col-md-4">
         <label for="documentoPersona" class="form-label">N° Documento</label>
         <input
@@ -96,7 +95,7 @@
         </div>
       </div>
 
-      <!-- Teléfono -->
+      <!-- Teléfono -
       <div class="col-md-4">
         <label for="telefono" class="form-label">Teléfono</label>
         <input
@@ -113,7 +112,7 @@
         </div>
       </div>
 
-      <!-- Dirección -->
+      <!-- Dirección 
       <div class="col-md-6">
         <label for="direccion" class="form-label">Dirección</label>
         <input
@@ -130,7 +129,7 @@
         </div>
       </div>
 
-      <!-- Email -->
+      <!-- Email 
       <div class="col-md-6">
         <label for="email" class="form-label">Email</label>
         <input
@@ -147,46 +146,45 @@
         </div>
       </div>
 
-      <!-- Ciudad -->
+      <!-- Ciudad 
       <div class="col-md-6">
         <label for="ciudad" class="form-label">Ciudad</label>
         <select
           id="ciudad"
           name="ciudad"
           class="form-select"
-          [(ngModel)]="formModel.ciudad"
-          [compareWith]="compareById"
+          [(ngModel)]="formModel.idCiudad"
           required>
           <option [ngValue]="null" disabled>Seleccione ciudad</option>
-          <option *ngFor="let city of ciudades" [ngValue]="city">
+          <option *ngFor="let city of ciudades" [ngValue]="city.idCiudad">
             {{ city.ciudad }}
           </option>
         </select>
-        <div *ngIf="formPersona.submitted && !formModel.ciudad" class="text-danger small mt-1">
+        <div *ngIf="formPersona.submitted && !formModel.idCiudad" class="text-danger small mt-1">
           La ciudad es obligatoria
         </div>
       </div>
 
-      <!-- Tipo Persona -->
+      <!-- Tipo Persona 
       <div class="col-md-6">
         <label for="tipoPersona" class="form-label">Tipo de Persona</label>
         <select
           id="tipoPersona"
           name="tipoPersona"
           class="form-select"
-          [(ngModel)]="formModel.tipoPersona"
-          [compareWith]="compareById"
+          [(ngModel)]="formModel.idTipoPersona"
+          
           required>
           <option [ngValue]="null" disabled>Seleccione tipo de persona</option>
-          <option *ngFor="let tipoPersona of tipoPersonas" [ngValue]="tipoPersona">
+          <option *ngFor="let tipoPersona of tipoPersonas" [ngValue]="tipoPersona.idTipoPersona">
             {{ tipoPersona.nombreTipoPersona }}
           </option>
         </select>
-        <div *ngIf="formPersona.submitted && !formModel.tipoPersona" class="text-danger small mt-1">
+        <div *ngIf="formPersona.submitted && !formModel.idTipoPersona" class="text-danger small mt-1">
           El tipo de persona es obligatorio
         </div>
       </div>
-      <!-- Roles -->
+      <!-- Roles 
       <div class="col-md-6">
         <label for="roles" class="form-label">Roles</label>
         <div *ngFor="let rol of listaRoles" class="form-check">
@@ -202,13 +200,10 @@
       {{ rol.nombreRol }}
     </label>
   </div>
-        <div *ngIf="formPersona.submitted && !formModel.tipoPersona" class="text-danger small mt-1">
-          El rol es obligatorio
-        </div>
       </div>
     </div>
 
-    <!-- Botones -->
+    <!-- Botones 
     <div class="d-flex justify-content-end mt-4">
       <button type="button" class="btn btn-outline-light me-2" data-bs-dismiss="modal">Cancelar</button>
       <button type="submit" class="btn btn-gradient" [disabled]="formPersona.invalid">
@@ -217,4 +212,169 @@
       </button>
     </div>
   </form>
+</div>-->
+
+<div class="container py-4">
+  <form (ngSubmit)="onSubmit(formPersona)" #formPersona="ngForm"
+        novalidate class="formulario p-4 rounded-4 shadow-lg">
+
+    <!-- Encabezado -->
+    <div class="text-center mb-4">
+      <h4 class="text-primary fw-bold mb-1">
+        <i class="bi bi-person-lines-fill me-2"></i>
+        {{ formModel.idPersona ? 'Editar Persona' : 'Nueva Persona' }}
+      </h4>
+      <p class="text-muted small">Complete los datos personales y de contacto</p>
+    </div>
+
+    <div class="row g-4">
+
+      <!-- INPUT GENERICO -->
+      <ng-container *ngFor="let campo of [
+        {label:'Nombre', key:'nombre', type:'text', required:true, placeholder:'EJ: Juan Carlos'},
+        {label:'Apellido', key:'apellido', type:'text', required:true, placeholder:'EJ: Gómez'},
+        {label:'Segundo Apellido', key:'segundoApellido', type:'text', required:false, placeholder:'EJ: López'},
+        {label:'N° Documento', key:'documentoPersona', type:'text', required:true, placeholder:'EJ: 1115078546'},
+        {label:'Teléfono', key:'telefono', type:'text', required:true, placeholder:'EJ: 3006549874'}
+      ]">
+        <div class="col-md-4">
+          <label class="form-label">{{ campo.label }}</label>
+          <input 
+            class="form-control"
+            [type]="campo.type"
+            [name]="campo.key"
+            [(ngModel)]="formModel[campo.key]"
+            [required]="campo.required"
+            minlength="3"
+            [placeholder]="campo.placeholder" />
+
+          <div *ngIf="formPersona.submitted && campo.required && !formModel[campo.key]"
+               class="text-danger small mt-1">
+            El campo {{ campo.label.toLowerCase() }} es obligatorio
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Tipo Documento -->
+      <div class="col-md-4">
+        <label class="form-label">Tipo de Documento</label>
+        <select class="form-select"
+                name="tipoDocumento"
+                [(ngModel)]="formModel.idTipoDocumento"
+                required>
+          <option [ngValue]="null" disabled>Seleccione tipo de documento</option>
+          <option *ngFor="let tipo of tipoDocumentos" [ngValue]="tipo.idTipoDocumento">
+            {{ tipo.nombreTipoDocumento }}
+          </option>
+        </select>
+
+        <div *ngIf="formPersona.submitted && !formModel.idTipoDocumento"
+             class="text-danger small mt-1">
+          El tipo de documento es obligatorio
+        </div>
+      </div>
+
+      <!-- Dirección -->
+      <div class="col-md-6">
+        <label class="form-label">Dirección</label>
+        <input type="text" class="form-control"
+               name="direccion"
+               [(ngModel)]="formModel.direccion"
+               required minlength="3"
+               placeholder="EJ: Calle 4 # 13 - 23" />
+
+        <div *ngIf="formPersona.submitted && !formModel.direccion"
+             class="text-danger small mt-1">
+          La dirección es obligatoria
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="col-md-6">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-control"
+               name="email"
+               [(ngModel)]="formModel.email"
+               required
+               placeholder="EJ: juango23@hotmail.com" />
+
+        <div *ngIf="formPersona.submitted && !formModel.email"
+             class="text-danger small mt-1">
+          El email es obligatorio
+        </div>
+      </div>
+
+      <!-- Ciudad -->
+      <div class="col-md-6">
+        <label class="form-label">Ciudad</label>
+        <select class="form-select"
+                name="ciudad"
+                [(ngModel)]="formModel.idCiudad"
+                required>
+          <option [ngValue]="null" disabled>Seleccione ciudad</option>
+          <option *ngFor="let c of ciudades" [ngValue]="c.idCiudad">
+            {{ c.ciudad }}
+          </option>
+        </select>
+
+        <div *ngIf="formPersona.submitted && !formModel.idCiudad"
+             class="text-danger small mt-1">
+          La ciudad es obligatoria
+        </div>
+      </div>
+
+      <!-- Tipo Persona -->
+      <div class="col-md-6">
+        <label class="form-label">Tipo de Persona</label>
+        <select class="form-select"
+                name="tipoPersona"
+                [(ngModel)]="formModel.idTipoPersona"
+                required>
+          <option [ngValue]="null" disabled>Seleccione tipo de persona</option>
+          <option *ngFor="let t of tipoPersonas" [ngValue]="t.idTipoPersona">
+            {{ t.nombreTipoPersona }}
+          </option>
+        </select>
+
+        <div *ngIf="formPersona.submitted && !formModel.idTipoPersona"
+             class="text-danger small mt-1">
+          El tipo de persona es obligatorio
+        </div>
+      </div>
+
+      <!-- Roles -->
+      <div class="col-md-6">
+        <label class="form-label">Roles</label>
+
+        <div *ngFor="let rol of listaRoles" class="form-check mb-1">
+          <input class="form-check-input"
+                 type="checkbox"
+                 [id]="'rol-' + rol.idRolPersona"
+                 [checked]="formModel.idsRoles?.includes(rol.idRolPersona)"
+                 (change)="onRolChange($event, rol.idRolPersona)" />
+
+          <label class="form-check-label" [for]="'rol-' + rol.idRolPersona">
+            {{ rol.nombreRol }}
+          </label>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-end mt-4">
+      <button type="button" class="btn btn-outline-light me-2" data-bs-dismiss="modal">
+        Cancelar
+      </button>
+
+      <button type="submit" class="btn btn-gradient" [disabled]="formPersona.invalid">
+        <i class="bi bi-save2 me-1"></i>
+        {{ formModel.idPersona ? 'Guardar cambios' : 'Agregar persona' }}
+      </button>
+    </div>
+
+  </form>
 </div>
+
+
+
