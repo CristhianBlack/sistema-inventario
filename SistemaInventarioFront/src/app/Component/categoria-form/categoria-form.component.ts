@@ -8,7 +8,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './categoria-form.component.html',
   styleUrls: ['./categoria-form.component.css']
 })
-export class CategoriaFormComponent implements OnInit {
+export class CategoriaFormComponent implements OnInit{
 
   // Recibe una categoría cuando se va a editar (puede venir vacía si es "crear")
   @Input() categoria?: Categoria | null = null;
@@ -34,12 +34,16 @@ export class CategoriaFormComponent implements OnInit {
    // Detecta cuando cambia el Input() y actualiza el modelo
    // Detecta cambios en el input y actualiza el formulario
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['categoria'] && this.categoria) {
+  if (changes['categoria']) {
+    if (this.categoria) {
+      // Si viene una categoría para editar → clonar datos
       this.formModel = { ...this.categoria };
     } else {
+      // Si categoria viene null → es crear → limpiar formulario
       this.formModel = new Categoria();
     }
   }
+}
 
   onSubmit(): void {
     if (this.formModel.idCategoria) {

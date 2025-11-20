@@ -1,5 +1,7 @@
 package com.cristhian.SistemaInventario.Modelo;
 
+import com.cristhian.SistemaInventario.DTO.CategoriaDTO;
+import com.cristhian.SistemaInventario.DTO.UnidadMedidaDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.OneToMany;
@@ -14,36 +16,40 @@ public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idCategoria;
+
     @Column(nullable = false, length = 45)
     private String nombreCategoria;
+
     @Column(nullable = false, length = 255)
     private String descripcion;
+
     @Column(nullable = false)
     private boolean activo = true;
 
-    public void agregarCategoria(Producto elProducto){
-        if(productos == null){
-            productos = new ArrayList<>();
-        }else{
-            productos.add(elProducto);
-
-            elProducto.setCategoria(this);
-        }
-    }
-    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Producto> productos;
 
     public Categoria() {
     }
 
-    public Categoria(String nombreCategoria, String descripcion, boolean activo) {
-        this.nombreCategoria = nombreCategoria;
-        this.descripcion = descripcion;
-        this.activo = activo;
+    // Constructor desde DTO → SOLO PARA CREACIÓN
+    public Categoria(CategoriaDTO dto) {
+        this.nombreCategoria = dto.getNombreCategoria();
+        this.descripcion = dto.getDescripcion();
+        this.activo = true; // siempre activo al crear
     }
 
+    // Manejo de relación bidireccional
+    public void agregarCategoria(Producto elProducto){
+        if (productos == null) {
+            productos = new ArrayList<>();
+        }
+        productos.add(elProducto);
+        elProducto.setCategoria(this);
+    }
 
+    // Getters y Setters
     public int getIdCategoria() {
         return idCategoria;
     }
@@ -72,10 +78,6 @@ public class Categoria {
         return activo;
     }
 
-    public boolean Activo() {
-        return activo;
-    }
-
     public void setActivo(boolean activo) {
         this.activo = activo;
     }
@@ -87,5 +89,4 @@ public class Categoria {
     public void setProductos(List<Producto> productos) {
         this.productos = productos;
     }
-
 }

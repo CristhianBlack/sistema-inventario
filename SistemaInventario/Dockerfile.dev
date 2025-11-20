@@ -1,0 +1,18 @@
+FROM eclipse-temurin:17-jdk
+
+WORKDIR /app
+
+# Instalar Maven dentro del contenedor (para desarrollo)
+RUN apt-get update && apt-get install -y maven procps && rm -rf /var/lib/apt/lists/*
+
+# Copiamos primero el pom para cachear dependencias
+COPY pom.xml .
+RUN mvn -q -DskipTests dependency:go-offline
+
+# Copiamos el código
+COPY . .
+
+EXPOSE 8080
+
+# Dev mode: hot reload con spring-boot-devtools
+CMD ["mvn", "spring-boot:run"]

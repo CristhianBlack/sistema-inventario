@@ -1,0 +1,53 @@
+
+
+services:
+
+  db:
+    image: mysql:8
+    container_name: mysql_sistema
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sistema_inventario
+      MYSQL_USER: devuser
+      MYSQL_PASSWORD: devpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d:ro
+
+  backend:
+    build:
+      context: ./SistemaInventario
+      dockerfile: Dockerfile.dev
+    container_name: backend_sistema
+    volumes:
+      - ./SistemaInventario:/app
+      - /app/.m2:/root/.m2
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/sistema_inventario
+      SPRING_DATASOURCE_USERNAME: devuser
+      SPRING_DATASOURCE_PASSWORD: devpass
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./SistemaInventarioFront
+      dockerfile: Dockerfile.dev
+    container_name: frontend_sistema
+    volumes:
+      - ./SistemaInventarioFront:/app
+      - /app/node_modules
+    ports:
+      - "4200:4200"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+
+volumes:
+  mysql-data:

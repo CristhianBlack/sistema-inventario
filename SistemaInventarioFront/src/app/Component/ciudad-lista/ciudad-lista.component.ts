@@ -100,6 +100,7 @@ export class CiudadListaComponent implements OnInit {
 
   // Eliminar una ciudad
   eliminarCiudad(id: number): void {
+    console.log("ID recibido para eliminar:", id);
     Swal.fire({
       title: '¿Eliminar categoría?',
       text: 'Esta acción no se puede deshacer.',

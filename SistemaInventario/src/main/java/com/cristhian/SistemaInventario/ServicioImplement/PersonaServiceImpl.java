@@ -222,17 +222,17 @@ public class PersonaServiceImpl implements IPersonaService {
         persona.setTelefono(dto.getTelefono());
         persona.setEmail(dto.getEmail());
 
-        // 🔥 Asignar TipoDocumento
+        // Asignar TipoDocumento
         TipoDocumento td = new TipoDocumento();
         td.setIdTipoDocumento(dto.getIdTipoDocumento());
         persona.setTipoDocumento(td);
 
-        // 🔥 Asignar TipoPersona
+        // Asignar TipoPersona
         TipoPersona tp = new TipoPersona();
         tp.setIdTipoPersona(dto.getIdTipoPersona());
         persona.setTipoPersona(tp);
 
-        // 🔥 Asignar Ciudad
+        // Asignar Ciudad
         Ciudad ciudad = new Ciudad();
         ciudad.setIdCiudad(dto.getIdCiudad());
         persona.setCiudad(ciudad);
@@ -265,9 +265,5 @@ public class PersonaServiceImpl implements IPersonaService {
             personaRepository.save(persona);
         }
     }
-
-
-
-
 }
 

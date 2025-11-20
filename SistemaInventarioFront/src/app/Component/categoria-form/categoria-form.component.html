@@ -17,6 +17,7 @@
         name="nombreCategoria"
         class="form-control"
         [(ngModel)]="formModel.nombreCategoria"
+        [ngModelOptions]="{standalone: true}"
         required
         minlength="3"
         placeholder="Ej: Electrónicos">
@@ -35,6 +36,7 @@
         name="descripcion"
         class="form-control"
         [(ngModel)]="formModel.descripcion"
+        [ngModelOptions]="{standalone: true}"
         required
         rows="3"
         placeholder="Breve descripción de la categoría">
@@ -52,7 +54,8 @@
         type="checkbox" 
         id="activo" 
         name="activo"
-        [(ngModel)]="formModel.activo">
+        [(ngModel)]="formModel.activo"
+        [ngModelOptions]="{standalone: true}">
       <label class="form-check-label" for="activo">
         Activo
       </label>

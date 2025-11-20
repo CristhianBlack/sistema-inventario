@@ -1,5 +1,6 @@
 package com.cristhian.SistemaInventario.Modelo;
 
+import com.cristhian.SistemaInventario.DTO.CiudadDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.ArrayList;
@@ -25,8 +26,13 @@ public class Ciudad {
     @Column(nullable = false)
     private boolean activo = true;
 
-    // ✅ Constructores, getters y setters
+    // Constructores, getters y setters
     public Ciudad() {}
+
+    public Ciudad(CiudadDTO dto){
+        this.ciudad = dto.getCiudad();
+        this.activo = dto.isActivo();
+    }
 
     public Ciudad(String ciudad) {
         this.ciudad = ciudad;

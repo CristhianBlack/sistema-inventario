@@ -389,6 +389,7 @@ export class CategoriaListaComponent implements OnInit, OnDestroy, AfterViewInit
 
   // Eliminar una categoría
   eliminarCategoria(id: number): void {
+    console.log("ID recibido para eliminar:", id);
     Swal.fire({
       title: '¿Eliminar categoría?',
       text: 'Esta acción no se puede deshacer.',

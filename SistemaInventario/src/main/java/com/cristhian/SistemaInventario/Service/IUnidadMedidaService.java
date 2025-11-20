@@ -1,5 +1,6 @@
 package com.cristhian.SistemaInventario.Service;
 
+import com.cristhian.SistemaInventario.DTO.UnidadMedidaDTO;
 import com.cristhian.SistemaInventario.Modelo.UnidadMedida;
 
 import java.util.List;
@@ -11,13 +12,12 @@ public interface IUnidadMedidaService {
 
     public Optional<UnidadMedida> buscarUnidadId(int id);
 
-    public UnidadMedida guardar(UnidadMedida unidadMedida);
+    public UnidadMedida guardar(UnidadMedidaDTO unidadMedidaDto);
+    public UnidadMedida actualizarUnidadeMedida(int id, UnidadMedidaDTO dto);
 
     public void borrar(int id);
 
-    public boolean existsByNombreMedida(String nombreMedida);
+    //public boolean existsOtherWithSameName(int id, String nombreMedida);
 
-    public boolean existsOtherWithSameName(int id, String nombreMedida);
 
-    public boolean existeOtraUnidadConMismoNombre(int id, String nombreMedida);
 }
