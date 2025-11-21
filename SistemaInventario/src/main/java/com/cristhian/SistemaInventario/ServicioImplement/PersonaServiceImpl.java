@@ -56,6 +56,7 @@ public class PersonaServiceImpl implements IPersonaService {
 }*/
 
 import com.cristhian.SistemaInventario.DTO.PersonaDTO;
+import com.cristhian.SistemaInventario.Excepciones.RecursoNoEncontradoException;
 import com.cristhian.SistemaInventario.Modelo.*;
 import com.cristhian.SistemaInventario.Repositorio.*;
 import com.cristhian.SistemaInventario.Service.IPersonaService;
@@ -104,7 +105,7 @@ public class PersonaServiceImpl implements IPersonaService {
         Persona persona = mapearPersona(dto);
         Persona guardada = personaRepository.save(persona);
 
-        RolPersona rolCliente = rolPersonaRepository.findByNombreRol("CLIENTE")
+        RolPersona rolCliente = rolPersonaRepository.findByNombreRolIgnoreCase("CLIENTE")
                 .orElseThrow(() -> new RuntimeException("Rol CLIENTE no existe"));
 
         PersonaRol pr = new PersonaRol();
@@ -240,9 +241,6 @@ public class PersonaServiceImpl implements IPersonaService {
         return persona;
     }
 
-
-
-
     // -----------------------------------------------------------
     // 5. LISTAR / BUSCAR
     // -----------------------------------------------------------
@@ -252,14 +250,13 @@ public class PersonaServiceImpl implements IPersonaService {
     }
 
     @Override
-    public Persona buscarPorId(Integer id) {
-        return personaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Persona no encontrada"));
+    public Optional<Persona> buscarPorId(Integer id) {
+        return personaRepository.findById(id);
     }
 
     @Override
     public void eliminarPersona(Integer id) {
-        Persona persona = personaRepository.findById(id).orElseGet(null);
+        Persona persona = personaRepository.findById(id).orElse(null);
         if(persona != null){
             persona.setActivo(false);
             personaRepository.save(persona);

@@ -321,7 +321,15 @@ export class PersonaFormComponent implements OnInit, OnChanges {
     this.cargarListas();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  /*ngOnChanges(changes: SimpleChanges): void {
+  if (changes['persona']) {
+    // Cuando cambie la persona, recargamos las listas
+    // y luego asignamos correctamente
+    //this.cargarListas();
+  }
+}*/
+
+  /*ngOnChanges(changes: SimpleChanges): void {
 
   // SI persona existe → es edición
   if (changes['persona'] && this.persona) {
@@ -337,7 +345,17 @@ export class PersonaFormComponent implements OnInit, OnChanges {
     // SI persona es null → NUEVA PERSONA
     this.formModel = new Persona();
   }
+}*/
+ngOnChanges(changes: SimpleChanges): void {
+  if (changes['persona'] && this.persona) {
+    this.asignarPersonaAlFormulario(); // ✔ Solo asignar datos
+  }
+
+  if (changes['persona'] && !this.persona) {
+    this.formModel = new Persona(); // ✔ para modo crear
+  }
 }
+
 
 
   private cargarListas(): void {
@@ -361,6 +379,27 @@ export class PersonaFormComponent implements OnInit, OnChanges {
   }
 
   private asignarPersonaAlFormulario(): void {
+  if (!this.persona) return;
+
+  this.formModel = {
+    ...this.persona,
+
+     idTipoDocumento: this.persona.idTipoDocumento ?? null,
+    idCiudad: this.persona.idCiudad ?? null,
+    idTipoPersona: this.persona.idTipoPersona ?? null,
+    idsRoles: this.persona.idsRoles ?? []
+  };
+  console.log("FORM MODEL AL ABRIR EDITAR:", this.formModel);
+  console.log("LISTAS:", {
+    documentos: this.tipoDocumentos,
+    ciudades: this.ciudades,
+    tipoPersonas: this.tipoPersonas,
+    roles: this.listaRoles
+  });
+}
+
+
+  /*private asignarPersonaAlFormulario(): void {
     this.formModel = {
       ...this.persona!,
 
@@ -371,7 +410,7 @@ export class PersonaFormComponent implements OnInit, OnChanges {
       // roles
       idsRoles: this.persona?.roles?.map(r => Number(r.idRolPersona)) ?? []
     };
-  }
+  }*/
 
   private mapPersonaToRequest(): any {
   return {
@@ -400,8 +439,6 @@ export class PersonaFormComponent implements OnInit, OnChanges {
       this.toastr.warning('Complete todos los campos requeridos');
       return;
     }
-
-    
     const request = this.mapPersonaToRequest();
     console.log("JSON que envío:", JSON.stringify(request, null, 2));
 

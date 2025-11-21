@@ -243,8 +243,10 @@ public class PersonaController {
     }
 }*/
 
+import com.cristhian.SistemaInventario.DTO.CiudadDTO;
 import com.cristhian.SistemaInventario.DTO.PersonaDTO;
 import com.cristhian.SistemaInventario.Mensaje.Mensaje;
+import com.cristhian.SistemaInventario.Modelo.Ciudad;
 import com.cristhian.SistemaInventario.Modelo.Persona;
 import com.cristhian.SistemaInventario.Service.IPersonaService;
 import jakarta.validation.Valid;
@@ -253,6 +255,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/Inventario")
@@ -265,7 +268,7 @@ public class PersonaController {
         this.personaService = personaService;
     }
 
-    @PostMapping("/Personas")
+    /*@PostMapping("/Personas")
     public ResponseEntity<?> crearPersona(@Valid @RequestBody PersonaDTO personaDto) {
         System.out.println("DEBUG DTO completo: " + personaDto);
         System.out.println("DEBUG tipoDocumento: " + personaDto.getIdTipoDocumento());
@@ -298,5 +301,57 @@ public class PersonaController {
     public ResponseEntity<?> eliminarPersona(@PathVariable Integer id){
         personaService.eliminarPersona(id);
         return new ResponseEntity<>(new Mensaje("Se eliminó la persona con éxito"), HttpStatus.OK);
+    }*/
+
+    @GetMapping("/Personas")
+    public ResponseEntity<List<PersonaDTO>> listarPersona(){
+        List<PersonaDTO> response = personaService.listarPersonas().stream()
+                .map(PersonaDTO :: new).toList(); // mapeo entidad → DTO
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/Personas/{id}")
+    public ResponseEntity<?> obtenerPersona(@PathVariable int id){
+        Optional<Persona> data = personaService.buscarPorId(id);
+
+        if (data.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new Mensaje("No existe el registro buscado"));
+        }
+        return ResponseEntity.ok(new PersonaDTO(data.get()));
+
+    }
+
+    @PostMapping("/Personas")
+    public ResponseEntity<?> crearPersona(@Valid @RequestBody PersonaDTO personaDTO) {
+
+        try{
+            var persona = personaService.crearPersonaConRolDefault(personaDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new PersonaDTO(persona));
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
+        }
+    }
+
+    @PutMapping("/Personas/{id}")
+    public ResponseEntity<?> actualizarPersona(@PathVariable int id, @RequestBody PersonaDTO personaDTO){
+        try{
+            var actualizado = personaService.actualizarPersona(id, personaDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(new PersonaDTO(actualizado));
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
+        }
+
+    }
+
+    @DeleteMapping("/Personas/{id}")
+    public ResponseEntity<?> eliminarPersona(@PathVariable int id){
+        try{
+            personaService.eliminarPersona(id);
+            return ResponseEntity.status(HttpStatus.OK).body(new Mensaje("Persona eliminada con éxito"));
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
+        }
     }
 }

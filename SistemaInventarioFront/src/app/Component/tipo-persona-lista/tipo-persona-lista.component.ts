@@ -111,7 +111,7 @@ export class TipoPersonaListaComponent implements OnInit{
             this.tipoPersonaService.eliminarTipoPersona(id).pipe(takeUntil(this.destroy$)).subscribe({
                 next: () => {
                   this.toastr.success(
-                    'Ciudad eliminada correctamente','Éxito'
+                    'Tipo de Persona eliminada correctamente','Éxito'
                   );
                   this.obtenerListaTipoPersona();
                 },

@@ -1,5 +1,6 @@
 package com.cristhian.SistemaInventario.Modelo;
 
+import com.cristhian.SistemaInventario.DTO.PersonaDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -50,6 +51,7 @@ public class Persona {
 
     @OneToOne(mappedBy = "persona")
     @JsonIgnoreProperties("persona")
+    @JsonIgnore
     private Proveedor proveedor;
 
     @OneToMany(mappedBy = "persona", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -80,15 +82,15 @@ public class Persona {
     public Persona() {
     }
 
-    public Persona(String documentoPersona, String nombre, String apellido, String segundoApellido, String direccion, String telefono, String email, boolean activo) {
-        this.documentoPersona = documentoPersona;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.segundoApellido = segundoApellido;
-        this.direccion = direccion;
-        this.telefono = telefono;
-        this.email = email;
-        this.activo = activo;
+    public Persona(PersonaDTO dto) {
+        this.documentoPersona = dto.getDocumentoPersona();
+        this.nombre = dto.getNombre();
+        this.apellido = dto.getApellido();
+        this.segundoApellido = dto.getSegundoApellido();
+        this.direccion = dto.getDireccion();
+        this.telefono = dto.getTelefono();
+        this.email = dto.getEmail();
+
     }
 
     public int getIdPersona() {

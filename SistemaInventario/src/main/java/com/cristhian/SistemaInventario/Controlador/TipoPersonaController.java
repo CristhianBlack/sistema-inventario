@@ -1,8 +1,12 @@
 package com.cristhian.SistemaInventario.Controlador;
 
+import com.cristhian.SistemaInventario.DTO.CiudadDTO;
+import com.cristhian.SistemaInventario.DTO.TipoDocumentoDTO;
 import com.cristhian.SistemaInventario.DTO.TipoPersonaDTO;
 import com.cristhian.SistemaInventario.Mensaje.Mensaje;
+import com.cristhian.SistemaInventario.Modelo.Ciudad;
 import com.cristhian.SistemaInventario.Modelo.TipoPersona;
+import com.cristhian.SistemaInventario.Service.ITipoPersonaService;
 import com.cristhian.SistemaInventario.ServicioImplement.TipoPersonaImpl;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,73 +21,57 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:4200")
 public class TipoPersonaController {
 
-    private final TipoPersonaImpl tipoPersonaImpl;
+    private final ITipoPersonaService tipoPersonaImpl;
 
-    public TipoPersonaController(TipoPersonaImpl tipoPersonaImpl) {
+    public TipoPersonaController(ITipoPersonaService tipoPersonaImpl) {
         this.tipoPersonaImpl = tipoPersonaImpl;
     }
 
     @GetMapping("/tipoPersonas")
-    public ResponseEntity<List<TipoPersona>> listarTipoPersona(){
-        List<TipoPersona> listadotipopersona = tipoPersonaImpl.listarTipoPersonaActiva();
-        return new ResponseEntity<List<TipoPersona>>(listadotipopersona, HttpStatus.OK);
+    public ResponseEntity<List<TipoPersonaDTO>> listarTipoPersona(){
+        List<TipoPersonaDTO> response = tipoPersonaImpl.listarTipoPersonaActiva().stream()
+                .map(TipoPersonaDTO :: new).toList(); // mapeo entidad → DTO
+        return ResponseEntity.ok(response);
     }
     @GetMapping("/tipoPersonas/{id}")
-    public ResponseEntity<TipoPersona> buscarTipoPersonaId(@PathVariable int id){
-        Optional<TipoPersona> tipoPersona = tipoPersonaImpl.buscarTipoPersonaId(id);
-        if (!tipoPersona.isPresent()){
-            return new ResponseEntity(new Mensaje("No existe el tipo de persona consultado"), HttpStatus.NOT_FOUND);
-        }else{
-            return new ResponseEntity<>(tipoPersona.get(), HttpStatus.OK);
+    public ResponseEntity<?> buscarTipoPersonaId(@PathVariable int id){
+        Optional<TipoPersona> data = tipoPersonaImpl.buscarTipoPersonaId(id);
+
+        if (data.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new Mensaje("No existe el registro buscado"));
         }
+        return ResponseEntity.ok(new TipoPersonaDTO(data.get()));
     }
 
     @PostMapping("tipoPersonas")
     public ResponseEntity<?> guardarTipoPersona(@Valid @RequestBody TipoPersonaDTO tipoPersonaDTO){
-        if(tipoPersonaImpl.existePorNombreTipoPersona(tipoPersonaDTO.getNombreTipoPersona())){
-            return new ResponseEntity<>(new Mensaje("Ya existe ese nombre de tipo persona."), HttpStatus.BAD_REQUEST);
+        try{
+            var tipoPersona = tipoPersonaImpl.guardarTipoPersona(tipoPersonaDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new TipoPersonaDTO(tipoPersona));
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
         }
-
-        TipoPersona tipoPersona = new TipoPersona();
-        tipoPersona.setNombreTipoPersona(tipoPersonaDTO.getNombreTipoPersona());
-
-        tipoPersonaImpl.guardarTipoPersona(tipoPersona);
-        return new ResponseEntity<>(new Mensaje("Tipo de persona creada con exito."),HttpStatus.CREATED);
     }
 
     @PutMapping("/tipoPersonas/{id}")
     public ResponseEntity<?> actualizarTipoPersona(@PathVariable int id, @RequestBody TipoPersonaDTO tipoPersonaDTO){
-
-        Optional<TipoPersona> tipoPersonaOpt = tipoPersonaImpl.buscarTipoPersonaId(id);
-        if (!tipoPersonaOpt.isPresent()){
-            return new ResponseEntity<>(new Mensaje("El tipo de persona no existe"), HttpStatus.NOT_FOUND);
+        try{
+            var actualizado = tipoPersonaImpl.actualizarTipoPersona(id, tipoPersonaDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(new TipoPersonaDTO(actualizado));
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
         }
-
-        TipoPersona tipoPersona = tipoPersonaOpt.get();
-        tipoPersona.setNombreTipoPersona(tipoPersonaDTO.getNombreTipoPersona());
-
-        tipoPersonaImpl.guardarTipoPersona(tipoPersona);
-
-        return new ResponseEntity<>(new Mensaje("Se actualizo el tipo de persona con exito."),HttpStatus.OK);
     }
 
     @DeleteMapping("/tipoPersonas/{id}")
     public ResponseEntity<?> desactivarTipoPersona(@PathVariable int id){
-
         try{
-            Optional<TipoPersona> tipoPersona = tipoPersonaImpl.buscarTipoPersonaId(id);
-            if(tipoPersona.isPresent()){
-                tipoPersonaImpl.desactivarTipoDocumento(id);
-                return new ResponseEntity<>(new Mensaje("El tipo de persona se elimino con exito"), HttpStatus.OK);
-            }else{
-                return new ResponseEntity<>(new Mensaje("No existe el tipo de persona."),HttpStatus.NOT_FOUND);
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<>(new Mensaje("Error interno al eliminar el tipo de persona"), HttpStatus.INTERNAL_SERVER_ERROR);
+            tipoPersonaImpl.desactivarTipoDocumento(id);
+            return ResponseEntity.status(HttpStatus.OK).body(new Mensaje("Tipo de perosna eliminada con éxito"));
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
         }
-
-
-
     }
 }

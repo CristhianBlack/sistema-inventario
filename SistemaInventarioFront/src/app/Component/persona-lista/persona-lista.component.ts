@@ -72,7 +72,7 @@ export class PersonaListaComponent implements OnInit{
   }
 
   //Abrir modal para crear o editar ciudad
-    abrirModalEditar(persona?: Persona): void {
+    /*abrirModalEditar(persona?: Persona): void {
       this.personaSeleccionada = persona ? { ...persona } : null;
   
       // Esperar un ciclo del render para asegurar que el modal exista
@@ -85,28 +85,30 @@ export class PersonaListaComponent implements OnInit{
           console.error('No se encontró el modal en el DOM.');
         }
       }, 0);
-    }
+    }*/
 
-     /* abrirModalEditar(persona?: Persona): void {
+    /*abrirModalEditar(persona?: Persona): void {
   if (!persona?.idPersona) return;
 
   this.personaService.obtnerPersonaPorID(persona.idPersona).subscribe({
     next: (data) => {
-      console.log('Datos recibidos:', data);
-      // 🔥 Aquí garantizamos que vienen tipoDocumento, ciudad, tipoPersona, roles
-      this.personaSeleccionada = data;
+      console.log('Persona completa recibida:', data);
+
+      this.personaSeleccionada = data; // 🔥 Envía datos completos al formulario
 
       setTimeout(() => {
         const modalEl = this.modalElement?.nativeElement;
         this.modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
         this.modalInstance.show();
-      });
+      }, 0);
     },
-    error: () => {
+    error: (err) => {
+      console.error(err);
       this.toastr.error("Error al cargar la persona");
     }
   });
 }*/
+
 
 /*abrirModalEditar(persona?: Persona): void {
   this.personaService.obtnerPersonaPorID(persona?.idPersona!).subscribe({
@@ -124,6 +126,39 @@ export class PersonaListaComponent implements OnInit{
     }
   });
 }*/
+
+abrirModalEditar(persona?: Persona): void {
+
+  if (!persona?.idPersona) {
+    this.personaSeleccionada = null;
+    this.abrirModal(); 
+    return;
+  }
+
+  this.personaService.obtnerPersonaPorID(persona.idPersona).subscribe({
+    next: (data) => {
+      console.log("PERSONA DETALLADA RECIBIDA:", data);
+
+      this.personaSeleccionada = data; // 🔥 ahora sí con todos los objetos
+      this.abrirModal();
+    },
+    error: (err) => {
+      console.error("Error al cargar persona:", err);
+      this.toastr.error("No se pudo cargar la persona", "Error");
+    }
+  });
+}
+
+private abrirModal(): void {
+  setTimeout(() => {
+    const modalEl = this.modalElement?.nativeElement;
+    if (modalEl) {
+      this.modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+      this.modalInstance.show();
+    }
+  }, 0);
+}
+
 
 
 

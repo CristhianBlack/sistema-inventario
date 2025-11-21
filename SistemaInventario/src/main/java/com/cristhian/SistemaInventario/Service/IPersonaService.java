@@ -4,6 +4,7 @@ import com.cristhian.SistemaInventario.DTO.PersonaDTO;
 import com.cristhian.SistemaInventario.Modelo.Persona;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IPersonaService {
   /*  public List<Persona> listarPersonasActivas();
@@ -19,7 +20,7 @@ public interface IPersonaService {
 
     List<Persona> listarPersonas();
 
-    Persona buscarPorId(Integer id);
+    Optional<Persona> buscarPorId(Integer id);
 
     void eliminarPersona(Integer id);
 

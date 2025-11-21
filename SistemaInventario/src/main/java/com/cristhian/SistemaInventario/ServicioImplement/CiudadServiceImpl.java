@@ -2,6 +2,8 @@ package com.cristhian.SistemaInventario.ServicioImplement;
 
 
 import com.cristhian.SistemaInventario.DTO.CiudadDTO;
+import com.cristhian.SistemaInventario.Excepciones.DuplicadoException;
+import com.cristhian.SistemaInventario.Excepciones.RecursoNoEncontradoException;
 import com.cristhian.SistemaInventario.Modelo.Ciudad;
 import com.cristhian.SistemaInventario.Repositorio.CiudadRepository;
 import com.cristhian.SistemaInventario.Service.ICiudadService;
@@ -63,7 +65,7 @@ public class CiudadServiceImpl implements ICiudadService {
 
             // Si ya existe y está activa → Error
             logger.info("La ciudad ya existe y está activa.");
-            throw new IllegalArgumentException("Ya existe una ciudad con ese nombre");
+            throw new DuplicadoException("Ya existe una ciudad con ese nombre");
         }
 
         // Si NO existe → Crear nueva
@@ -78,7 +80,7 @@ public class CiudadServiceImpl implements ICiudadService {
 
         // Validar si existe la ciudad con ese ID
         Ciudad ciudadExistente = ciudadRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("La ciudad no existe"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("La ciudad no existe"));
 
         // Verificar si hay otra ciudad con el mismo nombre
         Optional<Ciudad> ciudadConMismoNombre =
@@ -86,7 +88,7 @@ public class CiudadServiceImpl implements ICiudadService {
 
         if (ciudadConMismoNombre.isPresent()
                 && ciudadConMismoNombre.get().getIdCiudad() != id) {
-            throw new IllegalArgumentException("Ya existe otra ciudad con ese nombre");
+            throw new DuplicadoException("Ya existe otra ciudad con ese nombre");
         }
 
         // Actualizar datos

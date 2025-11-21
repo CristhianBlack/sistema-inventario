@@ -1,5 +1,6 @@
 package com.cristhian.SistemaInventario.Modelo;
 
+import com.cristhian.SistemaInventario.DTO.TipoDocumentoDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -28,10 +29,10 @@ public class TipoDocumento {
     public TipoDocumento() {
     }
 
-    public TipoDocumento(String nombreTipoDocumento, String sigla, boolean activo) {
-        this.nombreTipoDocumento = nombreTipoDocumento;
-        this.sigla = sigla;
-        this.activo = activo;
+    public TipoDocumento(TipoDocumentoDTO dto) {
+        this.nombreTipoDocumento = dto.getNombreTipoDocumento();
+        this.sigla = dto.getSigla();
+        this.activo = dto.isActivo();
     }
 
     public int getIdTipoDocumento() {

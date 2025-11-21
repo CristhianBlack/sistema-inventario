@@ -1,5 +1,6 @@
 package com.cristhian.SistemaInventario.Modelo;
 
+import com.cristhian.SistemaInventario.DTO.TipoPersonaDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -26,11 +27,9 @@ public class TipoPersona {
     public TipoPersona() {
     }
 
-    public TipoPersona(String nombreTipoPersona, boolean activo) {
-
-        this.nombreTipoPersona = nombreTipoPersona;
-        this.activo = activo;
-
+    public TipoPersona(TipoPersonaDTO tipoPersonaDTO){
+        this.nombreTipoPersona = tipoPersonaDTO.getNombreTipoPersona();
+        this.activo = tipoPersonaDTO.isActivo();
     }
 
     public int getIdTipoPersona() {

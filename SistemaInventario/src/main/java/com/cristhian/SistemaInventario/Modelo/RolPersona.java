@@ -1,5 +1,6 @@
 package com.cristhian.SistemaInventario.Modelo;
 
+import com.cristhian.SistemaInventario.DTO.RolPersonaDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -25,10 +26,10 @@ public class RolPersona {
     public RolPersona() {
     }
 
-    public RolPersona(String nombreRol, String descripcion, boolean activo) {
-        this.nombreRol = nombreRol;
-        this.descripcion = descripcion;
-        this.activo = activo;
+    public RolPersona(RolPersonaDTO rolPersonaDTO) {
+        this.nombreRol = rolPersonaDTO.getNombreRol();
+        this.descripcion = rolPersonaDTO.getDescripcion();
+        this.activo = rolPersonaDTO.isActivo();
     }
 
     public int getIdRolPersona() {

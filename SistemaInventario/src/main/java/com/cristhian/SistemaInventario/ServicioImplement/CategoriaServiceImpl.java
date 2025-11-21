@@ -1,6 +1,8 @@
 package com.cristhian.SistemaInventario.ServicioImplement;
 
 import com.cristhian.SistemaInventario.DTO.CategoriaDTO;
+import com.cristhian.SistemaInventario.Excepciones.DuplicadoException;
+import com.cristhian.SistemaInventario.Excepciones.RecursoNoEncontradoException;
 import com.cristhian.SistemaInventario.Modelo.Categoria;
 import com.cristhian.SistemaInventario.Repositorio.CategoriaRepository;
 import com.cristhian.SistemaInventario.Service.ICategoriaService;
@@ -38,7 +40,7 @@ public class CategoriaServiceImpl implements ICategoriaService {
 
         // Validación de nombre duplicado
         if (categoriaRepository.existsByNombreCategoriaIgnoreCase(dto.getNombreCategoria().trim())) {
-            throw new IllegalArgumentException("Ya existe una categoría con ese nombre");
+            throw new DuplicadoException("Ya existe una categoría con ese nombre");
         }
 
         // Crear entidad usando el constructor DTO → OK
@@ -51,7 +53,7 @@ public class CategoriaServiceImpl implements ICategoriaService {
     public Categoria actualizarCategoria(int id, CategoriaDTO dto) {
 
         Categoria categoriaExistente = categoriaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No existe esa categoría"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe esa categoría"));
 
         String nuevoNombre = dto.getNombreCategoria().trim();
 
@@ -59,7 +61,7 @@ public class CategoriaServiceImpl implements ICategoriaService {
         if (categoriaRepository.existsByNombreCategoriaIgnoreCase(nuevoNombre)
                 && !nuevoNombre.equalsIgnoreCase(categoriaExistente.getNombreCategoria())) {
 
-            throw new IllegalArgumentException("Ya existe otra categoría con ese nombre");
+            throw new DuplicadoException("Ya existe otra categoría con ese nombre");
         }
 
         // Actualización

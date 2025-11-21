@@ -24,6 +24,29 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errores, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    public ResponseEntity<ErrorRespuesta> manejarNoEncontrado(RecursoNoEncontradoException ex) {
+        ErrorRespuesta error = new ErrorRespuesta(ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DuplicadoException.class)
+    public ResponseEntity<ErrorRespuesta> manejarDuplicado(DuplicadoException ex) {
+        ErrorRespuesta error = new ErrorRespuesta(ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorRespuesta> manejarGenerico(Exception ex) {
+        ErrorRespuesta error = new ErrorRespuesta("Error interno del servidor");
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ValidacionException.class)
+    public ResponseEntity<ErrorRespuesta> manejarValidacion(ValidacionException ex) {
+        ErrorRespuesta error = new ErrorRespuesta(ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 }
 
 

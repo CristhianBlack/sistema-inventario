@@ -113,7 +113,7 @@ export class TipoDocumentoListaComponent implements OnInit{
           this.tipoDocumentoService.eliminarTipoDocumento(id).pipe(takeUntil(this.destroy$)).subscribe({
               next: () => {
                 this.toastr.success(
-                  'Ciudad eliminada correctamente','Éxito '
+                  'Tipo de Documento eliminado correctamente','Éxito '
                 );
                 this.obtenerTipoDocumentos();
               },

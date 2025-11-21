@@ -93,7 +93,7 @@ export class RolPersonaListaComponent implements OnInit {
     // Eliminar un rol
     eliminarRolPersona(id: number): void {
       Swal.fire({
-        title: '¿Eliminar categoría?',
+        title: '¿Eliminar Rol?',
         text: 'Esta acción no se puede deshacer.',
         icon: 'warning',
         showCancelButton: true,

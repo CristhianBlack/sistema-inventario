@@ -47,13 +47,13 @@ export class TipoDocumentoFormComponent implements OnInit{
           // Editamos nuestra ciudad
           this.tipoDocumentService.editarTipoDocumento(this.formModel.idTipoDocumento, this.formModel).subscribe({
             next: () =>{
-              this.toastr.success('Ciudad actualizada correctamente', 'Éxito');
+              this.toastr.success('Tipo de documento actualizado correctamente', 'Éxito');
               // Emite el evento hacia el componente padre.
               this.formGuardado.emit();
               this.limpiarFormulario(formTipoDocumento); // limpiar al editar
             },
             error: (err) =>{
-              this.toastr.error('Error al editar ciudad', 'Error');
+              this.toastr.error('Error al editar tipo de documento', 'Error');
             }
           });
         }else{
@@ -61,7 +61,7 @@ export class TipoDocumentoFormComponent implements OnInit{
           console.log(' Datos que se envían:', this.formModel);
           this.tipoDocumentService.agregarTipoDocumento(this.formModel).subscribe({
             next: () =>{
-              this.toastr.success('Ciudad agregada correctamente', 'Éxito');
+              this.toastr.success('Tipo de documento agregado correctamente', 'Éxito');
               // Emite el evento hacia el componente padre.
               this.formGuardado.emit();
               this.limpiarFormulario(formTipoDocumento); //  limpiar al editar

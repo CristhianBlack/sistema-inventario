@@ -1,6 +1,9 @@
 package com.cristhian.SistemaInventario.ServicioImplement;
 
 import com.cristhian.SistemaInventario.DTO.UnidadMedidaDTO;
+import com.cristhian.SistemaInventario.Excepciones.DuplicadoException;
+import com.cristhian.SistemaInventario.Excepciones.RecursoNoEncontradoException;
+import com.cristhian.SistemaInventario.Excepciones.ValidacionException;
 import com.cristhian.SistemaInventario.Mensaje.Mensaje;
 import com.cristhian.SistemaInventario.Modelo.UnidadMedida;
 import com.cristhian.SistemaInventario.Repositorio.UnidadMedidaRepository;
@@ -43,15 +46,15 @@ public class UnidadMedidaServiceImpl implements IUnidadMedidaService {
         String nombre = dto.getNombreMedida() == null ? "" : dto.getNombreMedida().trim();
         String sigla = dto.getSigla() == null ? "" : dto.getSigla().trim();
 
-        if (nombre.isEmpty()) {
-            throw new IllegalArgumentException("El nombre de la unidad es obligatorio");
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new ValidacionException("El nombre de la unidad es obligatorio");
         }
 
         if (unidadMedidaRepository.existsByNombreMedidaIgnoreCase(nombre)) {
-            throw new IllegalArgumentException("Ya existe una unidad de medida con ese nombre");
+            throw new DuplicadoException("Ya existe una unidad de medida con ese nombre");
         }
 
-        // 🔥 Aquí sí usamos el constructor basado en DTO
+        // Aquí sí usamos el constructor basado en DTO
         UnidadMedida unidad = new UnidadMedida(dto);
 
         return unidadMedidaRepository.save(unidad);
@@ -61,13 +64,13 @@ public class UnidadMedidaServiceImpl implements IUnidadMedidaService {
     public UnidadMedida actualizarUnidadeMedida(int id, UnidadMedidaDTO dto) {
 
         UnidadMedida unidadExistente = unidadMedidaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No existe esa unidad de Medida"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe esa unidad de Medida"));
 
         String nuevoNombre = dto.getNombreMedida().trim();
         String nuevaSigla = dto.getSigla().trim();
 
         if (unidadMedidaRepository.existsOtherWithSameName(id, nuevoNombre)) {
-            throw new IllegalArgumentException("Ya existe otra unidad de medida con ese nombre");
+            throw new DuplicadoException("Ya existe otra unidad de medida con ese nombre");
         }
 
         // 🔥 Solo actualizamos los campos necesarios
@@ -80,7 +83,7 @@ public class UnidadMedidaServiceImpl implements IUnidadMedidaService {
     @Override
     public void borrar(int id){
         UnidadMedida unidad = unidadMedidaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("No existe la unidad de medida"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe la unidad de medida"));
 
         unidad.setActivo(false);
         unidadMedidaRepository.save(unidad);

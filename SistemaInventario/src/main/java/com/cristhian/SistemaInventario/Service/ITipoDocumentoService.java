@@ -1,5 +1,6 @@
 package com.cristhian.SistemaInventario.Service;
 
+import com.cristhian.SistemaInventario.DTO.TipoDocumentoDTO;
 import com.cristhian.SistemaInventario.Modelo.TipoDocumento;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,7 +11,9 @@ public interface ITipoDocumentoService {
 
     List<TipoDocumento> listarTipoDocumentoActivo();
     Optional<TipoDocumento> buscarTipoDucmentoId(int id);
-    public TipoDocumento guardarTipoDocumento(TipoDocumento tipoDocumento);
+    public TipoDocumento guardarTipoDocumento(TipoDocumentoDTO tipoDocumentoDTO);
+
+    public TipoDocumento actualizarTipoDocumento(int id, TipoDocumentoDTO tipoDocumentoDTO);
     public void desactivarTipoDcomuento(int id);
-    public boolean existePorNombreTipoDocumento(String nombreTipoDocumento);
+
 }

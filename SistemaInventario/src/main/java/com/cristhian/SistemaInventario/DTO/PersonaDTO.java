@@ -1,5 +1,7 @@
 package com.cristhian.SistemaInventario.DTO;
 
+import com.cristhian.SistemaInventario.Modelo.Persona;
+import com.cristhian.SistemaInventario.Modelo.RolPersona;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,6 +10,7 @@ import java.util.List;
 
 public class PersonaDTO {
 
+    private int idPersona;
     @NotBlank(message = "El número de documento es obligatorio")
     private String documentoPersona;
     @NotBlank(message = "El nombre es obligatorio")
@@ -37,7 +40,50 @@ public class PersonaDTO {
     private List<Integer> idsRoles; // SOLO EL ADMIN LOS ENVÍA
 
 
+    public PersonaDTO() {
+    }
+
+    public PersonaDTO(Persona persona) {
+        this.idPersona = persona.getIdPersona();
+        this.documentoPersona = persona.getDocumentoPersona();
+        this.nombre = persona.getNombre();
+        this.apellido = persona.getApellido();
+        this.segundoApellido = persona.getSegundoApellido();
+        this.direccion = persona.getDireccion();
+        this.telefono = persona.getTelefono();
+        this.email = persona.getEmail();
+
+        // Solo enviamos los IDs para no exponer objetos completos
+        this.idTipoDocumento = persona.getTipoDocumento() != null
+                ? persona.getTipoDocumento().getIdTipoDocumento()
+                : null;
+
+        this.idTipoPersona = persona.getTipoPersona() != null
+                ? persona.getTipoPersona().getIdTipoPersona()
+                : null;
+
+        this.idCiudad = persona.getCiudad() != null
+                ? persona.getCiudad().getIdCiudad()
+                : null;
+
+        // Roles → convertimos la lista de entidades a una lista de IDs
+        this.idsRoles = persona.getPersonaRoles() != null
+                ? persona.getPersonaRoles()
+                .stream()
+                .map(pr -> pr.getRolPersona().getIdRolPersona()) // CORRECTO
+                .toList()
+                : null;
+    }
+
     // Getters y Setters
+    public int getIdPersona() {
+        return idPersona;
+    }
+
+    public void setIdPersona(int idPersona) {
+        this.idPersona = idPersona;
+    }
+
     public String getDocumentoPersona() { return documentoPersona; }
     public void setDocumentoPersona(String documentoPersona) { this.documentoPersona = documentoPersona; }
 
