@@ -1,7 +1,9 @@
 package com.cristhian.SistemaInventario.Controlador;
 
+import com.cristhian.SistemaInventario.DTO.RolPersonaDTO;
 import com.cristhian.SistemaInventario.DTO.UnidadMedidaDTO;
 import com.cristhian.SistemaInventario.Mensaje.Mensaje;
+import com.cristhian.SistemaInventario.Modelo.RolPersona;
 import com.cristhian.SistemaInventario.Modelo.UnidadMedida;
 import com.cristhian.SistemaInventario.Service.IUnidadMedidaService;
 import com.cristhian.SistemaInventario.ServicioImplement.UnidadMedidaServiceImpl;
@@ -41,14 +43,14 @@ public class UnidadMedidaController {
     // -------------------------------------------------------------
     @GetMapping("/Unidades/{id}")
     public ResponseEntity<?> buscarUnidadPorId(@PathVariable int id) {
+        Optional<UnidadMedida> data = unidadMedidaService.buscarUnidadId(id);
 
-        return unidadMedidaService.buscarUnidadId(id)
-                .<ResponseEntity<?>>map(unidad ->
-                        ResponseEntity.ok(unidad)
-                ).orElseGet(() ->
-                        ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                .body(new Mensaje("No existe el registro buscado"))
-                );
+        if (data.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new Mensaje("No existe el registro buscado"));
+        }
+        return ResponseEntity.ok(new UnidadMedidaDTO(data.get()));
     }
 
     // -------------------------------------------------------------
@@ -57,9 +59,9 @@ public class UnidadMedidaController {
     @PostMapping("/Unidades")
     public ResponseEntity<?> agregarUnidad(@Valid @RequestBody UnidadMedidaDTO unidadMedidaDto) {
         try {
-            unidadMedidaService.guardar(unidadMedidaDto);
+            var unidad = unidadMedidaService.guardar(unidadMedidaDto);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new Mensaje("Unidad creada con éxito"));
+                    .body(new UnidadMedidaDTO(unidad));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
         }
@@ -73,8 +75,8 @@ public class UnidadMedidaController {
                                                     @Valid @RequestBody UnidadMedidaDTO unidadMedidaDTO) {
 
         try {
-            unidadMedidaService.actualizarUnidadeMedida(id, unidadMedidaDTO);
-            return ResponseEntity.ok(new Mensaje("Unidad actualizada con éxito"));
+            var actualizado = unidadMedidaService.actualizarUnidadeMedida(id, unidadMedidaDTO);
+            return ResponseEntity.ok(new UnidadMedidaDTO(actualizado));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
         }

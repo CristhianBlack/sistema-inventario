@@ -71,62 +71,6 @@ export class PersonaListaComponent implements OnInit{
     });
   }
 
-  //Abrir modal para crear o editar ciudad
-    /*abrirModalEditar(persona?: Persona): void {
-      this.personaSeleccionada = persona ? { ...persona } : null;
-  
-      // Esperar un ciclo del render para asegurar que el modal exista
-      setTimeout(() => {
-        const modalEl = this.modalElement?.nativeElement;
-        if (modalEl) {
-          this.modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
-          this.modalInstance.show();
-        } else {
-          console.error('No se encontró el modal en el DOM.');
-        }
-      }, 0);
-    }*/
-
-    /*abrirModalEditar(persona?: Persona): void {
-  if (!persona?.idPersona) return;
-
-  this.personaService.obtnerPersonaPorID(persona.idPersona).subscribe({
-    next: (data) => {
-      console.log('Persona completa recibida:', data);
-
-      this.personaSeleccionada = data; // 🔥 Envía datos completos al formulario
-
-      setTimeout(() => {
-        const modalEl = this.modalElement?.nativeElement;
-        this.modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
-        this.modalInstance.show();
-      }, 0);
-    },
-    error: (err) => {
-      console.error(err);
-      this.toastr.error("Error al cargar la persona");
-    }
-  });
-}*/
-
-
-/*abrirModalEditar(persona?: Persona): void {
-  this.personaService.obtnerPersonaPorID(persona?.idPersona!).subscribe({
-    next: (data) => {
-      this.personaSeleccionada = data;
-
-      setTimeout(() => {
-        const modalEl = this.modalElement?.nativeElement;
-        this.modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
-        this.modalInstance.show();
-      });
-    },
-    error: () => {
-      this.toastr.error("Error al cargar la persona");
-    }
-  });
-}*/
-
 abrirModalEditar(persona?: Persona): void {
 
   if (!persona?.idPersona) {
@@ -158,9 +102,6 @@ private abrirModal(): void {
     }
   }, 0);
 }
-
-
-
 
     // Abrir modal del detalle
    abrirModalDetalle(persona: Persona): void {

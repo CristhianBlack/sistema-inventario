@@ -15,9 +15,9 @@ public class PersonaDTO {
     private String documentoPersona;
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
-    @NotBlank(message = "El primer apellido es obligatorio")
+
     private String apellido;
-    @NotBlank(message = "El segundo apellido es obligatorio")
+
     private String segundoApellido;
     @NotBlank(message = "La dirección es obligatoria")
     private String direccion;
@@ -74,6 +74,19 @@ public class PersonaDTO {
                 .toList()
                 : null;
     }
+
+    public PersonaDTO(int idPersona,String documentoPersona,String nombre,String apellido,String segundoApellido,
+            String direccion,String telefono,String email) {
+        this.idPersona = idPersona;
+        this.documentoPersona = documentoPersona;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.segundoApellido = segundoApellido;
+        this.direccion = direccion;
+        this.telefono = telefono;
+        this.email = email;
+    }
+
 
     // Getters y Setters
     public int getIdPersona() {

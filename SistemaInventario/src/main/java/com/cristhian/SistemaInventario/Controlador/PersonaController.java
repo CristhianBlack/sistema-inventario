@@ -323,6 +323,12 @@ public class PersonaController {
 
     }
 
+    @GetMapping("/Personas/proveedores")
+    public ResponseEntity<List<PersonaDTO>> obtenerPersonasConRolProveedor() {
+        List<PersonaDTO> personas = personaService.listarPersonasConRolProveedor();
+        return ResponseEntity.ok(personas);
+    }
+
     @PostMapping("/Personas")
     public ResponseEntity<?> crearPersona(@Valid @RequestBody PersonaDTO personaDTO) {
 

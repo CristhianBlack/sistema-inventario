@@ -58,6 +58,77 @@
         </a>
       </li>
 
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/Unidades">
+          <i class="fas fa-fw fa-cubes"></i>
+          <span>Unidad Medida</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/Proveedores">
+          <i class="fas fa-fw fa-cubes"></i>
+          <span>Proveedor</span>
+        </a>
+      </li>
+
+      <!--Sub menu producto-->
+      <li class="nav-item">
+
+  <!-- TÍTULO PRODUCTO -->
+  <a class="nav-link collapsed"
+     href="#"
+     data-bs-toggle="collapse"
+     data-bs-target="#collapseProducto"
+     aria-expanded="false"
+     aria-controls="collapseProducto">
+
+    <i class="fas fa-fw fa-box"></i>
+    <span>Producto</span>
+  </a>
+
+  <!-- SUBMENÚ -->
+  <div id="collapseProducto"
+       class="collapse"
+       aria-labelledby="headingProducto"
+       data-bs-parent="#accordionSidebar">
+
+    <div class="bg-white py-2 collapse-inner rounded">
+
+      <a class="collapse-item" routerLink="/Productos" routerLinkActive="active"
+       (click)="cerrarSubmenu()">
+        Lista de productos
+        
+      </a>
+      <a class="collapse-item" routerLink="/MovimientoInventario" routerLinkActive="active"
+       (click)="cerrarSubmenu()">
+        Lista de Movimientos
+        
+      </a>
+
+      <!--<a class="collapse-item" routerLink="/Kardex">
+        Kardex
+      </a>-->
+
+    </div>
+  </div>
+
+</li>
+<!--fin del sub menu producto-->
+
+
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/Compras">
+          <i class="fas fa-fw fa-cubes"></i>
+          <span>Compras</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/FormaPago">
+          <i class="fas fa-fw fa-cubes"></i>
+          <span>Forma de Pago</span>
+        </a>
+      </li>
+
       <hr class="sidebar-divider" />
 
       <!-- Botón colapsar -->

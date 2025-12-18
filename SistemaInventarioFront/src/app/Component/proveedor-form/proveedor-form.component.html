@@ -1,0 +1,92 @@
+<div class="container">
+    <form (ngSubmit)="onSubmit(formProveedor)" #formProveedor="ngForm" novalidate>
+        
+        <!--Titulo dinamico-->
+        <div class="text-center mb-4">
+            <h4 class="fw-bold"> <i class="fa-solid fa-city text-white fs-5 me-2"></i>
+                {{formModel.idProveedor ? 'Editar Proveedor' : 'Nuevo Proveedor' }}
+            </h4>
+        </div>
+
+       <input class="form-control"
+       type="text"
+       id="buscar" name="buscar"
+       placeholder="Buscar persona..."
+       [(ngModel)]="textoBusqueda"
+       (ngModelChange)="filtrarPersonas()">
+
+<ul class="list-group mt-2" *ngIf="personasFiltradas.length > 0">
+  <li class="list-group-item list-group-item-action"
+      *ngFor="let p of personasFiltradas"
+      (click)="seleccionarPersona(p)">
+    {{ p.nombre }} {{ p.apellido }} {{ p.segundoApellido }}
+  </li>
+</ul>
+
+<div class="text-muted mt-2" *ngIf="personasFiltradas.length === 0">
+  No hay resultados
+</div>
+
+
+<div *ngIf="proveedorSeleccionado">
+
+  <div class="mb-3">
+    <label>NIT</label>
+    <input type="text" class="form-control" 
+           [value]="proveedorSeleccionado.documentoPersona" readonly>
+  </div>
+
+  <div class="mb-3">
+    <label>Teléfono</label>
+    <input type="text" class="form-control" 
+           [value]="proveedorSeleccionado.telefono" readonly>
+  </div>
+
+  <div class="mb-3">
+    <label>Dirección</label>
+    <input type="text" class="form-control" 
+           [value]="proveedorSeleccionado.direccion" readonly>
+  </div>
+
+  <div class="mb-3">
+    <label>Email</label>
+    <input type="text" class="form-control" 
+           [value]="proveedorSeleccionado.email" readonly>
+  </div>
+
+</div>
+
+
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripcion Proveedor</label>
+            <input type="text" id="descripcion" name="descripcion" class="form-control"
+            [(ngModel)]="formModel.descripcionProveedor" required minlength="3" placeholder="EJ: proveedor que vende cacharreria">
+
+            <!-- Mensajes de error -->
+             <div *ngIf="formProveedor.submitted && !formModel.descripcionProveedor" class="text-danger small mt-1">
+                La descripcion es obligatoria
+             </div>
+        </div>
+
+        <!-- Campo: Activo (opcional)
+    <div class="form-check mb-4">
+      <input 
+        class="form-check-input" 
+        type="checkbox" 
+        id="activo" 
+        name="activo"
+        [(ngModel)]="formModel.activo">
+      <label class="form-check-label" for="activo">
+        Activo
+      </label>
+    </div>-->
+
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary me-2"  data-bs-dismiss="modal" >Cancelar</button>
+
+            <button type="submit" class="btn btn-primary" [disabled]="formProveedor.invalid">
+                {{formModel.idProveedor ? 'Guardar cambios' : 'Agregar Proveedor'}}
+            </button>
+        </div>
+    </form>
+</div>

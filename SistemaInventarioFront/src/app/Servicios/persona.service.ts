@@ -36,6 +36,10 @@ export class PersonaService  implements Ipersona{
 obtenerRolesPorPersona(idPersona: number): Observable<any[]> {
   return this.httpClient.get<any[]>(`${this.URL}/PersonaRol/${idPersona}`);
 }
+// Obtenemos un listado personas con el rol de proveedor
+obtenerPersonasConRolProveedor() {
+    return this.httpClient.get<Persona[]>(`${this.URL}/proveedores`).pipe(catchError(this.manejarError));
+  }
 
 // Asignar un rol a una persona
 asignarRolPersona(idPersona: number, idRol: number): Observable<any> {

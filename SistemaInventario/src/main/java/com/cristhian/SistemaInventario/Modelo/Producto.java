@@ -1,12 +1,16 @@
 package com.cristhian.SistemaInventario.Modelo;
 
+import com.cristhian.SistemaInventario.DTO.ProductoDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Producto {
@@ -29,23 +33,39 @@ public class Producto {
     @Column(nullable = false, length = 255)
     private String descripcion;
 
+    @CreationTimestamp
     @Column(nullable = false)
     private LocalDate fechaCreacion;
     @Column(nullable = false)
-    private boolean activo;
+    private boolean activo = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_categoria")
-    @JsonBackReference
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "productos"})
     private Categoria categoria;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_unidad_medida")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "productos"})
     private UnidadMedida unidadMedida;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_proveedor")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "productos"})
     private Proveedor proveedor;
+
+    // Relación con producto
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("producto") // evita recursión infinita
+    private List<DetalleCompra> detalles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "producto" )
+    @JsonIgnoreProperties("producto") // evita recursión infinita
+    private List<MovimientoInventario> movimientos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("producto") // 👈 evita recursión infinita
+    private List<DetalleVenta> detalleVentas = new ArrayList<>();
 
     @Override
     public String toString() {
@@ -69,19 +89,16 @@ public class Producto {
     public Producto() {
     }
 
-    public Producto(String codigoProducto, String nombreProducto, double precioCompra, double precioVenta, int stock, int stockMinimo, String descripcion, LocalDate fechaCreacion, boolean activo, Categoria categoria, UnidadMedida unidadMedida, Proveedor proveedor) {
-        this.codigoProducto = codigoProducto;
-        this.nombreProducto = nombreProducto;
-        this.precioCompra = precioCompra;
-        this.precioVenta = precioVenta;
-        this.stock = stock;
-        this.stockMinimo = stockMinimo;
-        this.descripcion = descripcion;
-        this.fechaCreacion = fechaCreacion;
-        this.activo = activo;
-        this.categoria = categoria;
-        this.unidadMedida = unidadMedida;
-        this.proveedor = proveedor;
+    public Producto(ProductoDTO productoDTO){
+        this.codigoProducto = productoDTO.getCodigoProducto();
+        this.nombreProducto = productoDTO.getNombreProducto();
+        this.precioCompra = productoDTO.getPrecioCompra();
+        this.precioVenta = productoDTO.getPrecioVenta();
+        this.stock = productoDTO.getStock();
+        this.stockMinimo = productoDTO.getStockMinimo();
+        this.descripcion = productoDTO.getDescripcion();
+        this.fechaCreacion = productoDTO.getFechaCreacion();
+        this. activo = productoDTO.isActivo();
     }
 
     public int getIdProducto() {
@@ -164,12 +181,12 @@ public class Producto {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public boolean isActive() {
+    public boolean isActivo() {
         return activo;
     }
 
-    public void setActive(boolean activo) {
-        activo = activo;
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
     public Categoria getCategoria() {
@@ -195,4 +212,6 @@ public class Producto {
     public void setProveedor(Proveedor proveedor) {
         this.proveedor = proveedor;
     }
+
+
 }

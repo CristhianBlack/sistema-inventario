@@ -1,5 +1,6 @@
 package com.cristhian.SistemaInventario.Modelo;
 
+import com.cristhian.SistemaInventario.DTO.ProveedorDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -15,37 +16,35 @@ public class Proveedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idProveedor;
-    @Column(nullable = false, length = 50)
-    private String razonSocial;
-    @Column(nullable = false, length = 30)
-    private String nitProveedor;
-
     @Column(length = 255)
     private String descripcionProveedor;
     @Column(nullable = false)
-    @Temporal(TemporalType.DATE)
     private LocalDate fechaCreacion;
 
-
     @OneToMany(mappedBy = "proveedor" )
-    @JsonIgnore
-    private List<Producto> productos;
+    @JsonIgnoreProperties("proveedor") // evita recursión infinita
+    private List<Producto> productos = new ArrayList<>();
+    @OneToMany(mappedBy = "proveedor" )
+    @JsonIgnoreProperties("proveedor") // evita recursión infinita
+    private List<MovimientoInventario> movimientos = new ArrayList<>();
+
     @Column(nullable = false)
     private boolean activo = true;
 
     @OneToOne
-    @JoinColumn(name = "id_persona", referencedColumnName = "idPersona")
+    @JoinColumn(name = "id_persona", referencedColumnName = "idPersona", unique = true)
     private Persona persona;
 
+    @OneToMany(mappedBy = "proveedor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("proveedor") // evita recursión infinita
+    private List<Compra> compras = new ArrayList<>();
     public Proveedor() {
     }
 
-    public Proveedor(String razonSocial, String nitProveedor, String descripcionProveedor, LocalDate fechaCreacion, boolean activo) {
-        this.razonSocial = razonSocial;
-        this.nitProveedor = nitProveedor;
-        this.descripcionProveedor = descripcionProveedor;
-        this.fechaCreacion = fechaCreacion;
-        this.activo = activo;
+    public Proveedor(ProveedorDTO proveedorDTO) {
+        this.descripcionProveedor = proveedorDTO.getDescripcionProveedor();
+        this.fechaCreacion = LocalDate.now();
+        this.activo = proveedorDTO.isActivo();
     }
 
     public int getIdProveedor() {
@@ -54,22 +53,6 @@ public class Proveedor {
 
     public void setIdProveedor(int idProveedor) {
         this.idProveedor = idProveedor;
-    }
-
-    public String getRazonSocial() {
-        return razonSocial;
-    }
-
-    public void setRazonSocial(String razonSocial) {
-        this.razonSocial = razonSocial;
-    }
-
-    public String getNitProveedor() {
-        return nitProveedor;
-    }
-
-    public void setNitProveedor(String nitProveedor) {
-        this.nitProveedor = nitProveedor;
     }
 
     public String getDescripcionProveedor() {
@@ -96,11 +79,19 @@ public class Proveedor {
         this.activo = activo;
     }
 
-    /**public List<Producto> getProductos() {
+    public Persona getPersona() {
+        return persona;
+    }
+
+    public void setPersona(Persona persona) {
+        this.persona = persona;
+    }
+
+    public List<Producto> getProductos() {
         return productos;
     }
 
     public void setProductos(List<Producto> productos) {
         this.productos = productos;
-    }**/
+    }
 }

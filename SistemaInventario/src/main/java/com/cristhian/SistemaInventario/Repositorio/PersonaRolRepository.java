@@ -24,5 +24,30 @@ public interface PersonaRolRepository extends JpaRepository<PersonaRol, Integer>
     @Query("SELECT pr FROM PersonaRol pr WHERE pr.persona.idPersona = :idPersona")
     List<PersonaRol> findByPersonaId(@Param("idPersona") Integer idPersona);
 
+    boolean existsByPersonaIdPersonaAndRolPersonaIdRolPersona(Integer idPersona, Integer idRolPersona);
+
+    @Query("SELECT pr.persona FROM PersonaRol pr WHERE pr.rolPersona.idRolPersona = :idRol AND pr.activo = true")
+    List<Persona> findPersonasConRol(@Param("idRol") Integer idRol);
+
+    // Obtener personas CON DTO (para mostrarlas en frontend)
+    @Query("""
+        SELECT new com.cristhian.SistemaInventario.DTO.PersonaDTO(
+            p.idPersona,
+            p.documentoPersona,
+            p.nombre,
+            p.apellido,
+            p.segundoApellido,
+            p.direccion,
+            p.telefono,
+            p.email
+        )
+        FROM PersonaRol pr
+        JOIN pr.persona p
+        WHERE pr.rolPersona.idRolPersona = :idRol
+          AND pr.activo = true
+    """)
+    List<PersonaDTO> findPersonasConRolDTO(@Param("idRol") Integer idRol);
+
+
 
 }

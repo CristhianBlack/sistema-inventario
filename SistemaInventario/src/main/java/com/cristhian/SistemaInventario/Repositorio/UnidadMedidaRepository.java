@@ -1,5 +1,6 @@
 package com.cristhian.SistemaInventario.Repositorio;
 
+import com.cristhian.SistemaInventario.Modelo.Ciudad;
 import com.cristhian.SistemaInventario.Modelo.UnidadMedida;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -7,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UnidadMedidaRepository extends JpaRepository<UnidadMedida, Integer> {
@@ -22,4 +24,6 @@ public interface UnidadMedidaRepository extends JpaRepository<UnidadMedida, Inte
     boolean existsByNombreMedidaIgnoreCase(String nombreMedida);
 
     List<UnidadMedida> findByActivoTrue();
+
+    Optional<UnidadMedida> findByNombreMedidaIgnoreCase(String nombreMedida);
 }

@@ -1,6 +1,8 @@
 package com.cristhian.SistemaInventario.DTO;
 
 import com.cristhian.SistemaInventario.Modelo.Ciudad;
+import com.cristhian.SistemaInventario.Modelo.Proveedor;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -10,43 +12,44 @@ import java.time.LocalDate;
 
 public class ProveedorDTO {
 
-
-    @NotBlank(message = "La razón social es obligatoria")
-    private String razonSocial;
-
-    @NotBlank(message = "El NIT del proveedor es obligatorio")
-    private String nitProveedor;
+    private int idProveedor;
 
     @Size(max = 255, message = "La descripción no puede superar los 255 caracteres")
     private String descripcionProveedor;
 
-    @NotNull(message = "La fecha de creación es obligatoria")
+    //@NotNull(message = "La fecha de creación es obligatoria")
     private LocalDate fechaCreacion;
-
-    @NotNull(message = "Debe seleccionar una ciudad válida")
-    private Integer idCiudad; // Representa la FK hacia la entidad Ciudad
     @Column(nullable = false)
     private boolean activo;
 
-    // 🧩 Getters y Setters
+    @JsonAlias({ "persona", "idPersona" })
+    private Integer idPersona;
 
-    public String getRazonSocial() {
-        return razonSocial;
+    public ProveedorDTO() {
     }
 
-    public void setRazonSocial(String razonSocial) {
-        this.razonSocial = razonSocial;
+    public ProveedorDTO(Proveedor proveedor){
+        this.idProveedor = proveedor.getIdProveedor();
+        this.descripcionProveedor = proveedor.getDescripcionProveedor();
+        this.fechaCreacion = proveedor.getFechaCreacion();
+        this.activo = proveedor.isActivo();
+
+        // Enviamos el ID para no exponer objetos completos
+        this.idPersona = proveedor.getPersona() != null
+                ? proveedor.getPersona().getIdPersona()
+                : null;
     }
 
-    public String getNitProveedor() {
-        return nitProveedor;
+    // Getters y Setters
+
+
+    public int getIdProveedor() {
+        return idProveedor;
     }
 
-    public void setNitProveedor(String nitProveedor) {
-        this.nitProveedor = nitProveedor;
+    public void setIdProveedor(int idProveedor) {
+        this.idProveedor = idProveedor;
     }
-
-
 
     public String getDescripcionProveedor() {
         return descripcionProveedor;
@@ -64,19 +67,19 @@ public class ProveedorDTO {
         this.fechaCreacion = fechaCreacion;
     }
 
-    public int getIdCiudad() {
-        return idCiudad;
-    }
-
-    public void setIdCiudad(int idCiudad) {
-        this.idCiudad = idCiudad;
-    }
-
     public boolean isActivo() {
         return activo;
     }
 
     public void setActivo(boolean activo) {
         this.activo = activo;
+    }
+
+    public Integer getIdPersona() {
+        return idPersona;
+    }
+
+    public void setIdPersona(Integer idPersona) {
+        this.idPersona = idPersona;
     }
 }

@@ -1,0 +1,54 @@
+<div class="row mb-3">
+  <div class="col-md-3">
+    <label>Desde</label>
+    <input type="date" class="form-control" [(ngModel)]="desde">
+  </div>
+
+  <div class="col-md-3">
+    <label>Hasta</label>
+    <input type="date" class="form-control" [(ngModel)]="hasta">
+  </div>
+
+  <div class="col-md-3 d-flex align-items-end">
+    <button class="btn btn-primary w-100" (click)="filtrar()">
+      Filtrar
+    </button>
+  </div>
+</div>
+
+<button class="btn btn-success btn-sm" (click)="descargarExcel()">
+  <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+</button>
+<button class="btn btn-danger btn-sm" (click)="descargarPdf()">
+  <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
+</button>
+
+<table class="table table-bordered table-sm">
+  <thead class="table-dark">
+    <tr>
+      <th>Fecha</th>
+      <th>Origen</th>
+      <th>Tipo</th>
+      <th>Cantidad</th>
+      <th>Observación</th>
+      <th>Producto</th>
+      <th>Proveedor</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let movimiento of movimientoInventarios">
+      <td>{{ movimiento.fechaMovimiento }}</td>
+      <td>{{ movimiento.origenMovimiento }}</td>
+      <td class="fw-bold"
+      [ngClass]="{ 'text-success': movimiento.tipoMovimiento }"><i class="bi bi-arrow-up-circle-fill text-success fs-5"></i>
+        {{ movimiento.tipoMovimiento }}</td>
+      <td class="fw-bold" 
+      [ngClass]="{ 'text-danger': movimiento.cantidad}"> <i class="bi bi-arrow-down-circle-fill text-danger fs-5"></i>
+        {{ movimiento.cantidad }}</td>        
+      <td>{{ movimiento.observacion }}</td>
+      <td>{{ movimiento.idProducto }}</td>
+      <td>{{ movimiento.idProveedor }}</td>
+    </tr>
+  </tbody>
+</table>

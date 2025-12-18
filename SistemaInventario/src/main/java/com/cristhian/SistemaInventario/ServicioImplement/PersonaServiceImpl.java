@@ -152,10 +152,8 @@ public class PersonaServiceImpl implements IPersonaService {
         Ciudad ciudad = ciudadRepository.findById(dto.getIdCiudad())
                 .orElseThrow(() -> new RuntimeException("Ciudad no encontrada"));
 
-        // 4. Actualizar datos básicos
+        // Datos básicos
         persona.setNombre(dto.getNombre());
-        persona.setApellido(dto.getApellido());
-        persona.setSegundoApellido(dto.getSegundoApellido());
         persona.setDireccion(dto.getDireccion());
         persona.setTelefono(dto.getTelefono());
         persona.setEmail(dto.getEmail());
@@ -163,6 +161,15 @@ public class PersonaServiceImpl implements IPersonaService {
         persona.setTipoDocumento(tipoDocumento);
         persona.setTipoPersona(tipoPersona);
         persona.setCiudad(ciudad);
+
+        // VALIDACIÓN PARA PERSONA JURÍDICA
+        if (tipoPersona.getIdTipoPersona() == 2) { // EJEMPLO: 2 = Jurídica
+            persona.setApellido("");
+            persona.setSegundoApellido("");
+        } else {
+            persona.setApellido(dto.getApellido());
+            persona.setSegundoApellido(dto.getSegundoApellido());
+        }
 
         personaRepository.save(persona);
 
@@ -217,11 +224,18 @@ public class PersonaServiceImpl implements IPersonaService {
 
         persona.setDocumentoPersona(dto.getDocumentoPersona());
         persona.setNombre(dto.getNombre());
-        persona.setApellido(dto.getApellido());
-        persona.setSegundoApellido(dto.getSegundoApellido());
         persona.setDireccion(dto.getDireccion());
         persona.setTelefono(dto.getTelefono());
         persona.setEmail(dto.getEmail());
+
+        // VALIDACIÓN SEGÚN TIPO PERSONA
+        if (dto.getIdTipoPersona() == 2) { // JURÍDICA
+            persona.setApellido("");
+            persona.setSegundoApellido("");
+        } else {
+            persona.setApellido(dto.getApellido());
+            persona.setSegundoApellido(dto.getSegundoApellido());
+        }
 
         // Asignar TipoDocumento
         TipoDocumento td = new TipoDocumento();
@@ -262,5 +276,28 @@ public class PersonaServiceImpl implements IPersonaService {
             personaRepository.save(persona);
         }
     }
+
+    // ---------------------------------------------------------
+    // 1. Obtener todas las personas que tienen rol PROVEEDOR
+    // ---------------------------------------------------------
+    public List<Persona> obtenerPersonasConRolProveedor() {
+        int idRolProveedor = 2; // Ajusta si es otro ID
+        return personaRolRepository.findPersonasConRol(idRolProveedor);
+    }
+
+    // ---------------------------------------------------------
+    // 2. Validar si una persona YA TIENE el rol PROVEEDOR
+    // ---------------------------------------------------------
+    public boolean personaTieneRolProveedor(int idPersona) {
+        int idRolProveedor = 2;
+        return personaRolRepository.existsByPersonaIdPersonaAndRolPersonaIdRolPersona(idPersona, idRolProveedor);
+    }
+
+    @Override
+    public List<PersonaDTO> listarPersonasConRolProveedor() {
+        Integer idRolProveedor = 4; // Cambia si tu rol proveedor tiene otro ID
+        return personaRolRepository.findPersonasConRolDTO(idRolProveedor);
+    }
+
 }
 

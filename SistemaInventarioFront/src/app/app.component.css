@@ -70,3 +70,7 @@ body, .navbar, .sidebar, footer, .card {
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
+.modal-frontal .mat-dialog-container {
+  z-index: 2000 !important; /* suficiente para estar encima */
+}
+

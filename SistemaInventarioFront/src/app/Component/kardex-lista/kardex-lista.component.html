@@ -1,0 +1,70 @@
+
+<div class="row mb-3">
+  <div class="col-md-3">
+    <label>Desde</label>
+    <input type="date" class="form-control" [(ngModel)]="desde">
+  </div>
+
+  <div class="col-md-3">
+    <label>Hasta</label>
+    <input type="date" class="form-control" [(ngModel)]="hasta">
+  </div>
+
+  <div class="col-md-3 d-flex align-items-end">
+    <button class="btn btn-primary w-100" (click)="filtrar()">
+      Filtrar
+    </button>
+  </div>
+</div>
+<div class="alert alert-info d-flex justify-content-between align-items-center">
+  <div>
+    <strong>Saldo actual del producto:</strong>
+  </div>
+  <h4 class="mb-0 fw-bold"
+    [ngClass]="{
+      'text-success': saldoActual > 10,
+      'text-warning': saldoActual <= 10 && saldoActual > 0,
+      'text-danger': saldoActual === 0
+    }">
+    {{ saldoActual }}
+  </h4>
+</div>
+<button class="btn btn-success btn-sm" (click)="descargarExcel()">
+  <i class="bi bi-file-earmark-excel"></i> Exportar Excel
+</button>
+<button class="btn btn-danger btn-sm" (click)="descargarPdf()">
+  <i class="bi bi-file-earmark-pdf"></i> Exportar PDF
+</button>
+
+<table class="table table-bordered table-sm">
+  <thead class="table-dark">
+    <tr>
+      <th>Fecha</th>
+      <th>Origen</th>
+      <th>Entrada</th>
+      <th>Salida</th>
+      <th>Saldo</th>
+      <th>Observación</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let k of kardex"  [ngClass]="{
+    'table-success': k.entrada > 0,
+    'table-danger': k.salida > 0
+  }">
+      <td>{{ k.fecha }}</td>
+      <td>{{ k.origen }}</td>
+      <td class="fw-bold"
+      [ngClass]="{ 'text-success': k.entrada > 0 }"><i class="bi bi-arrow-up-circle-fill text-success fs-5"></i>
+        {{ k.entrada }}</td>
+      <td class="fw-bold" 
+      [ngClass]="{ 'text-danger': k.salida > 0 }"> <i class="bi bi-arrow-down-circle-fill text-danger fs-5"></i>
+        {{ k.salida }}</td>
+      <td class="fw-bold text-primary"><strong>
+        {{ k.saldo }}</strong></td>
+      <td>{{ k.observacion }}</td>
+    </tr>
+  </tbody>
+</table>
+

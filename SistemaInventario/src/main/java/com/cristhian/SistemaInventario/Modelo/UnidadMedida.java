@@ -1,6 +1,7 @@
 package com.cristhian.SistemaInventario.Modelo;
 
 import com.cristhian.SistemaInventario.DTO.UnidadMedidaDTO;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -19,7 +20,8 @@ public class UnidadMedida {
     @Column(nullable = false, length = 5)
     private String sigla;
 
-    @OneToMany(mappedBy = "unidadMedida", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "unidadMedida", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("unidadMedida") // evita recursión infinita
     private List<Producto> productos = new ArrayList<>();
 
     @Column(nullable = false)

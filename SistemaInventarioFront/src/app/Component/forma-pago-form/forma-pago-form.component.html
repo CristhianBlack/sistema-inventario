@@ -1,0 +1,82 @@
+<div class="container">
+    <form (ngSubmit)="onSubmit(formFormaPago)" #formFormaPago="ngForm" novalidate>
+        
+        <!--Titulo dinamico-->
+        <div class="text-center mb-4">
+            <h4 class="fw-bold"> <i class="fa-solid fa-city text-white fs-5 me-2"></i>
+                {{formModel.idFormaPago  ? 'Ver Forma Pago' : ' ' }}
+            </h4>
+        </div>
+
+        <div class="mb-3">
+            <label for="nombreFormaPago" class="form-label">Forma de Pago</label>
+            <input type="text" id="nombreFormaPago" name="nombreFormaPago" class="form-control" disabled="true"
+            [(ngModel)]="formModel.nombreFormaPago" required minlength="3">
+
+            <!-- Mensajes de error -->
+             <div *ngIf="formFormaPago.submitted && !formModel.nombreFormaPago" class="text-danger small mt-1">
+                
+             </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="tipoPago" class="form-label">Forma de Pago</label>
+            <input type="text" id="tipoPago" name="tipoPago" class="form-control" disabled="true"
+            [(ngModel)]="formModel.tipoPago" required minlength="3">
+
+            <!-- Mensajes de error -->
+             <div *ngIf="formFormaPago.submitted && !formModel.tipoPago" class="text-danger small mt-1">
+                
+             </div>
+        </div>
+
+     <!--Campo: Permitir cuotas (opcional)-->
+    <div class="form-check mb-4">
+      <input 
+        class="form-check-input" 
+        type="checkbox" 
+        id="permiteCuotas" 
+        name="permiteCuotas"
+        [(ngModel)]="formModel.permiteCuotas" disabled="true">
+      <label class="form-check-label" for="permiteCuotas">
+        Se permiten Cuotas.
+      </label>
+    </div>
+
+     <!--Campo: se requiere confirmacion  (opcional)-->
+    <div class="form-check mb-4">
+      <input 
+        class="form-check-input" 
+        type="checkbox" 
+        id="requiereConfirmacion" 
+        name="requiereConfirmacion"
+        [(ngModel)]="formModel.requiereConfirmacion" disabled="true">
+      <label class="form-check-label" for="requiereConfirmacion">
+        Se requiere confirmacion.
+      </label>
+    </div>
+
+       
+
+        <!-- Campo: Activo (opcional)
+    <div class="form-check mb-4">
+      <input 
+        class="form-check-input" 
+        type="checkbox" 
+        id="activo" 
+        name="activo"
+        [(ngModel)]="formModel.activo">
+      <label class="form-check-label" for="activo">
+        Activo
+      </label>
+    </div>-->
+
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary me-2"  data-bs-dismiss="modal" >Cancelar</button>
+
+            <!--<button type="submit" class="btn btn-primary" [disabled]="formFormaPago.invalid">
+                {{formModel.idFormaPago ? 'Guardar cambios' : ''}}
+            </button>-->
+        </div>
+    </form>
+</div>

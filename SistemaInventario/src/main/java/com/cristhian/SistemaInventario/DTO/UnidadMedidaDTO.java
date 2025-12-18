@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public class UnidadMedidaDTO {
 
+    private int idUnidadMedida;
     @NotBlank
     private String nombreMedida;
 
@@ -18,9 +19,18 @@ public class UnidadMedidaDTO {
 
     // 👉 Constructor desde entidad (para mapear entidad → DTO)
     public UnidadMedidaDTO(UnidadMedida entidad) {
+        this.idUnidadMedida = entidad.getIdUnidadMedida();
         this.nombreMedida = entidad.getNombreMedida();
         this.sigla = entidad.getSigla();
         this.activo = entidad.isActivo();
+    }
+
+    public int getIdUnidadMedida() {
+        return idUnidadMedida;
+    }
+
+    public void setIdUnidadMedida(int idUnidadMedida) {
+        this.idUnidadMedida = idUnidadMedida;
     }
 
     public boolean isActivo() {

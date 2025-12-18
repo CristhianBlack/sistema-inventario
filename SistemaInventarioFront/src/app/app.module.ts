@@ -23,6 +23,22 @@ import { PersonaListaComponent } from './Component/persona-lista/persona-lista.c
 import { PersonaFormComponent } from './Component/persona-form/persona-form.component';
 import { RolPersonaListaComponent } from './Component/rol-persona-lista/rol-persona-lista.component';
 import { RolPersonaFormComponent } from './Component/rol-persona-form/rol-persona-form.component';
+import { UnidadMedidaListaComponent } from './Component/unidad-medida-lista/unidad-medida-lista.component';
+import { UnidadMedidaFormComponent } from './Component/unidad-medida-form/unidad-medida-form.component';
+import { ProveedorListaComponent } from './Component/proveedor-lista/proveedor-lista.component';
+import { ProveedorFormComponent } from './Component/proveedor-form/proveedor-form.component';
+import { ProductoListaComponent } from './Component/producto-lista/producto-lista.component';
+import { ProductoFormComponent } from './Component/producto-form/producto-form.component';
+import { CompraListComponent } from './Component/compra-list/compra-list.component';
+import { CompraFormComponent } from './Component/compra-form/compra-form.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { KardexListaComponent } from './Component/kardex-lista/kardex-lista.component';
+import { MovimientoInventarioListComponent } from './Component/movimiento-inventario-list/movimiento-inventario-list.component';
+import { FormaPagoListaComponent } from './Component/forma-pago-lista/forma-pago-lista.component';
+import { FormaPagoFormComponent } from './Component/forma-pago-form/forma-pago-form.component';
+
+
+
 
 
 
@@ -41,7 +57,21 @@ import { RolPersonaFormComponent } from './Component/rol-persona-form/rol-person
     PersonaListaComponent,
     PersonaFormComponent,
     RolPersonaListaComponent,
-    RolPersonaFormComponent
+    RolPersonaFormComponent,
+    UnidadMedidaListaComponent,
+    UnidadMedidaFormComponent,
+    ProveedorListaComponent,
+    ProveedorFormComponent,
+    ProductoListaComponent,
+    ProductoFormComponent,
+    CompraListComponent,
+    CompraFormComponent,
+    KardexListaComponent,
+    MovimientoInventarioListComponent,
+    FormaPagoListaComponent,
+    FormaPagoFormComponent,
+    
+    
   ],
   imports: [
     BrowserModule,
@@ -49,7 +79,8 @@ import { RolPersonaFormComponent } from './Component/rol-persona-form/rol-person
     BrowserAnimationsModule , //módulo de animaciones requerido 
     ToastrModule.forRoot ( ),
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

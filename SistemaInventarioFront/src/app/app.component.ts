@@ -20,5 +20,12 @@ export class AppComponent implements OnInit {
     this.darkMode = !this.darkMode;
     localStorage.setItem('darkMode', String(this.darkMode));
   }
+
+  cerrarSubmenu() {
+  const submenu = document.getElementById('collapseProducto');
+  if (submenu) {
+    submenu.classList.remove('show');
+  }
+}
 }
 

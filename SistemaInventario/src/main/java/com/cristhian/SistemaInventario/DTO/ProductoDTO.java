@@ -1,8 +1,10 @@
 package com.cristhian.SistemaInventario.DTO;
 
 import com.cristhian.SistemaInventario.Modelo.Categoria;
+import com.cristhian.SistemaInventario.Modelo.Producto;
 import com.cristhian.SistemaInventario.Modelo.Proveedor;
 import com.cristhian.SistemaInventario.Modelo.UnidadMedida;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -10,6 +12,7 @@ import java.util.Date;
 
 public class ProductoDTO {
 
+    private int idProducto;
     private String codigoProducto;
 
     private  String nombreProducto;
@@ -28,11 +31,59 @@ public class ProductoDTO {
 
     private boolean activo;
 
+    @JsonAlias({ "categoria", "idCategoria" })
     private Integer idCategoria;
 
+    @JsonAlias({ "unidadMedida", "idUnidadMeida" })
     private Integer idUnidadMedida;
 
+    @JsonAlias({ "proveedor", "idProveedor" })
     private Integer idProveedor;
+
+    public ProductoDTO() {
+    }
+
+    public ProductoDTO(Producto producto){
+        this.idProducto = producto.getIdProducto();
+        this.codigoProducto = producto.getCodigoProducto();
+        this.nombreProducto = producto.getNombreProducto();
+        this.precioCompra = producto.getPrecioCompra();
+        this.precioVenta = producto.getPrecioVenta();
+        this.stock = producto.getStock();
+        this.stockMinimo = producto.getStockMinimo();
+        this.descripcion = producto.getDescripcion();
+        this.fechaCreacion = producto.getFechaCreacion();
+        this.activo = producto.isActivo();
+
+        // Enviamos el ID para no exponer objetos completos
+        this.idCategoria = producto.getCategoria() != null
+                ? producto.getCategoria().getIdCategoria()
+                : null;
+
+        this.idUnidadMedida = producto.getUnidadMedida() != null
+                ? producto.getUnidadMedida().getIdUnidadMedida()
+                : null;
+
+        this.idProveedor = producto.getProveedor() != null
+                ? producto.getProveedor().getIdProveedor()
+                : null;
+    }
+
+    public int getIdProducto() {
+        return idProducto;
+    }
+
+    public void setIdProducto(int idProducto) {
+        this.idProducto = idProducto;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
 
     public String getCodigoProducto() {
         return codigoProducto;

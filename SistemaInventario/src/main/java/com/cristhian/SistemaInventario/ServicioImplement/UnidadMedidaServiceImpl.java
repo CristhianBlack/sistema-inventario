@@ -5,6 +5,7 @@ import com.cristhian.SistemaInventario.Excepciones.DuplicadoException;
 import com.cristhian.SistemaInventario.Excepciones.RecursoNoEncontradoException;
 import com.cristhian.SistemaInventario.Excepciones.ValidacionException;
 import com.cristhian.SistemaInventario.Mensaje.Mensaje;
+import com.cristhian.SistemaInventario.Modelo.Ciudad;
 import com.cristhian.SistemaInventario.Modelo.UnidadMedida;
 import com.cristhian.SistemaInventario.Repositorio.UnidadMedidaRepository;
 import com.cristhian.SistemaInventario.Service.IUnidadMedidaService;
@@ -50,7 +51,21 @@ public class UnidadMedidaServiceImpl implements IUnidadMedidaService {
             throw new ValidacionException("El nombre de la unidad es obligatorio");
         }
 
-        if (unidadMedidaRepository.existsByNombreMedidaIgnoreCase(nombre)) {
+        Optional<UnidadMedida> unidadExistente = unidadMedidaRepository.findByNombreMedidaIgnoreCase(nombre.trim());
+
+        // Si existe la unidad
+        if (unidadExistente.isPresent()) {
+            UnidadMedida unidad = unidadExistente.get();
+
+            // Si existe pero está inactiva → Reactivar
+            if (!unidad.isActivo()) {
+                logger.info("Unidad encontrada inactiva. Se activará nuevamente.");
+                unidad.setActivo(true);
+                return unidadMedidaRepository.save(unidad);   // ✔ IMPORTANTE: retornar
+            }
+
+            // Si ya existe y está activa → Error
+            logger.info("La unidad ya existe y está activa.");
             throw new DuplicadoException("Ya existe una unidad de medida con ese nombre");
         }
 

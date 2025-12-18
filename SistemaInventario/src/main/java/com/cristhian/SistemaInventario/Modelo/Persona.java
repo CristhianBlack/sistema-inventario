@@ -58,6 +58,10 @@ public class Persona {
     @JsonIgnore
     private List<PersonaRol> personaRoles = new ArrayList<>();
 
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("persona") //  evita recursión infinita
+    private List<Venta> ventas = new ArrayList<>();
+
     @Column(nullable = false)
     private boolean activo = true;
 

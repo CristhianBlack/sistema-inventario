@@ -23,8 +23,5 @@ public interface IPersonaService {
     Optional<Persona> buscarPorId(Integer id);
 
     void eliminarPersona(Integer id);
-
-
-
-
+    List<PersonaDTO> listarPersonasConRolProveedor();
 }

@@ -1,0 +1,213 @@
+<!--<div class="container">
+  <form (ngSubmit)="onSubmit(formCompra)" #formCompra="ngForm" novalidate>
+    
+     Título dinámico 
+    <div class="text-center mb-4">
+      <h4 class="fw-bold"> <i class="bi bi-tags-fill text-white fs-4 me-2"></i>
+        {{ formModel.idCompra ? 'Editar Compra' : 'Nueva Compra' }}
+      </h4>
+    </div>
+
+     Campo: total compra 
+    <div class="mb-3">
+      <label for="total" class="form-label">Total de Compra</label>
+      <input 
+        type="text"
+        id="total"
+        name="total"
+        class="form-control"
+        [(ngModel)]="formModel.total"
+        [ngModelOptions]="{standalone: true}"
+        required
+        minlength="3"
+        placeholder="Ej: $25.000">
+
+      <!-- Mensajes de error 
+      <div *ngIf="formCompra.submitted && !formModel.total" class="text-danger small mt-1">
+        El total de compra es obligatorio.
+      </div>
+    </div>
+
+    <!-- proveedores 
+        <div class="col-md-6">
+          <label class="form-label">Proveedor del Producto</label>
+          <select
+            class="form-select"
+            name="idProveedor"
+            [(ngModel)]="formModel.idProveedor"
+            required
+          >
+            <option [ngValue]="null" disabled>Seleccione...</option>
+            <option *ngFor="let proveedor of proveedores" [ngValue]="proveedor.idProveedor">
+              {{ proveedor.nombre }} {{proveedor.apellido}} {{proveedor.segundoApellido}}
+            </option>
+          </select>
+        </div>
+
+    
+
+    <!-- Botones 
+    <div class="d-flex justify-content-end">
+      <button 
+        type="button" 
+        class="btn btn-secondary me-2"
+        data-bs-dismiss="modal" >
+        Cancelar
+      </button>
+
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="formCompra.invalid">
+        {{ formModel.idCompra ? 'Guardar cambios' : 'Agregar Compra' }}
+      </button>
+    </div>
+
+  </form>
+</div>-->
+
+<div class="container">
+  <form (ngSubmit)="onSubmit(formCompra)" #formCompra="ngForm" novalidate>
+
+    <!-- Título dinámico -->
+    <div class="text-center mb-4">
+      <h4 class="fw-bold">
+        <i class="bi bi-tags-fill text-white fs-4 me-2"></i>
+        {{ formModel.idCompra ? 'Editar Compra' : 'Nueva Compra' }}
+      </h4>
+    </div>
+
+    <!-- Campo: Proveedor -->
+    <div class="mb-4">
+      <label class="form-label">Proveedor del Producto</label>
+      <select
+        class="form-select"
+        name="idProveedor"
+        [(ngModel)]="formModel.idProveedor"
+        required 
+        [disabled]="modoSoloLectura">
+      >
+        <option [ngValue]="null" disabled>Seleccione...</option>
+        <option *ngFor="let proveedor of proveedores" [ngValue]="proveedor.idProveedor">
+          {{ proveedor.nombre }} {{ proveedor.apellido }} {{ proveedor.segundoApellido }}
+        </option>
+      </select>
+    </div>
+
+    <button type="button" class="btn btn-gradient px-4 shadow-sm "  (click)="abrirModalProducto()"
+  [disabled]="modoSoloLectura">
+      <i class="bi bi-plus-circle me-2"></i> Nuevo Producto</button>
+
+    <!-- ========================= -->
+    <!-- AGREGAR PRODUCTO -->
+    <!-- ========================= -->
+    <div class="card bg-dark text-white p-3 mb-4 mt-3">
+      <h5 class="mb-3">Agregar Productos a la Compra</h5>
+
+      <div class="row g-3">
+
+        <!-- Producto -->
+        <div class="col-md-5">
+          <label class="form-label">Producto</label>
+          <select class="form-select" [(ngModel)]="productoSeleccionado" [ngModelOptions]="{standalone: true}"
+            [disabled]="modoSoloLectura">
+            <option value="">Seleccione...</option>
+            <option *ngFor="let p of productos" [ngValue]="p">
+              {{ p.nombreProducto }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Cantidad -->
+        <div class="col-md-3">
+          <label class="form-label">Cantidad</label>
+          <input type="number" class="form-control"
+            [(ngModel)]="cantidad" [ngModelOptions]="{standalone: true}" 
+  [disabled]="modoSoloLectura">
+        </div>
+
+        <!-- Precio -->
+        <div class="col-md-3">
+          <label class="form-label">Precio</label>
+          <input type="number" class="form-control"
+            [(ngModel)]="precio" [ngModelOptions]="{standalone: true}"  
+  [disabled]="modoSoloLectura">
+
+  <!-- Texto formateado con comas -->
+  <div class="mt-1 text-muted" *ngIf="precio">
+    {{ precio | number:'1.0-0' }}
+  </div>
+        </div>
+
+        <!-- Botón agregar -->
+        <div class="col-md-1 d-flex align-items-end">
+          <button type="button" class="btn btn-primary w-100" (click)="agregarItem()"
+          [disabled]="modoSoloLectura">
+            +
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================= -->
+    <!-- TABLA DETALLE -->
+    <!-- ========================= -->
+    <table class="table table-dark table-striped align-middle" *ngIf="detalleCompra.length > 0">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio</th>
+          <th>Subtotal</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let item of detalleCompra; let i = index">
+          <td>{{ item.nombreProducto }}</td>
+          <td>{{ item.cantidad }}</td>
+          <td>{{ item.precio | number:'1.2-2'}}</td>
+          <td>{{ item.subtotal | number:'1.2-2'}}</td>
+          <td>
+            <button type="button" class="btn btn-warning btn-sm me-3" 
+            (click)="editarItem(i)"      
+            [disabled]="modoSoloLectura"> <i class="bi bi-pencil-square me-1"></i> </button>
+            <button type="button" class="btn btn-danger btn-sm" 
+            (click)="eliminarItem(i)"
+            [disabled]="modoSoloLectura"><i class="bi bi-trash me-1"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ========================= -->
+    <!-- TOTAL -->
+    <!-- ========================= -->
+    <div class="text-end fs-5 fw-bold mt-3" *ngIf="total > 0">
+      Total: {{ total | currency:'COP' : 'symbol' }}
+    </div>
+
+    <br>
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-end">
+      <button 
+        type="button" 
+        class="btn btn-secondary me-2"
+        data-bs-dismiss="modal">
+        Cancelar
+      </button>
+
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="formCompra.invalid || detalleCompra.length === 0 || modoSoloLectura">
+        {{ formModel.idCompra ? 'Guardar cambios' : 'Agregar Compra' }}
+      </button>
+    </div>
+
+  </form>
+</div>
+

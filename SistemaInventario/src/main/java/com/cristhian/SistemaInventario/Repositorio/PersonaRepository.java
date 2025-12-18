@@ -3,6 +3,8 @@ package com.cristhian.SistemaInventario.Repositorio;
 import com.cristhian.SistemaInventario.Modelo.Ciudad;
 import com.cristhian.SistemaInventario.Modelo.Persona;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,4 +17,7 @@ public interface PersonaRepository extends JpaRepository<Persona, Integer> {
     List<Persona> findByActivoTrue();
 
     Optional<Persona> findByDocumentoPersona(String documentoPersona);
+
+
+
 }

@@ -308,6 +308,9 @@ export class PersonaFormComponent implements OnInit, OnChanges {
   tipoPersonas: TipoPersona[] = [];
   listaRoles: any[] = [];
 
+  esJuridica: boolean = false;
+
+
   constructor(
     private personaService: PersonaService,
     private toastr: ToastrService,
@@ -349,6 +352,8 @@ export class PersonaFormComponent implements OnInit, OnChanges {
 ngOnChanges(changes: SimpleChanges): void {
   if (changes['persona'] && this.persona) {
     this.asignarPersonaAlFormulario(); // ✔ Solo asignar datos
+    // Asegurar que si es jurídica, deshabilite los apellidos
+    this.onTipoPersonaChange();
   }
 
   if (changes['persona'] && !this.persona) {
@@ -497,4 +502,17 @@ ngOnChanges(changes: SimpleChanges): void {
 
   this.formModel.idsRoles = [];
   }
+
+  private readonly ID_PERSONA_JURIDICA = 2;
+
+onTipoPersonaChange() {
+  this.esJuridica = this.formModel.idTipoPersona === this.ID_PERSONA_JURIDICA; // el 2 es el id de la base de datos que tiene persona juridica
+
+  if (this.esJuridica) {
+    this.formModel.apellido = "";
+    this.formModel.segundoApellido = "";
+  }
+}
+
+
 }

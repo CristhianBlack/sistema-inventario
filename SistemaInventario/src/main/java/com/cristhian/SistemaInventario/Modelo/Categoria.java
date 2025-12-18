@@ -3,6 +3,7 @@ package com.cristhian.SistemaInventario.Modelo;
 import com.cristhian.SistemaInventario.DTO.CategoriaDTO;
 import com.cristhian.SistemaInventario.DTO.UnidadMedidaDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.persistence.OneToMany;
 
@@ -27,8 +28,8 @@ public class Categoria {
     private boolean activo = true;
 
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Producto> productos;
+    @JsonIgnoreProperties("categoria") // evita recursión infinita
+    private List<Producto> productos = new ArrayList<>();
 
     public Categoria() {
     }

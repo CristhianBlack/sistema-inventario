@@ -1,0 +1,93 @@
+<div class="container py-4 persona-container">
+  <!-- Encabezado -->
+  <div class="text-center mb-5">
+    <h3 class="fw-bold text-gradient mb-2">
+      <i class="fa-solid fa-city text-white fs-4 me-2"></i>Listado de proveedores
+    </h3>
+    <p class="text-muted mb-4">Consulta rápida de proveedores</p>
+
+    <button class="btn btn-gradient px-4 shadow-sm" (click)="abrirModalEditar()">
+      <i class="bi bi-plus-circle me-2"></i> Nuevo Proveedor
+    </button>
+  </div>
+
+  <!-- 🔹 Loader -->
+  <div *ngIf="loading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-3 text-muted">Cargando proveedores...</p>
+  </div>
+
+  <!--  Si no hay categoria -->
+  <div *ngIf="!loading && proveedoresPersona.length === 0" class="alert alert-info text-center shadow-sm mt-4">
+    <i class="bi bi-info-circle me-2"></i> No hay proveedores registrados.
+  </div>
+
+  <!--  Tarjetas -->
+  <div class="row g-4 justify-content-center" *ngIf="!loading && proveedoresPersona.length > 0">
+    <div class="col-md-4 col-sm-6" *ngFor="let proveedor of proveedoresPersona">
+
+      <div class="card persona-card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-body p-4">
+
+          <!--  Cabecera de la tarjeta -->
+          <div class="d-flex align-items-center mb-3">
+            <div class="avatar bg-gradient me-3">
+              <i class="fa-solid fa-city text-white fs-5 "></i>
+            </div>
+            <div>
+              <h5 class="fw-semibold text-light mb-0">{{ proveedor.nombre }} {{proveedor.apellido}} {{proveedor.segundoApellido}}</h5>
+            </div>
+          </div>
+          <p class="card-text text-muted small">
+          <strong>Documento:</strong> {{ proveedor.documentoPersona }} <br>
+          <strong>Tel:</strong> {{ proveedor.telefono }} <br>
+          <strong>Email:</strong> {{ proveedor.email }} <br>
+          <strong>Dirección:</strong> {{ proveedor.direccion }}<br>
+          <strong>Descripcion:</strong> {{ proveedor.descripcionProveedor }}
+        </p>
+          
+            <div class="d-flex gap-2 justify-content-center">
+              <button class="btn btn-outline-warning btn-sm d-flex align-items-center px-3"
+              (click)="abrirModalEditar(proveedor)">
+                <i class="bi bi-pencil-square me-1"></i> Editar
+              </button>
+              <button class="btn btn-outline-danger btn-sm d-flex align-items-center px-3"
+                      (click)="eliminarProveedor(proveedor.idProveedor!)">
+                <i class="bi bi-trash me-1"></i> Eliminar
+              </button>
+            </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+<!-- 🔹 Modal -->
+  <div #modalProveedor class="modal fade" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content modal-dark rounded-4 shadow-lg">
+      
+      <!-- 🔹 Header fijo -->
+      <div class="modal-header border-0 pb-0 sticky-top">
+        <h5 class="modal-title text-white fw-bold">
+          <i class="fa-solid fa-city text-white fs-4 me-2"></i>
+          {{ proveedorSeleccionado ? 'Editar Proveedor' : 'Agregar Proveedor' }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <!-- 🔹 Cuerpo scrollable -->
+      <div class="modal-body modal-scroll">
+        <app-proveedor-form
+            [proveedor]="proveedorSeleccionado"
+            (formGuardado)="cerrarModalYActualizarLista()">
+          </app-proveedor-form>
+      </div>
+
+      <!-- 🔹 Footer fijo -->
+      <div class="modal-footer border-0 pt-0 sticky-bottom">
+        <small class="text-muted">Sistema de Inventario © 2025</small>
+      </div>
+
+    </div>
+  </div>
+</div>

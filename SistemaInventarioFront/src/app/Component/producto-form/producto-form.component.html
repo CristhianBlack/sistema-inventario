@@ -1,0 +1,176 @@
+<div class="container">
+  <form (ngSubmit)="onSubmit(formProducto)" #formProducto="ngForm" novalidate>
+    
+    <!-- Título dinámico -->
+    <div class="text-center mb-4">
+      <h4 class="fw-bold"> <i class="bi bi-tags-fill text-white fs-4 me-2"></i>
+        {{ formModel.idProducto ? 'Editar Producto' : 'Nuevo Producto' }}
+      </h4>
+    </div>
+
+    <!-- Campo: Nombre -->
+    <div class="mb-3">
+      <label for="nombreProducto" class="form-label">Nombre de Producto</label>
+      <input 
+        type="text"
+        id="nombreProducto"
+        name="nombreProducto"
+        class="form-control"
+        [(ngModel)]="formModel.nombreProducto"
+        [ngModelOptions]="{standalone: true}"
+        required
+        minlength="3"
+        placeholder="Ej: Celular Xiaomi">
+
+      <!-- Mensajes de error -->
+      <div *ngIf="formProducto.submitted && !formModel.nombreProducto" class="text-danger small mt-1">
+        El nombre es obligatorio.
+      </div>
+    </div>
+
+    <!-- Campo: codigo -->
+    <div class="mb-3">
+      <label for="codigoProducto" class="form-label">Codigo de Producto</label>
+      <input 
+        type="text"
+        id="codigoProducto"
+        name="codigoProducto"
+        class="form-control"
+        [(ngModel)]="formModel.codigoProducto"
+        [ngModelOptions]="{standalone: true}"
+        required
+        minlength="3"
+        placeholder="Ej: 0001">
+
+      <!-- Mensajes de error -->
+      <div *ngIf="formProducto.submitted && !formModel.codigoProducto" class="text-danger small mt-1">
+        El codigo es obligatorio.
+      </div>
+    </div>
+
+    <!-- Campo: precio compra -->
+    <div class="mb-3">
+      <label for="precioCompra" class="form-label">Precio de Compra</label>
+      <input 
+        type="text"
+        id="precioCompra"
+        name="precioCompra"
+        class="form-control"
+        [(ngModel)]="formModel.precioCompra"
+        [ngModelOptions]="{standalone: true}"
+        required
+        minlength="3"
+        placeholder="Ej: $25.000">
+
+      <!-- Mensajes de error -->
+      <div *ngIf="formProducto.submitted && !formModel.precioCompra" class="text-danger small mt-1">
+        El precio de compra es obligatorio.
+      </div>
+    </div>
+
+    <!-- Campo: precio de venta -->
+    <div class="mb-3">
+      <label for="precioVenta" class="form-label">Precio de Venta</label>
+      <input 
+        type="text"
+        id="precioVenta"
+        name="precioVenta"
+        class="form-control"
+        [(ngModel)]="formModel.precioVenta"
+        [ngModelOptions]="{standalone: true}"
+        required
+        minlength="3"
+        placeholder="Ej: $28.000">
+
+      <!-- Mensajes de error -->
+      <div *ngIf="formProducto.submitted && !formModel.precioVenta" class="text-danger small mt-1">
+        El precio de venta es obligatorio.
+      </div>
+    </div>
+
+    <!-- Categoria -->
+        <div class="col-md-6">
+          <label class="form-label">Categoria del Producto</label>
+          <select
+            class="form-select"
+            name="idCategoria"
+            [(ngModel)]="formModel.idCategoria"
+            required
+          >
+            <option [ngValue]="null" disabled>Seleccione...</option>
+            <option *ngFor="let categoria of categorias" [ngValue]="categoria.idCategoria">
+              {{ categoria.nombreCategoria }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Unidad Medida -->
+        <div class="col-md-6">
+          <label class="form-label">Unidad de Medida del Producto</label>
+          <select
+            class="form-select"
+            name="idUnidadMedida"
+            [(ngModel)]="formModel.idUnidadMedida"
+            required
+          >
+            <option [ngValue]="null" disabled>Seleccione...</option>
+            <option *ngFor="let unidad of unidadMedida" [ngValue]="unidad.idUnidadMedida">
+              {{ unidad.nombreMedida }}
+            </option>
+          </select>
+        </div>
+
+        <!-- proveedores -->
+        <div class="col-md-6">
+          <label class="form-label">Proveedor del Producto</label>
+          <select
+            class="form-select"
+            name="idProveedor"
+            [(ngModel)]="formModel.idProveedor"
+            required
+          >
+            <option [ngValue]="null" disabled>Seleccione...</option>
+            <option *ngFor="let proveedor of proveedores" [ngValue]="proveedor.idProveedor">
+              {{ proveedor.nombre }} {{proveedor.apellido}} {{proveedor.segundoApellido}}
+            </option>
+          </select>
+        </div>
+
+    <!-- Campo: Descripción -->
+    <div class="mb-3">
+      <label for="descripcion" class="form-label">Descripción</label>
+      <textarea
+        id="descripcion"
+        name="descripcion"
+        class="form-control"
+        [(ngModel)]="formModel.descripcion"
+        [ngModelOptions]="{standalone: true}"
+        required
+        rows="3"
+        placeholder="Breve descripción del producto">
+      </textarea>
+
+      <div *ngIf="formProducto.submitted && !formModel.descripcion" class="text-danger small mt-1">
+        La descripción es obligatoria.
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-end">
+      <button 
+        type="button" 
+        class="btn btn-secondary me-2"
+        data-bs-dismiss="modal" >
+        Cancelar
+      </button>
+
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="formProducto.invalid">
+        {{ formModel.idProducto ? 'Guardar cambios' : 'Agregar Producto' }}
+      </button>
+    </div>
+
+  </form>
+</div>
