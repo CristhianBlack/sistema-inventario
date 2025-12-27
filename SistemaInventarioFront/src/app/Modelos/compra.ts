@@ -6,7 +6,11 @@ export class Compra {
 
     fechaCompra : Date = new Date();
 
-    total : number = 0;
+    subTotalCompra : number = 0;
+    totalImpuestos : number = 0; 
+    totalCompra :number = 0;
+    estado : string = ""; // Pendiente, parcial , pagada
+    //pagos?: CompraPago[] | null;
 
     activo : boolean = true;
 

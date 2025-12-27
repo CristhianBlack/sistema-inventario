@@ -4,6 +4,7 @@ import com.cristhian.SistemaInventario.DTO.ImpuestoDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,18 +13,22 @@ public class Impuesto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int idImpuestos;
+    private int idImpuesto;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String nombreImpuesto;
+    private TipoImpuesto tipoImpuesto;
 
-    @Column(nullable = false)
-    private double valorImpuesto;
 
-    @Column(nullable = false)
-    private String tipoImpuesto;
+    // 0.19 = 19%
+    @Column(nullable = false, precision = 5, scale = 4)
+    private BigDecimal porcentaje;
 
     private boolean activo;
+
+    @OneToMany(mappedBy = "impuesto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("impuesto") //  evita recursión infinita
+    private List<Producto> productos = new ArrayList<>();
 
     /*@OneToMany(mappedBy = "impuesto", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("impuesto") //  evita recursión infinita
@@ -37,50 +42,33 @@ public class Impuesto {
     }
 
     public Impuesto(ImpuestoDTO impuestoDTO){
-        this.nombreImpuesto = impuestoDTO.getNombreImpuesto();
-        this.valorImpuesto = impuestoDTO.getValorImpuesto();
         this.tipoImpuesto = impuestoDTO.getTipoImpuesto();
+        this.porcentaje = impuestoDTO.getPorcentaje();
         this.activo = impuestoDTO.isActivo();
     }
 
-    public int getIdImpuestos() {
-        return idImpuestos;
+    public int getIdImpuesto() {
+        return idImpuesto;
     }
 
-    public void setIdImpuestos(int idImpuestos) {
-        this.idImpuestos = idImpuestos;
+    public void setIdImpuesto(int idImpuestos) {
+        this.idImpuesto = idImpuesto;
     }
 
-    public double getValorImpuesto() {
-        return valorImpuesto;
-    }
-
-    public void setValorImpuesto(double valorImpuesto) {
-        this.valorImpuesto = valorImpuesto;
-    }
-
-   /* public List<Venta> getVentas() {
-        return ventas;
-    }
-
-    public void setVentas(List<Venta> ventas) {
-        this.ventas = ventas;
-    }*/
-
-    public String getNombreImpuesto() {
-        return nombreImpuesto;
-    }
-
-    public void setNombreImpuesto(String nombreImpuesto) {
-        this.nombreImpuesto = nombreImpuesto;
-    }
-
-    public String getTipoImpuesto() {
+    public TipoImpuesto getTipoImpuesto() {
         return tipoImpuesto;
     }
 
-    public void setTipoImpuesto(String tipoImpuesto) {
+    public void setTipoImpuesto(TipoImpuesto tipoImpuesto) {
         this.tipoImpuesto = tipoImpuesto;
+    }
+
+    public BigDecimal getPorcentaje() {
+        return porcentaje;
+    }
+
+    public void setPorcentaje(BigDecimal porcentaje) {
+        this.porcentaje = porcentaje;
     }
 
     public boolean isActivo() {

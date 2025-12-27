@@ -11,7 +11,9 @@ public interface ICompraService {
     List<Compra> listarComprasActivas();
     Optional<Compra> BuscarCompraId(int id);
     public Compra guardarCompra(CompraDTO compraDTO);
-    public Compra actualizarCompra(int id, CompraDTO compraDTO);
+
     public void eliminarCompra(int id);
+
+    public void cancelarCompra(int id);
 
 }

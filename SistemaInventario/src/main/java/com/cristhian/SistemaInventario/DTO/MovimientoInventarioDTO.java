@@ -7,6 +7,7 @@ import jakarta.persistence.Column;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class MovimientoInventarioDTO {
 
@@ -19,7 +20,7 @@ public class MovimientoInventarioDTO {
 
     private String observacion;
 
-    private LocalDate fechaMovimiento;
+    private LocalDateTime fechaMovimiento;
 
     private Integer idProducto;
 
@@ -86,11 +87,11 @@ public class MovimientoInventarioDTO {
         this.observacion = observacion;
     }
 
-    public LocalDate getFechaMovimiento() {
+    public LocalDateTime getFechaMovimiento() {
         return fechaMovimiento;
     }
 
-    public void setFechaMovimiento(LocalDate fechaMovimiento) {
+    public void setFechaMovimiento(LocalDateTime fechaMovimiento) {
         this.fechaMovimiento = fechaMovimiento;
     }
 

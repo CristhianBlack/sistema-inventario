@@ -95,6 +95,7 @@ public class ProductoServiceImpl implements IProductoService {
         producto.setStock(0);
         producto.setStockMinimo(0);
 
+
         // Asignar relaciones
         producto.setCategoria(categoria);
         producto.setUnidadMedida(unidad);

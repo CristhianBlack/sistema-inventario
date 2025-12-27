@@ -153,6 +153,8 @@ import { ProveedorService } from 'src/app/Servicios/proveedor.service';
 import { ProductoFormComponent } from '../producto-form/producto-form.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalProductoService } from 'src/app/Servicios/modalproductoservice.service';
+import { Impuesto } from 'src/app/Modelos/impuesto';
+import { ImpuestoService } from 'src/app/Servicios/impuesto.service';
 
 @Component({
   selector: 'app-compra-form',
@@ -172,7 +174,8 @@ export class CompraFormComponent {
   // NUEVAS VARIABLES DETALLE
   // ============================
   productos: Producto[] = [];         // cargarás tu lista real después
-  productoSeleccionado: any = null;
+ productoSeleccionado : Producto | null = null;
+ impuestoSeleccionado: Impuesto | null = null;
 
   cantidad: number = 0;
   precio: number = 0;
@@ -187,6 +190,8 @@ export class CompraFormComponent {
 
   modoSoloLectura: boolean = false;
 
+  impuestos : Impuesto[]=[];
+
   // ============================
 
 
@@ -196,13 +201,14 @@ export class CompraFormComponent {
     private proveedorService: ProveedorService,
     private productoService : ProductoService,
     private dialog: MatDialog,
-    private modalProductoService : ModalProductoService
+    private modalProductoService : ModalProductoService,
+    private impuestoService : ImpuestoService
 
   ) {}
 
   ngOnInit(): void {
     this.cargarListas();
-    this.formModel.total = 0;
+    this.formModel.totalCompra = 0;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -224,11 +230,13 @@ export class CompraFormComponent {
   private cargarListas(): void {
     forkJoin({
       proveedores: this.proveedorService.listarProveedorPersona(),
-      productos: this.productoService.obtenerListaProductos()
+      productos: this.productoService.obtenerListaProductos(),
+      impuestos : this.impuestoService.listarImpuestos()
     }).subscribe({
       next: data => {
         this.proveedores = data.proveedores;
         this.productos = data.productos;
+        this.impuestos = data.impuestos
 
         if (this.compra) {
           this.asignarDatosAlFormulario();
@@ -251,14 +259,18 @@ export class CompraFormComponent {
     idProducto: d.idProducto,
     nombreProducto: d.nombreProducto,
     cantidad: d.cantidad,
-    precio: d.precioUnitario,
-    subtotal: d.subTotal
+    precioUnitario: d.precioUnitario,
+    subtotalLinea: d.subtotalLinea,
+    impuestoLinea: d.impuestoLinea,
+    totalLinea: d.totalLinea
   })) || [];
 
   this.calcularTotal();
 
   //activamos el modo lecutra
-  this.modoSoloLectura = this.formModel.idCompra ? true : false;
+    this.modoSoloLectura = this.formModel.estado === 'CONFIRMADA' ||
+  this.formModel.estado === 'PAGADA' ||
+  this.formModel.estado === 'CANCELADA';
 
   // mensaje informativo
   if (this.modoSoloLectura) {
@@ -281,12 +293,18 @@ export class CompraFormComponent {
   // ============================
 
   agregarItem() {
-    if (!this.productoSeleccionado || this.cantidad <= 0 || this.precio <= 0) {
+    if (!this.productoSeleccionado || this.cantidad <= 0 ) {
       this.toastr.warning("Complete todos los campos del detalle");
       return;
     }
 
-    const subtotal = this.cantidad * this.precio;
+    const precio = this.productoSeleccionado.precioVenta;
+      this.impuestoSeleccionado = this.obtenerImpuestoPorProducto(this.productoSeleccionado);
+
+    const impuestoPct = this.impuestoSeleccionado?.porcentaje ?? 0;
+      const subtotalLinea = precio * this.cantidad;
+      const impuestoValor = subtotalLinea * impuestoPct;
+      const totalLinea = subtotalLinea + impuestoValor;
 
   // Si estamos editando un ítem
   if (this.indiceEditando !== null) {
@@ -294,8 +312,10 @@ export class CompraFormComponent {
       idProducto: this.productoSeleccionado.idProducto,
       nombreProducto: this.productoSeleccionado.nombreProducto,
       cantidad: this.cantidad,
-      precio: this.precio,
-      subtotal
+      precioCompra: precio,
+      impuestoValor,
+      subtotalLinea,
+      totalLinea
     };
 
     this.indiceEditando = null;
@@ -306,8 +326,10 @@ export class CompraFormComponent {
       idProducto: this.productoSeleccionado.idProducto,
       nombreProducto: this.productoSeleccionado.nombreProducto,
       cantidad: this.cantidad,
-      precio: this.precio,
-      subtotal
+      precioUnitario: precio,
+      impuestoValor,
+      subtotalLinea,
+      totalLinea
     });
   }
 
@@ -325,8 +347,9 @@ export class CompraFormComponent {
   }
 
   calcularTotal() {
-    this.total = this.detalleCompra.reduce((sum, item) => sum + item.subtotal, 0);
-    this.formModel.total = this.total; // enviarlo al backend
+    this.total = this.detalleCompra.reduce((sum, item) => sum + item.totalLinea, 0);
+    console.log("Total ", this.total);
+    this.formModel.totalCompra = this.total; // enviarlo al backend
   }
 
 
@@ -337,13 +360,11 @@ export class CompraFormComponent {
   return {
     idCompra: this.formModel.idCompra ?? null,
     fechaCompra: this.formModel.fechaCompra ?? null,
-    total: this.formModel.total,
     idProveedor: Number(this.formModel.idProveedor),
 
     detalles: this.detalleCompra.map(item => ({
       cantidad: item.cantidad,
       precioUnitario: item.precio,
-      subTotal: item.subtotal,
       idProducto: item.idProducto
     }))
   };
@@ -369,7 +390,7 @@ export class CompraFormComponent {
 
     // EDITAR
     if (this.formModel.idCompra) {
-      this.compraService.editarCompra(this.formModel.idCompra, request)
+      this.compraService.obtenerCompraPorId(this.formModel.idCompra)
         .subscribe(() => {
           this.toastr.success('Compra actualizada correctamente');
           this.formGuardado.emit();
@@ -415,7 +436,16 @@ export class CompraFormComponent {
   const item = this.detalleCompra[i];
 
   this.indiceEditando = i;
-  this.productoSeleccionado = this.productos.find(p => p.idProducto === item.idProducto);
+
+  const producto = this.productos.find(
+    p => p.idProducto === item.idProducto
+  );
+
+  if (!producto) {
+    this.toastr.error('Producto no encontrado');
+    return;
+  }
+  this.productoSeleccionado = producto;
   this.cantidad = item.cantidad;
   this.precio = item.precio;
 }
@@ -431,6 +461,16 @@ abrirModalProducto() {
       }
     });
   }
+
+   obtenerImpuestoPorProducto(producto: Producto | null): Impuesto | null {
+  if (!producto || producto.idImpuesto == null) {
+    return null;
+  }
+
+  return this.impuestos.find(
+    i => i.idImpuesto === producto.idImpuesto
+  ) ?? null;
+}
 
 
 }

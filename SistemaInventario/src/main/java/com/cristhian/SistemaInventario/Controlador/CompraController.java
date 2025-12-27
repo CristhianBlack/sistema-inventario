@@ -54,14 +54,10 @@ public class CompraController {
         }
     }
 
-    @PutMapping("/Compras/{id}")
-    public ResponseEntity<?> actualizarCompra(@PathVariable int id, @RequestBody CompraDTO compraDTO){
-        try{
-            var actualizado = compraService.actualizarCompra(id, compraDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(new CompraDTO(actualizado));
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
-        }
+    @PutMapping("/Compras/{id}/cancelar")
+    public ResponseEntity<Void> cancelarVenta(@PathVariable int id) {
+        compraService.cancelarCompra(id);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/Compras/{id}")

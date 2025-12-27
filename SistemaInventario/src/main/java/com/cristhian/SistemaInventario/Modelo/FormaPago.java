@@ -34,6 +34,10 @@ public class FormaPago {
     @JsonIgnoreProperties("formaPago") // evita recursión infinita
     private List<VentaPago> ventaPagos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "formaPago", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("formaPago") // evita recursión infinita
+    private List<CompraPago> compraPagos = new ArrayList<>();
+
     public FormaPago() {
     }
 

@@ -43,7 +43,7 @@ public class FormaPagoController {
     }
 
     @PutMapping("/FormaPago/{id}")
-    public ResponseEntity<?> actualizarCiudad(@PathVariable int id, @RequestBody FormaPagoDTO formaPagoDTO){
+    public ResponseEntity<?> actualizarFormaPago(@PathVariable int id, @RequestBody FormaPagoDTO formaPagoDTO){
         try{
             var actualizado = formaPagoService.actualizarFormaPago(id, formaPagoDTO);
             return ResponseEntity.status(HttpStatus.OK).body(new FormaPagoDTO(actualizado));
@@ -54,7 +54,7 @@ public class FormaPagoController {
     }
 
     @DeleteMapping("/FormaPago/{id}")
-    public ResponseEntity<?> eliminarCiudad(@PathVariable int id){
+    public ResponseEntity<?> eliminarFormaPago(@PathVariable int id){
         try{
             formaPagoService.eliminarFormaPago(id);
             return ResponseEntity.status(HttpStatus.OK).body(new Mensaje("Forma de pago eliminada con éxito"));

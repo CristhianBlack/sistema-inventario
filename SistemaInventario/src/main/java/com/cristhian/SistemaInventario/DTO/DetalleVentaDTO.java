@@ -10,18 +10,26 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+import java.math.BigDecimal;
+
 public class DetalleVentaDTO {
 
     private int idDetalleVenta;
     private int cantidad;
-    private double precioUnitario;// Precio del producto al momento de la venta
-    private double descuento;// Descuento aplicado en la línea (valor absoluto)
-    private double subtotalLinea;// Subtotal sin impuesto
-    private double impuestoLinea;// Valor del impuesto aplicado en esta línea
-    private double totalLinea;// Total final de la línea
+    private BigDecimal precioUnitario;// Precio del producto al momento de la venta
+    private BigDecimal descuento;// Descuento aplicado en la línea (valor absoluto)
+    private BigDecimal subtotalLinea;// Subtotal sin impuesto
+    private BigDecimal
+            impuestoLinea;// Valor del impuesto aplicado en esta línea
+    private BigDecimal totalLinea;// Total final de la línea
     private Integer idVenta;
     private Integer idProducto;
     private Integer idImpuesto;
+    private String nombreProducto;
+    private BigDecimal porcentajeImpuesto;
+
+    public DetalleVentaDTO() {
+    }
 
     public DetalleVentaDTO(DetalleVenta detalleVenta){
         this.idDetalleVenta = detalleVenta.getIdDetalleVenta();
@@ -42,8 +50,18 @@ public class DetalleVentaDTO {
                 : null;
 
         this.idImpuesto = detalleVenta.getImpuesto() != null
-                ? detalleVenta.getImpuesto().getIdImpuestos()
+                ? detalleVenta.getImpuesto().getIdImpuesto()
                 : null;
+
+        if (detalleVenta.getProducto() != null) {
+            this.idProducto = detalleVenta.getProducto().getIdProducto();
+            this.nombreProducto = detalleVenta.getProducto().getNombreProducto();
+        }
+
+        if (detalleVenta.getImpuesto() != null) {
+            this.idImpuesto = detalleVenta.getImpuesto().getIdImpuesto();
+            this.porcentajeImpuesto = detalleVenta.getImpuesto().getPorcentaje();
+        }
 
     }
 
@@ -63,43 +81,43 @@ public class DetalleVentaDTO {
         this.cantidad = cantidad;
     }
 
-    public double getPrecioUnitario() {
+    public BigDecimal getPrecioUnitario() {
         return precioUnitario;
     }
 
-    public void setPrecioUnitario(double precioUnitario) {
+    public void setPrecioUnitario(BigDecimal precioUnitario) {
         this.precioUnitario = precioUnitario;
     }
 
-    public double getDescuento() {
+    public BigDecimal getDescuento() {
         return descuento;
     }
 
-    public void setDescuento(double descuento) {
+    public void setDescuento(BigDecimal descuento) {
         this.descuento = descuento;
     }
 
-    public double getSubtotalLinea() {
+    public BigDecimal getSubtotalLinea() {
         return subtotalLinea;
     }
 
-    public void setSubtotalLinea(double subtotalLinea) {
+    public void setSubtotalLinea(BigDecimal subtotalLinea) {
         this.subtotalLinea = subtotalLinea;
     }
 
-    public double getImpuestoLinea() {
+    public BigDecimal getImpuestoLinea() {
         return impuestoLinea;
     }
 
-    public void setImpuestoLinea(double impuestoLinea) {
+    public void setImpuestoLinea(BigDecimal impuestoLinea) {
         this.impuestoLinea = impuestoLinea;
     }
 
-    public double getTotalLinea() {
+    public BigDecimal getTotalLinea() {
         return totalLinea;
     }
 
-    public void setTotalLinea(double totalLinea) {
+    public void setTotalLinea(BigDecimal totalLinea) {
         this.totalLinea = totalLinea;
     }
 
@@ -125,5 +143,21 @@ public class DetalleVentaDTO {
 
     public void setIdImpuesto(Integer idImpuesto) {
         this.idImpuesto = idImpuesto;
+    }
+
+    public String getNombreProducto() {
+        return nombreProducto;
+    }
+
+    public void setNombreProducto(String nombreProducto) {
+        this.nombreProducto = nombreProducto;
+    }
+
+    public BigDecimal getPorcentajeImpuesto() {
+        return porcentajeImpuesto;
+    }
+
+    public void setPorcentajeImpuesto(BigDecimal porcentajeImpuesto) {
+        this.porcentajeImpuesto = porcentajeImpuesto;
     }
 }

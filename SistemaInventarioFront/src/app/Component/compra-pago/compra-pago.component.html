@@ -1,0 +1,126 @@
+<div class="card mt-3">
+
+  <div class="card-header fw-bold">
+    Pagos de la Compra
+  </div>
+
+  <div class="card-body">
+
+    <!-- Resumen -->
+    <p class="text-success">
+      <strong>Registro de pago correspondiente a la Compra # {{ codigoCompra }}</strong>
+    </p>
+
+    <p><strong>Total Compra:</strong> {{ totalCompra | currency:'COP' }}</p>
+    <p><strong>Total pagado:</strong> {{ totalPagado | currency:'COP' }}</p>
+    <p class="text-danger">
+      <strong>Saldo pendiente:</strong> {{ saldoPendiente | currency:'COP' }}
+    </p>
+    <p>
+      <strong>Estado de Compra:</strong> {{ estado }}
+    </p>
+
+    <hr>
+
+    <!-- Registro de pago -->
+    <div class="row g-2 mb-3 align-items-end">
+
+      <div class="col-md-3">
+        <label class="form-label">Monto</label>
+        <input type="number"
+               class="form-control"
+               placeholder="Monto"
+               min="1"
+               step="0.01"
+               [(ngModel)]="monto"
+               [ngModelOptions]="{ standalone: true }">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Estado del pago</label>
+        <select class="form-select"
+                [(ngModel)]="estadoPago"
+                [ngModelOptions]="{ standalone: true }">
+          <option [ngValue]="EstadoPago.PENDIENTE_CONFIRMACION">
+            Pendiente confirmación
+          </option>
+          <option [ngValue]="EstadoPago.CONFIRMADO">
+            Confirmado
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label">Forma de pago</label>
+        <select class="form-select"
+                [(ngModel)]="idFormaPago"
+                [ngModelOptions]="{ standalone: true }">
+          <option [ngValue]="null">Seleccione...</option>
+          <option *ngFor="let forma of formaPagos"
+                  [ngValue]="forma.idFormaPago">
+            {{ forma.nombreFormaPago }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <button class="btn btn-success w-100"
+                [disabled]="!monto || monto <= 0 || !idFormaPago"
+                (click)="registrarPago()">
+          Registrar
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Lista de pagos -->
+    <table class="table table-sm table-bordered">
+
+      <thead class="table-light">
+        <tr>
+          <th>Fecha</th>
+          <th>Monto</th>
+          <th>Estado</th>
+          <th style="width: 160px;">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let p of pagos; trackBy: trackByPago">
+
+          <td>{{ p.fechaPago | date:'shortDate' }}</td>
+
+          <td>{{ p.montoCompra | currency:'COP' }}</td>
+
+          <td>
+            <span class="badge"
+                  [ngClass]="{
+                    'bg-warning': p.estadoPago === EstadoPago.PENDIENTE_CONFIRMACION,
+                    'bg-success': p.estadoPago === EstadoPago.CONFIRMADO,
+                    'bg-danger': p.estadoPago === EstadoPago.RECHAZADO
+                  }">
+              {{ p.estadoPago.replace('_',' ') }}
+            </span>
+          </td>
+
+          <td>
+            <button *ngIf="p.estadoPago === EstadoPago.PENDIENTE_CONFIRMACION"
+                    class="btn btn-sm btn-success me-1"
+                    (click)="confirmarPago(p.idCompraPago!)">
+              Confirmar
+            </button>
+
+            <button *ngIf="p.estadoPago === EstadoPago.PENDIENTE_CONFIRMACION"
+                    class="btn btn-sm btn-danger"
+                    (click)="rechazarPago(p.idCompraPago!)">
+              Rechazar
+            </button>
+          </td>
+
+        </tr>
+      </tbody>
+
+    </table>
+
+  </div>
+</div>

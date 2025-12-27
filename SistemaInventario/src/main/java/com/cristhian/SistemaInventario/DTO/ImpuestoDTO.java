@@ -1,56 +1,50 @@
 package com.cristhian.SistemaInventario.DTO;
 
 import com.cristhian.SistemaInventario.Modelo.Impuesto;
+import com.cristhian.SistemaInventario.Modelo.TipoImpuesto;
 import jakarta.persistence.Column;
+
+import java.math.BigDecimal;
 
 public class ImpuestoDTO {
 
-    private int idImpuestos;
-    private String nombreImpuesto;
-    private double valorImpuesto;
-    private String tipoImpuesto;
+    private int idImpuesto;
+
+    private BigDecimal porcentaje;
+    private TipoImpuesto tipoImpuesto;
     private boolean activo;
 
     public ImpuestoDTO(){}
 
     public ImpuestoDTO(Impuesto impuesto){
-        this.idImpuestos = impuesto.getIdImpuestos();
-        this.nombreImpuesto = impuesto.getNombreImpuesto();
-        this.valorImpuesto = impuesto.getValorImpuesto();
+        this.idImpuesto = impuesto.getIdImpuesto();
+        this.porcentaje = impuesto.getPorcentaje();
         this.tipoImpuesto = impuesto.getTipoImpuesto();
         this.activo = impuesto.isActivo();
 
     }
 
-    public int getIdImpuestos() {
-        return idImpuestos;
+    public int getIdImpuesto() {
+        return idImpuesto;
     }
 
-    public void setIdImpuestos(int idImpuestos) {
-        this.idImpuestos = idImpuestos;
+    public void setIdImpuesto(int idImpuesto) {
+        this.idImpuesto = idImpuesto;
     }
 
-    public String getNombreImpuesto() {
-        return nombreImpuesto;
+    public BigDecimal getPorcentaje() {
+        return porcentaje;
     }
 
-    public void setNombreImpuesto(String nombreImpuesto) {
-        this.nombreImpuesto = nombreImpuesto;
+    public void setPorcentaje(BigDecimal porcentaje) {
+        this.porcentaje = porcentaje;
     }
 
-    public double getValorImpuesto() {
-        return valorImpuesto;
-    }
-
-    public void setValorImpuesto(double valorImpuesto) {
-        this.valorImpuesto = valorImpuesto;
-    }
-
-    public String getTipoImpuesto() {
+    public TipoImpuesto getTipoImpuesto() {
         return tipoImpuesto;
     }
 
-    public void setTipoImpuesto(String tipoImpuesto) {
+    public void setTipoImpuesto(TipoImpuesto tipoImpuesto) {
         this.tipoImpuesto = tipoImpuesto;
     }
 

@@ -56,7 +56,7 @@
         id="precioCompra"
         name="precioCompra"
         class="form-control"
-        [(ngModel)]="formModel.precioCompra"
+        [(ngModel)]="formModel.precioCompra" disabled="true"
         [ngModelOptions]="{standalone: true}"
         required
         minlength="3"
@@ -132,6 +132,22 @@
             <option [ngValue]="null" disabled>Seleccione...</option>
             <option *ngFor="let proveedor of proveedores" [ngValue]="proveedor.idProveedor">
               {{ proveedor.nombre }} {{proveedor.apellido}} {{proveedor.segundoApellido}}
+            </option>
+          </select>
+        </div>
+
+        <!-- impuestos -->
+        <div class="col-md-6">
+          <label class="form-label">Impuesto del Producto</label>
+          <select
+            class="form-select"
+            name="idImpuesto"
+            [(ngModel)]="formModel.idImpuesto"
+            required
+          >
+            <option [ngValue]="null" disabled>Seleccione...</option>
+            <option *ngFor="let impuesto of impuestos" [ngValue]="impuesto.idImpuesto">
+              {{ impuesto.tipoImpuesto }} {{impuesto.porcentaje * 100 +' %'}}
             </option>
           </select>
         </div>

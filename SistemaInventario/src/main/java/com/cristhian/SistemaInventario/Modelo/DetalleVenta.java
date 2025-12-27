@@ -4,6 +4,7 @@ import com.cristhian.SistemaInventario.DTO.DetalleVentaDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,24 +19,24 @@ public class DetalleVenta {
     private int cantidad;
 
     // Precio del producto al momento de la venta
-    @Column(nullable = false)
-    private double precioUnitario;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal precioUnitario;
 
     // Descuento aplicado en la línea (valor absoluto)
-    @Column(nullable = false)
-    private double descuento;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal descuento;
 
     // Subtotal sin impuesto
-    @Column(nullable = false)
-    private double subtotalLinea;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal subtotalLinea;
 
     // Valor del impuesto aplicado en esta línea
-    @Column(nullable = false)
-    private double impuestoLinea;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal impuestoLinea;
 
     // Total final de la línea
-    @Column(nullable = false)
-    private double totalLinea;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal totalLinea;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_venta")
@@ -80,29 +81,7 @@ public class DetalleVenta {
         this.cantidad = cantidad;
     }
 
-    public double getPrecioUnitario() {
-        return precioUnitario;
-    }
 
-    public void setPrecioUnitario(double precioUnitario) {
-        this.precioUnitario = precioUnitario;
-    }
-
-    public double getDescuento() {
-        return descuento;
-    }
-
-    public void setDescuento(double descuento) {
-        this.descuento = descuento;
-    }
-
-    public double getTotalLinea() {
-        return totalLinea;
-    }
-
-    public void setTotalLinea(double totalLinea) {
-        this.totalLinea = totalLinea;
-    }
 
     public Venta getVenta() {
         return venta;
@@ -128,19 +107,43 @@ public class DetalleVenta {
         this.impuesto = impuesto;
     }
 
-    public double getSubtotalLinea() {
+    public BigDecimal getPrecioUnitario() {
+        return precioUnitario;
+    }
+
+    public void setPrecioUnitario(BigDecimal precioUnitario) {
+        this.precioUnitario = precioUnitario;
+    }
+
+    public BigDecimal getDescuento() {
+        return descuento;
+    }
+
+    public void setDescuento(BigDecimal descuento) {
+        this.descuento = descuento;
+    }
+
+    public BigDecimal getSubtotalLinea() {
         return subtotalLinea;
     }
 
-    public void setSubtotalLinea(double subtotalLinea) {
+    public void setSubtotalLinea(BigDecimal subtotalLinea) {
         this.subtotalLinea = subtotalLinea;
     }
 
-    public double getImpuestoLinea() {
+    public BigDecimal getImpuestoLinea() {
         return impuestoLinea;
     }
 
-    public void setImpuestoLinea(double impuestoLinea) {
+    public void setImpuestoLinea(BigDecimal impuestoLinea) {
         this.impuestoLinea = impuestoLinea;
+    }
+
+    public BigDecimal getTotalLinea() {
+        return totalLinea;
+    }
+
+    public void setTotalLinea(BigDecimal totalLinea) {
+        this.totalLinea = totalLinea;
     }
 }

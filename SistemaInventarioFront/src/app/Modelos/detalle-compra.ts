@@ -4,8 +4,12 @@ export class DetalleCompra {
     cantidad : number = 0;
 
     precioUnitario : number = 0;
+    
+    subtotalLinea: number = 0;
+    
+     impuestoLinea: number = 0;
 
-    subTotal : number = 0;
+     totalLinea: number = 0;
 
     nombreProducto ?: String = "";
 

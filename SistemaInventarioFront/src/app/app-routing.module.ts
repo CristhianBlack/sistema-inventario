@@ -23,6 +23,12 @@ import { KardexListaComponent } from './Component/kardex-lista/kardex-lista.comp
 import { MovimientoInventarioListComponent } from './Component/movimiento-inventario-list/movimiento-inventario-list.component';
 import { FormaPagoListaComponent } from './Component/forma-pago-lista/forma-pago-lista.component';
 import { FormaPagoFormComponent } from './Component/forma-pago-form/forma-pago-form.component';
+import { ImpuestoFormComponent } from './Component/impuesto-form/impuesto-form.component';
+import { ImpuestoListaComponent } from './Component/impuesto-lista/impuesto-lista.component';
+import { VentaListaComponent } from './Component/venta-lista/venta-lista.component';
+import { VentaFormComponent } from './Component/venta-form/venta-form.component';
+import { VentaPagoFormComponent } from './Component/venta-pago-form/venta-pago-form.component';
+import { CompraPagoComponent } from './Component/compra-pago/compra-pago.component';
 
 
 const routes: Routes = [
@@ -58,6 +64,12 @@ const routes: Routes = [
   {path: 'MovimientoInventario', component: MovimientoInventarioListComponent},
   {path: 'FormaPago', component: FormaPagoListaComponent},
   {path: 'FormaPago/:id', component: FormaPagoFormComponent},
+  {path: 'Impuesto', component: ImpuestoListaComponent},
+  {path: 'Impuesto/:id', component: ImpuestoFormComponent},
+  {path: 'Ventas', component: VentaListaComponent},
+  {path: 'Impuesta/:id', component: VentaFormComponent},
+  {path: 'Ventapago/:id', component: VentaPagoFormComponent},
+  {path: 'CompraPago/:id', component: CompraPagoComponent},
   {path:'**', redirectTo:'Categorias', pathMatch:'full'}
 ];
 

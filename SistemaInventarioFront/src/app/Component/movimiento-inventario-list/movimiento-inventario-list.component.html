@@ -37,15 +37,39 @@
   </thead>
 
   <tbody>
-    <tr *ngFor="let movimiento of movimientoInventarios">
-      <td>{{ movimiento.fechaMovimiento }}</td>
+    <tr *ngFor="let movimiento of movimientoInventarios" [ngClass]="{
+    'table-success': movimiento.tipoMovimiento === 'ENTRADA',
+    'table-danger': movimiento.tipoMovimiento === 'SALIDA'
+  }">
+      <td>{{ movimiento.fechaMovimiento | date:'dd/MM/yyyy HH:mm'}}</td>
       <td>{{ movimiento.origenMovimiento }}</td>
-      <td class="fw-bold"
-      [ngClass]="{ 'text-success': movimiento.tipoMovimiento }"><i class="bi bi-arrow-up-circle-fill text-success fs-5"></i>
-        {{ movimiento.tipoMovimiento }}</td>
+      <td>
+  <span
+    class="d-flex align-items-center gap-1 fw-bold"
+    [ngClass]="{
+      'text-success': movimiento.tipoMovimiento === 'ENTRADA',
+      'text-danger': movimiento.tipoMovimiento === 'SALIDA'
+    }"
+  ><i class="bi"
+      [ngClass]="{
+        'bi-arrow-up-circle-fill': movimiento.tipoMovimiento === 'ENTRADA',
+        'bi-arrow-down-circle-fill': movimiento.tipoMovimiento === 'SALIDA'
+      }"
+    ></i>
+    {{ movimiento.tipoMovimiento }}
+  </span>
+</td>
       <td class="fw-bold" 
-      [ngClass]="{ 'text-danger': movimiento.cantidad}"> <i class="bi bi-arrow-down-circle-fill text-danger fs-5"></i>
-        {{ movimiento.cantidad }}</td>        
+      [ngClass]="{
+        'text-success': movimiento.tipoMovimiento === 'ENTRADA',
+        'text-danger': movimiento.tipoMovimiento === 'SALIDA'}"> 
+      <i class="bi"
+      [ngClass]="{
+        'bi-arrow-up-circle-fill': movimiento.tipoMovimiento === 'ENTRADA',
+        'bi-arrow-down-circle-fill': movimiento.tipoMovimiento === 'SALIDA'
+      }"
+    ></i> {{ movimiento.cantidad }}
+  </td>        
       <td>{{ movimiento.observacion }}</td>
       <td>{{ movimiento.idProducto }}</td>
       <td>{{ movimiento.idProveedor }}</td>

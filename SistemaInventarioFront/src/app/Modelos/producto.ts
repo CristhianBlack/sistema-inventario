@@ -1,3 +1,5 @@
+import { Impuesto } from "./impuesto";
+
 export class Producto {
 
     idProducto? :number;
@@ -14,5 +16,6 @@ export class Producto {
     // Relaciones
     idCategoria : number | null = null;
     idUnidadMedida : number | null = null;
-    idProveedor : number | null = null
+    idProveedor : number | null = null;
+    idImpuesto :number |null = null;
 }

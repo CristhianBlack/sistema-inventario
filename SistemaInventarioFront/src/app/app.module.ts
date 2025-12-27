@@ -36,6 +36,12 @@ import { KardexListaComponent } from './Component/kardex-lista/kardex-lista.comp
 import { MovimientoInventarioListComponent } from './Component/movimiento-inventario-list/movimiento-inventario-list.component';
 import { FormaPagoListaComponent } from './Component/forma-pago-lista/forma-pago-lista.component';
 import { FormaPagoFormComponent } from './Component/forma-pago-form/forma-pago-form.component';
+import { ImpuestoListaComponent } from './Component/impuesto-lista/impuesto-lista.component';
+import { ImpuestoFormComponent } from './Component/impuesto-form/impuesto-form.component';
+import { VentaListaComponent } from './Component/venta-lista/venta-lista.component';
+import { VentaFormComponent } from './Component/venta-form/venta-form.component';
+import { VentaPagoFormComponent } from './Component/venta-pago-form/venta-pago-form.component';
+import { CompraPagoComponent } from './Component/compra-pago/compra-pago.component';
 
 
 
@@ -70,6 +76,12 @@ import { FormaPagoFormComponent } from './Component/forma-pago-form/forma-pago-f
     MovimientoInventarioListComponent,
     FormaPagoListaComponent,
     FormaPagoFormComponent,
+    ImpuestoListaComponent,
+    ImpuestoFormComponent,
+    VentaListaComponent,
+    VentaFormComponent,
+    VentaPagoFormComponent,
+    CompraPagoComponent,
     
     
   ],

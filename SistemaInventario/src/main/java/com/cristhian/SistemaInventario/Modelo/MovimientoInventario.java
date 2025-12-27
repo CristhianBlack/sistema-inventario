@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class MovimientoInventario {
@@ -30,15 +31,15 @@ public class MovimientoInventario {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private LocalDate fechaMovimiento;
+    private LocalDateTime fechaMovimiento;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_prpducto")
+    @JoinColumn(name = "id_producto")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "movimientos"})
     private Producto producto;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_proveedor")
+    @JoinColumn(name = "id_proveedor", nullable = true)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "movimientos"})
     private Proveedor proveedor;
 
@@ -93,11 +94,11 @@ public class MovimientoInventario {
         this.observacion = observacion;
     }
 
-    public LocalDate getFechaMovimiento() {
+    public LocalDateTime getFechaMovimiento() {
         return fechaMovimiento;
     }
 
-    public void setFechaMovimiento(LocalDate fechaMovimiento) {
+    public void setFechaMovimiento(LocalDateTime fechaMovimiento) {
         this.fechaMovimiento = fechaMovimiento;
     }
 

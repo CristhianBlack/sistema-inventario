@@ -4,6 +4,7 @@ import com.cristhian.SistemaInventario.DTO.VentaPagoDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -14,7 +15,7 @@ public class VentaPago {
     private int idVentaPago;
 
     @Column(nullable = false)
-    private double monto;
+    private BigDecimal monto;
 
     @Column(nullable = false)
     private LocalDate fechaPago;
@@ -34,7 +35,7 @@ public class VentaPago {
     private FormaPago formaPago;
 
     @Column(nullable = true)
-    private int numeroCuotas; // Si es pago a cuotas
+    private Integer numeroCuotas; // Si es pago a cuotas
 
     @Column(nullable = true)
     private LocalDate fechaVencimientoCuota; // Vencimiento de la siguiente cuota
@@ -58,12 +59,12 @@ public class VentaPago {
         this.idVentaPago = idVentaPago;
     }
 
-    public double getMonto() {
-        return monto;
+    public void setMonto(BigDecimal monto) {
+        this.monto = monto;
     }
 
-    public void setMonto(double monto) {
-        this.monto = monto;
+    public BigDecimal getMonto() {
+        return monto;
     }
 
     public LocalDate getFechaPago() {
@@ -98,11 +99,11 @@ public class VentaPago {
         this.formaPago = formaPago;
     }
 
-    public int getNumeroCuotas() {
+    public Integer getNumeroCuotas() {
         return numeroCuotas;
     }
 
-    public void setNumeroCuotas(int numeroCuotas) {
+    public void setNumeroCuotas(Integer numeroCuotas) {
         this.numeroCuotas = numeroCuotas;
     }
 

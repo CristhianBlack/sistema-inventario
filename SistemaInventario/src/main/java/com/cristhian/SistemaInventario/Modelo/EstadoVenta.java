@@ -1,7 +1,9 @@
 package com.cristhian.SistemaInventario.Modelo;
 
 public enum EstadoVenta {
-    PENDDIENTE,
+    PENDIENTE,
+    CONFIRMADA,
     PARCIAL,
-    PAGADA
+    PAGADA,
+    CANCELADA
 }

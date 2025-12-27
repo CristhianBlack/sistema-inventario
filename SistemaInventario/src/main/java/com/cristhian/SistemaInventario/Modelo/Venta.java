@@ -3,8 +3,11 @@ package com.cristhian.SistemaInventario.Modelo;
 import com.cristhian.SistemaInventario.DTO.VentaDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,20 +18,21 @@ public class Venta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idVenta;
 
+    @CreationTimestamp
     @Column(nullable = false)
-    private LocalDate fechaVenta;
+    private LocalDateTime fechaVenta;
 
-    @Column(nullable = false)
-    private double subTotalVenta;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal subTotalVenta;
 
-    @Column(nullable = false)
-    private double totalImpuestos;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal totalImpuestos;
 
-    @Column(nullable = false)
-    private double totalVenta;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal totalVenta;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "estado", nullable = false, length = 20)
     private EstadoVenta estado; // Pendiente, parcial , pagada
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -63,36 +67,36 @@ public class Venta {
         this.idVenta = idVenta;
     }
 
-    public LocalDate getFechaVenta() {
+    public LocalDateTime getFechaVenta() {
         return fechaVenta;
     }
 
-    public void setFechaVenta(LocalDate fechaVenta) {
+    public void setFechaVenta(LocalDateTime fechaVenta) {
         this.fechaVenta = fechaVenta;
     }
 
-    public double getSubTotalVenta() {
+    public BigDecimal getSubTotalVenta() {
         return subTotalVenta;
     }
 
-    public void setSubTotalVenta(double subTotalVenta) {
+    public void setSubTotalVenta(BigDecimal subTotalVenta) {
         this.subTotalVenta = subTotalVenta;
     }
 
-    public double getTotalVenta() {
-        return totalVenta;
-    }
-
-    public void setTotalVenta(double totalVenta) {
-        this.totalVenta = totalVenta;
-    }
-
-    public double getTotalImpuestos() {
+    public BigDecimal getTotalImpuestos() {
         return totalImpuestos;
     }
 
-    public void setTotalImpuestos(double totalImpuestos) {
+    public void setTotalImpuestos(BigDecimal totalImpuestos) {
         this.totalImpuestos = totalImpuestos;
+    }
+
+    public BigDecimal getTotalVenta() {
+        return totalVenta;
+    }
+
+    public void setTotalVenta(BigDecimal totalVenta) {
+        this.totalVenta = totalVenta;
     }
 
     public EstadoVenta getEstado() {
@@ -120,10 +124,18 @@ public class Venta {
     }
 
     public List<VentaPago> getVentaPagos() {
-        return ventaPagos;
+        return ventaPagos  == null ? new ArrayList<>() : ventaPagos;
     }
 
     public void setVentaPagos(List<VentaPago> ventaPagos) {
         this.ventaPagos = ventaPagos;
+    }
+
+    public List<DetalleVenta> getDetalleVentas() {
+        return detalleVentas;
+    }
+
+    public void setDetalleVentas(List<DetalleVenta> detalleVentas) {
+        this.detalleVentas = detalleVentas;
     }
 }

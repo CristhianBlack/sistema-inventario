@@ -129,14 +129,22 @@
         <!-- Precio -->
         <div class="col-md-3">
           <label class="form-label">Precio</label>
-          <input type="number" class="form-control"
-            [(ngModel)]="precio" [ngModelOptions]="{standalone: true}"  
+          <input type="text" class="form-control"
+           [ngModel]="productoSeleccionado?.precioVenta"
+  (ngModelChange)="productoSeleccionado && (productoSeleccionado.precioVenta = $event)" [ngModelOptions]="{standalone: true}"  
   [disabled]="modoSoloLectura">
 
   <!-- Texto formateado con comas -->
   <div class="mt-1 text-muted" *ngIf="precio">
     {{ precio | number:'1.0-0' }}
   </div>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Impuesto</label>
+          <input type="text" class="form-control"
+            [value]="obtenerImpuestoPorProducto(productoSeleccionado)?.porcentaje || 0"  
+  [disabled]="modoSoloLectura">
         </div>
 
         <!-- Botón agregar -->
@@ -159,8 +167,11 @@
           <th>Producto</th>
           <th>Cantidad</th>
           <th>Precio</th>
+          <th>IVA %</th>
           <th>Subtotal</th>
-          <th></th>
+          <th>IVA</th>
+          <th>Total</th>
+          <th>Acciones</th>
         </tr>
       </thead>
 
@@ -168,8 +179,11 @@
         <tr *ngFor="let item of detalleCompra; let i = index">
           <td>{{ item.nombreProducto }}</td>
           <td>{{ item.cantidad }}</td>
-          <td>{{ item.precio | number:'1.2-2'}}</td>
-          <td>{{ item.subtotal | number:'1.2-2'}}</td>
+          <td>{{ item.precioUnitario | number }}</td>
+          <td>{{ item.ivaPorcentaje * 100 }}%</td>
+          <td>{{ item.subtotalLinea | number }}</td>
+          <td>{{ item.impuestoLinea | number }}</td>
+          <td>{{ item.totalLinea | number }}</td>
           <td>
             <button type="button" class="btn btn-warning btn-sm me-3" 
             (click)="editarItem(i)"      

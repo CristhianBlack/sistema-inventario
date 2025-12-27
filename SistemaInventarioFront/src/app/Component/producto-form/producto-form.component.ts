@@ -3,10 +3,12 @@ import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { forkJoin } from 'rxjs';
 import { Categoria } from 'src/app/Modelos/categoria';
+import { Impuesto } from 'src/app/Modelos/impuesto';
 import { Producto } from 'src/app/Modelos/producto';
 import { Proveedor } from 'src/app/Modelos/proveedor';
 import { UnidadMedida } from 'src/app/Modelos/unidad-medida';
 import { CategoriaService } from 'src/app/Servicios/categoria.service';
+import { ImpuestoService } from 'src/app/Servicios/impuesto.service';
 import { ProductoService } from 'src/app/Servicios/producto.service';
 import { ProveedorService } from 'src/app/Servicios/proveedor.service';
 import { UnidadMedidaService } from 'src/app/Servicios/unidad-medida.service';
@@ -26,6 +28,7 @@ export class ProductoFormComponent {
     categorias: Categoria[] = [];
     unidadMedida: UnidadMedida[] = [];
     proveedores: Proveedor[] = [];
+    impuestos : Impuesto[] = [];
   
   
     constructor(
@@ -33,7 +36,8 @@ export class ProductoFormComponent {
       private toastr: ToastrService,
       private categoriaService: CategoriaService,
       private unidadMedidaService: UnidadMedidaService,
-      private proveedorService: ProveedorService
+      private proveedorService: ProveedorService,
+      private impuestoService : ImpuestoService
     ) {}
   
     ngOnInit(): void {
@@ -58,11 +62,13 @@ export class ProductoFormComponent {
         categorias: this.categoriaService.obtenerListaCategoria(),
         unidadMedida: this.unidadMedidaService.obtenerListaUnidadMedida(),
         proveedores: this.proveedorService.listarProveedorPersona(),
+        impuestos: this.impuestoService.listarImpuestos()
       }).subscribe({
         next: data => {
           this.categorias = data.categorias;
           this.unidadMedida = data.unidadMedida;
           this.proveedores = data.proveedores;
+          this.impuestos = data.impuestos;
           
   
           if (this.producto) {
@@ -81,12 +87,14 @@ export class ProductoFormComponent {
       idCategoria: this.producto.idCategoria ?? null,
       idUnidadMedida: this.producto.idUnidadMedida ?? null,
       idProveedor: this.producto.idProveedor ?? null,
+      idImpuesto : this.producto.idImpuesto ?? null
     };
     console.log("FORM MODEL AL ABRIR EDITAR:", this.formModel);
     console.log("LISTAS:", {
       categorias: this.categorias,
       unidadMedida: this.unidadMedida,
-      proveedores: this.proveedores
+      proveedores: this.proveedores,
+      impuestos: this.impuestos
     });
   }
   
@@ -116,7 +124,8 @@ export class ProductoFormComponent {
     // NOMBRES CORRECTOS que espera tu DTO
     idCategoria : Number(this.formModel.idCategoria),
     idUnidadMedida : Number(this.formModel.idUnidadMedida),
-    idProveedor :  Number(this.formModel.idProveedor) 
+    idProveedor :  Number(this.formModel.idProveedor),
+    idImpuesto : Number(this.formModel.idImpuesto) 
       
     };
   }

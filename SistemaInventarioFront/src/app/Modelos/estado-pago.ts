@@ -1,0 +1,7 @@
+export enum EstadoPago {
+    CONFIRMADO = 'CONFIRMADO',
+    PENDIENTE_CONFIRMACION = 'PENDIENTE_CONFIRMACION',
+    RECHAZADO = 'RECHAZADO',
+    EN_CUOTAS ='EN_CUOTAS', // En proceso de pago a cuotas
+    CANCELADO = 'CANCELADO'
+}

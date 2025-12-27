@@ -7,6 +7,7 @@ import com.cristhian.SistemaInventario.Modelo.UnidadMedida;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -17,7 +18,7 @@ public class ProductoDTO {
 
     private  String nombreProducto;
 
-    private double precioCompra;
+    private BigDecimal precioCompra;
 
     private double precioVenta;
 
@@ -39,6 +40,8 @@ public class ProductoDTO {
 
     @JsonAlias({ "proveedor", "idProveedor" })
     private Integer idProveedor;
+    @JsonAlias({ "impuesto", "idImpuesto" })
+    private Integer idImpuesto;
 
     public ProductoDTO() {
     }
@@ -66,6 +69,10 @@ public class ProductoDTO {
 
         this.idProveedor = producto.getProveedor() != null
                 ? producto.getProveedor().getIdProveedor()
+                : null;
+
+        this.idImpuesto = producto.getImpuesto() != null
+                ? producto.getImpuesto().getIdImpuesto()
                 : null;
     }
 
@@ -101,11 +108,11 @@ public class ProductoDTO {
         this.nombreProducto = nombreProducto;
     }
 
-    public double getPrecioCompra() {
+    public BigDecimal getPrecioCompra() {
         return precioCompra;
     }
 
-    public void setPrecioCompra(double precioCompra) {
+    public void setPrecioCompra(BigDecimal precioCompra) {
         this.precioCompra = precioCompra;
     }
 
@@ -179,5 +186,13 @@ public class ProductoDTO {
 
     public void setIdProveedor(Integer idProveedor) {
         this.idProveedor = idProveedor;
+    }
+
+    public Integer getIdImpuesto() {
+        return idImpuesto;
+    }
+
+    public void setIdImpuesto(Integer idImpuesto) {
+        this.idImpuesto = idImpuesto;
     }
 }

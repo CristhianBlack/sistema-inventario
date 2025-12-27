@@ -1,0 +1,170 @@
+<div class="container">
+  <form (ngSubmit)="onSubmit(formVenta)" #formVenta="ngForm" novalidate>
+
+    <!-- Título dinámico -->
+    <div class="text-center mb-4">
+      <h4 class="fw-bold">
+        <i class="bi bi-tags-fill text-white fs-4 me-2"></i>
+        {{ formModel.idVenta ? 'Editar Venta' : 'Nueva Venta' }}
+      </h4>
+    </div>
+
+    <!-- Campo: Proveedor -->
+    <div class="mb-4">
+      <label class="form-label">Cliente</label>
+      <select
+        class="form-select"
+        name="idPersona"
+        [(ngModel)]="formModel.idPersona"
+        required 
+        [disabled]="modoSoloLectura">
+      
+        <option [ngValue]="null" disabled>Seleccione...</option>
+        <option *ngFor="let persona of personas" [ngValue]="persona.idPersona">
+          {{ persona.nombre }} {{ persona.apellido }} {{ persona.segundoApellido }}
+        </option>
+      </select>
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- AGREGAR PRODUCTO -->
+    <!-- ========================= -->
+    <div class="card bg-dark text-white p-3 mb-4 mt-3">
+      <h5 class="mb-3">Agregar Productos a la Venta</h5>
+
+      <div class="row g-3">
+
+        <!-- Producto -->
+        <div class="col-md-5">
+          <label class="form-label">Producto</label>
+          <select class="form-select" [(ngModel)]="productoSeleccionado" [ngModelOptions]="{standalone: true}"
+            [disabled]="modoSoloLectura">
+            <option value="">Seleccione...</option>
+            <option *ngFor="let p of productos" [ngValue]="p">
+              {{ p.nombreProducto }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Cantidad -->
+        <div class="col-md-3">
+          <label class="form-label">Cantidad</label>
+          <input type="number" class="form-control"
+            [(ngModel)]="cantidad" [ngModelOptions]="{standalone: true}" 
+  [disabled]="modoSoloLectura">
+        </div>
+
+        <!-- Precio -->
+        <div class="col-md-3">
+          <label class="form-label">Precio</label>
+          <input type="text" class="form-control"
+           [ngModel]="productoSeleccionado?.precioCompra"
+  (ngModelChange)="productoSeleccionado && (productoSeleccionado.precioCompra = $event)" [ngModelOptions]="{standalone: true}"  
+  [disabled]="modoSoloLectura">
+
+  <!-- Texto formateado con comas -->
+  <!--<div class="mt-1 text-muted" *ngIf="precioUnitario">
+    {{ precio | number:'1.0-0' }}-->
+  </div>
+  <div class="col-md-3">
+          <label class="form-label">Impuesto</label>
+          <input type="text" class="form-control"
+            [value]="obtenerImpuestoPorProducto(productoSeleccionado)?.porcentaje || 0"  
+  [disabled]="modoSoloLectura">
+        </div>
+
+        <!-- Descuento -->
+        <div class="col-md-3">
+          <label class="form-label">Descuento</label>
+          <input type="number" class="form-control"
+            [(ngModel)]="descuento" [ngModelOptions]="{standalone: true}" 
+  [disabled]="modoSoloLectura">
+        </div>
+
+        
+
+        <!-- Botón agregar -->
+        <div class="col-md-1 d-flex align-items-end">
+          <button type="button" class="btn btn-primary w-100" (click)="agregarItem()"
+          [disabled]="modoSoloLectura">
+            +
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================= -->
+    <!-- TABLA DETALLE -->
+    <!-- ========================= -->
+    <table class="table table-dark table-striped align-middle" *ngIf="detalleVenta.length > 0">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Decuento</th>
+          <th>Precio Unit.</th>
+          <th>IVA %</th>
+          <th>Subtotal</th>
+          <th>IVA</th>
+          <th>Total</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let item of detalleVenta; let i = index">
+          <td>{{ item.nombreProducto }}</td>
+          <td>{{ item.cantidad }}</td>
+          <td>{{ item.descuento}}</td>
+          <td>{{ item.precioUnitario | number }}</td>
+          <td>{{ item.ivaPorcentaje * 100 }}%</td>
+          <td>{{ item.subtotalLinea | number }}</td>
+          <td>{{ item.impuestoLinea | number }}</td>
+          <td>{{ item.totalLinea | number }}</td>
+      
+          <td>
+            <button type="button" class="btn btn-warning btn-sm me-3" 
+            (click)="editarItem(i)"      
+            [disabled]="modoSoloLectura"> <i class="bi bi-pencil-square me-1"></i> </button>
+            <button type="button" class="btn btn-danger btn-sm" 
+            (click)="eliminarItem(i)"
+            [disabled]="modoSoloLectura"><i class="bi bi-trash me-1"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ========================= -->
+    <!-- TOTAL -->
+    <!-- ========================= -->
+    <div class="text-end fs-5 fw-bold mt-3" *ngIf="total > 0">
+      Total: {{ total | currency:'COP' : 'symbol' }}
+    </div>
+
+    <br>
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-end">
+      <button 
+        type="button" 
+        class="btn btn-secondary me-2"
+        data-bs-dismiss="modal">
+        Cancelar
+      </button>
+
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="formVenta.invalid || detalleVenta.length === 0 || modoSoloLectura">
+        {{ formModel.idVenta ? 'Guardar cambios' : 'Agregar Venta' }}
+      </button>
+    </div>
+    
+
+  </form>
+  
+</div>
+
+

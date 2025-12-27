@@ -14,7 +14,7 @@ declare var bootstrap: any;
   styleUrls: ['./compra-list.component.css']
 })
 export class CompraListComponent {
-compras : Compra[] = [];
+/*compras : Compra[] = [];
   compraDetalle: Compra | null = null;
   
     private destroy$ = new Subject<void>();
@@ -157,4 +157,136 @@ compras : Compra[] = [];
           }
         });
       }
+}*/
+
+compras : Compra[] = [];
+  CompraDetalle: Compra | null = null;
+  
+    private destroy$ = new Subject<void>();
+    private modalInstance: any;
+  
+    compraSeleccionada : Compra | null = null;
+    compraSeleccionadaId!: number;
+  
+    loading = false;
+  
+    // Referencia al elemento HTML del modal
+      @ViewChild('modalCompra') modalElement!: ElementRef;
+      @ViewChild('modalDetalle') modalDetalle!: ElementRef;
+      //@ViewChild('modalPago') modalPago!:ElementRef;
+      
+  
+    constructor(
+      private compraService : CompraService,
+      private toastr : ToastrService
+    ){}
+  
+    ngOnInit(): void {
+      this.obtenerListadoCompras();
+    }
+  
+    ngAfterViewInit(): void {
+      // Inicializamos el modal una sola vez cuando la vista está lista
+      if (this.modalElement?.nativeElement) {
+        this.modalInstance = bootstrap.Modal.getOrCreateInstance(
+          this.modalElement.nativeElement
+        );
+      }
+    }
+  
+    // Método del ciclo de vida que se ejecuta cuando el componente se destruye
+    // Se usa para cerrar suscripciones y liberar memoria
+    ngOnDestroy(): void {
+      this.destroy$.next();
+      this.destroy$.complete();
+    }
+  
+    obtenerListadoCompras(): void{
+      this.loading = true;
+      this.compraService.obtenerListaCompra().pipe(takeUntil(this.destroy$)).subscribe({
+        next: (datos) =>{
+          console.log('Datos recibidos:', datos);
+          this.compras = datos;
+        },
+        error: (err) =>{
+          console.error('Error al obtener ventas:', err);
+          this.toastr.error('Error al cargar las ventas', 'Error');
+        },
+        complete: () =>{
+          this.loading = false
+        }
+      });
+    }
+  
+  abrirModalEditar(compra?: Compra): void {
+  
+    if (!compra?.idCompra) {
+      this.compraSeleccionada = null;
+      this.abrirModal(); 
+      return;
+    }
+  
+    this.compraService.obtenerCompraPorId(compra.idCompra).subscribe({
+      next: (data) => {
+        console.log("VENTA EDITAR RECIBIDA:", data);
+  
+        this.compraSeleccionada = data; //  ahora sí con todos los objetos
+        this.abrirModal();
+      },
+      error: (err) => {
+        console.error("Error al cargar venta:", err);
+        this.toastr.error("No se pudo cargar la venta", "Error");
+      }
+    });
+  }
+  
+  private abrirModal(): void {
+    setTimeout(() => {
+      const modalEl = this.modalElement?.nativeElement;
+      if (modalEl) {
+        this.modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+        this.modalInstance.show();
+      }
+    }, 0);
+  }
+  
+      // Abrir modal del detalle
+     abrirModalDetalle(compra : Compra): void {
+    if (!compra.idCompra) return;
+  
+    this.compraService.obtenerCompraPorId(compra.idCompra).subscribe({
+      next: (data) => {
+        console.log("VENTA DETALLADO RECIBIDA:", data);
+        this.CompraDetalle = { ...compra };
+        const modal = new bootstrap.Modal(this.modalDetalle.nativeElement);
+        modal.show();
+      },
+      error: (err) => {
+        console.error("Error al cargar venta:", err);
+        this.toastr.error("No se pudo cargar la venta", "Error");
+      }
+    });
+  }
+    
+      // Cerrar modal y refrescar lista
+      cerrarModalYActualizarLista(): void {
+        if (this.modalInstance) {
+          this.modalInstance.hide();
+        }
+        this.obtenerListadoCompras();
+        this.compraSeleccionada = null;
+      }
+  
+mostrarModalPago = false;
+
+abrirModalPago(idCompra: number) {
+  this.compraSeleccionadaId = idCompra;
+  this.mostrarModalPago = true;
+}
+
+cerrarModalPago() {
+  this.mostrarModalPago = false;
+}
+
+
 }

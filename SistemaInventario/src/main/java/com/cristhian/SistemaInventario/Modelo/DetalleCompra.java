@@ -4,6 +4,7 @@ import com.cristhian.SistemaInventario.DTO.DetalleCompraDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -16,11 +17,22 @@ public class DetalleCompra {
     @Column(nullable = false)
     private int cantidad;
 
-    @Column(nullable = false)
-    private double precioUnitario;
 
-    @Column(nullable = false)
-    private double subTotal;
+    // Precio del producto al momento de la venta
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal precioUnitario;
+
+    // Subtotal sin impuesto
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal subtotalLinea;
+
+    // Valor del impuesto aplicado en esta línea
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal impuestoLinea;
+
+    // Total final de la línea
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal totalLinea;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_compra")
@@ -38,7 +50,9 @@ public class DetalleCompra {
     public DetalleCompra(DetalleCompraDTO detalleCompraDTO){
         this.cantidad = detalleCompraDTO.getCantidad();
         this.precioUnitario = detalleCompraDTO.getPrecioUnitario();
-        this.subTotal = detalleCompraDTO.getSubTotal();
+        this.subtotalLinea = detalleCompraDTO.getSubtotalLinea();
+        this.impuestoLinea = detalleCompraDTO.getImpuestoLinea();
+        this.totalLinea = detalleCompraDTO.getTotalLinea();
     }
 
     public int getIdDetalleCompra() {
@@ -57,20 +71,36 @@ public class DetalleCompra {
         this.cantidad = cantidad;
     }
 
-    public double getPrecioUnitario() {
+    public BigDecimal getPrecioUnitario() {
         return precioUnitario;
     }
 
-    public void setPrecioUnitario(double precioUnitario) {
+    public void setPrecioUnitario(BigDecimal precioUnitario) {
         this.precioUnitario = precioUnitario;
     }
 
-    public double getSubTotal() {
-        return subTotal;
+    public BigDecimal getSubtotalLinea() {
+        return subtotalLinea;
     }
 
-    public void setSubTotal(double subTotal) {
-        this.subTotal = subTotal;
+    public void setSubtotalLinea(BigDecimal subtotalLinea) {
+        this.subtotalLinea = subtotalLinea;
+    }
+
+    public BigDecimal getImpuestoLinea() {
+        return impuestoLinea;
+    }
+
+    public void setImpuestoLinea(BigDecimal impuestoLinea) {
+        this.impuestoLinea = impuestoLinea;
+    }
+
+    public BigDecimal getTotalLinea() {
+        return totalLinea;
+    }
+
+    public void setTotalLinea(BigDecimal totalLinea) {
+        this.totalLinea = totalLinea;
     }
 
     public Compra getCompra() {

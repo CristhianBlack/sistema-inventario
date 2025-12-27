@@ -4,17 +4,23 @@ import com.cristhian.SistemaInventario.Modelo.EstadoVenta;
 import com.cristhian.SistemaInventario.Modelo.Venta;
 
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class VentaDTO {
 
     private int idVenta;
-    private LocalDate fechaVenta;
-    private double subTotalVenta;
-    private double totalImpuestos;
-    private double totalVenta;
+    private LocalDateTime fechaVenta;
+    private BigDecimal subTotalVenta;
+    private BigDecimal totalImpuestos;
+    private BigDecimal totalVenta;
     private EstadoVenta estado; // Pendiente, parcial , pagada
     private Integer idPersona;
+
+    private List<DetalleVentaDTO> detalles;
+    private List<VentaPagoDTO> pagos;
 
     public VentaDTO(){
 
@@ -33,6 +39,13 @@ public class VentaDTO {
                 ? venta.getPersona().getIdPersona()
                 : null;
 
+        this.detalles = venta.getDetalleVentas() != null
+                ? venta.getDetalleVentas().stream()
+                .map(DetalleVentaDTO::new)
+                .toList()
+                : null;
+
+
     }
 
     public int getIdVenta() {
@@ -43,35 +56,35 @@ public class VentaDTO {
         this.idVenta = idVenta;
     }
 
-    public LocalDate getFechaVenta() {
+    public LocalDateTime getFechaVenta() {
         return fechaVenta;
     }
 
-    public void setFechaVenta(LocalDate fechaVenta) {
+    public void setFechaVenta(LocalDateTime fechaVenta) {
         this.fechaVenta = fechaVenta;
     }
 
-    public double getSubTotalVenta() {
+    public BigDecimal getSubTotalVenta() {
         return subTotalVenta;
     }
 
-    public void setSubTotalVenta(double subTotalVenta) {
+    public void setSubTotalVenta(BigDecimal subTotalVenta) {
         this.subTotalVenta = subTotalVenta;
     }
 
-    public double getTotalImpuestos() {
+    public BigDecimal getTotalImpuestos() {
         return totalImpuestos;
     }
 
-    public void setTotalImpuestos(double totalImpuestos) {
+    public void setTotalImpuestos(BigDecimal totalImpuestos) {
         this.totalImpuestos = totalImpuestos;
     }
 
-    public double getTotalVenta() {
+    public BigDecimal getTotalVenta() {
         return totalVenta;
     }
 
-    public void setTotalVenta(double totalVenta) {
+    public void setTotalVenta(BigDecimal totalVenta) {
         this.totalVenta = totalVenta;
     }
 
@@ -89,5 +102,21 @@ public class VentaDTO {
 
     public void setIdPersona(Integer idPersona) {
         this.idPersona = idPersona;
+    }
+
+    public List<DetalleVentaDTO> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetalleVentaDTO> detalles) {
+        this.detalles = detalles;
+    }
+
+    public List<VentaPagoDTO> getPagos() {
+        return pagos;
+    }
+
+    public void setPagos(List<VentaPagoDTO> pagos) {
+        this.pagos = pagos;
     }
 }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,12 +23,14 @@ public class Producto {
     private String codigoProducto;
     @Column(nullable = false, length = 50)
     private  String nombreProducto;
-    @Column(nullable = false)
-    private double precioCompra;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal precioCompra;
     @Column(nullable = false)
     private double precioVenta;
     @Column(nullable = false)
     private int stock;
+    @Column(nullable = false)
+    private int stockReservado;
     @Column(nullable = false)
     private int stockMinimo;
     @Column(nullable = false, length = 255)
@@ -53,6 +56,10 @@ public class Producto {
     @JoinColumn(name = "id_proveedor")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "productos"})
     private Proveedor proveedor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_impuesto")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "productos"})
+    private Impuesto impuesto;
 
     // Relación con producto
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -125,11 +132,11 @@ public class Producto {
         this.nombreProducto = nombreProducto;
     }
 
-    public double getPrecioCompra() {
+    public BigDecimal getPrecioCompra() {
         return precioCompra;
     }
 
-    public void setPrecioCompra(double precioCompra) {
+    public void setPrecioCompra(BigDecimal precioCompra) {
         this.precioCompra = precioCompra;
     }
 
@@ -213,5 +220,19 @@ public class Producto {
         this.proveedor = proveedor;
     }
 
+    public Impuesto getImpuesto() {
+        return impuesto;
+    }
 
+    public void setImpuesto(Impuesto impuesto) {
+        this.impuesto = impuesto;
+    }
+
+    public int getStockReservado() {
+        return stockReservado;
+    }
+
+    public void setStockReservado(int stockReservado) {
+        this.stockReservado = stockReservado;
+    }
 }

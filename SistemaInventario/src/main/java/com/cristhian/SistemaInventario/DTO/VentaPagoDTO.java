@@ -7,15 +7,16 @@ import com.cristhian.SistemaInventario.Modelo.VentaPago;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class VentaPagoDTO {
 
     private int idVentaPago;
-    private double monto;
+    private BigDecimal monto;
     private LocalDate fechaPago;
     private EstadoPago estadoPago;
-    private int numeroCuotas; // Si es pago a cuotas
+    private Integer numeroCuotas; // Si es pago a cuotas
     private LocalDate fechaVencimientoCuota; // Vencimiento de la siguiente cuota
     private Integer idVenta;
     private Integer idFormaPago;
@@ -48,11 +49,11 @@ public class VentaPagoDTO {
         this.idVentaPago = idVentaPago;
     }
 
-    public double getMonto() {
+    public BigDecimal getMonto() {
         return monto;
     }
 
-    public void setMonto(double monto) {
+    public void setMonto(BigDecimal monto) {
         this.monto = monto;
     }
 
@@ -72,11 +73,11 @@ public class VentaPagoDTO {
         this.estadoPago = estadoPago;
     }
 
-    public int getNumeroCuotas() {
+    public Integer getNumeroCuotas() {
         return numeroCuotas;
     }
 
-    public void setNumeroCuotas(int numeroCuotas) {
+    public void setNumeroCuotas(Integer numeroCuotas) {
         this.numeroCuotas = numeroCuotas;
     }
 

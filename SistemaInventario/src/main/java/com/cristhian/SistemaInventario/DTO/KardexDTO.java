@@ -1,10 +1,11 @@
 package com.cristhian.SistemaInventario.DTO;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class KardexDTO {
 
-    private LocalDate fecha;
+    private LocalDateTime fecha;
     private String origen;
     private Integer entrada;
     private Integer salida;
@@ -14,11 +15,11 @@ public class KardexDTO {
     public KardexDTO() {
     }
 
-    public LocalDate getFecha() {
+    public LocalDateTime getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDate fecha) {
+    public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
     }
 
