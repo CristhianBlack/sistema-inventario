@@ -30,6 +30,10 @@ public class Venta {
 
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal totalVenta;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal saldoAplicado = BigDecimal.ZERO;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal totalPagar;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 20)
@@ -41,12 +45,17 @@ public class Venta {
     private Persona persona;
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("venta") // 👈 evita recursión infinita
+    @JsonIgnoreProperties("venta") // evita recursión infinita
     private List<VentaPago> ventaPagos = new ArrayList<>();
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("venta") // 👈 evita recursión infinita
+    @JsonIgnoreProperties("venta") // evita recursión infinita
     private List<DetalleVenta> detalleVentas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("venta") // evita recursión infinita
+    private List<Devolucion> devoluciones = new ArrayList<>();
+
 
     public Venta() {
     }
@@ -57,6 +66,8 @@ public class Venta {
         this.totalImpuestos = ventaDTO.getTotalImpuestos();
         this.totalVenta = ventaDTO.getTotalVenta();
         this.estado = ventaDTO.getEstado();
+        this.saldoAplicado = ventaDTO.getSaldoAplicado();
+        this.totalPagar = ventaDTO.getTotalPagar();
     }
 
     public int getIdVenta() {
@@ -137,5 +148,29 @@ public class Venta {
 
     public void setDetalleVentas(List<DetalleVenta> detalleVentas) {
         this.detalleVentas = detalleVentas;
+    }
+
+    public List<Devolucion> getDevoluciones() {
+        return devoluciones;
+    }
+
+    public void setDevoluciones(List<Devolucion> devoluciones) {
+        this.devoluciones = devoluciones;
+    }
+
+    public BigDecimal getSaldoAplicado() {
+        return saldoAplicado;
+    }
+
+    public void setSaldoAplicado(BigDecimal saldoAplicado) {
+        this.saldoAplicado = saldoAplicado;
+    }
+
+    public BigDecimal getTotalPagar() {
+        return totalPagar;
+    }
+
+    public void setTotalPagar(BigDecimal totalPagar) {
+        this.totalPagar = totalPagar;
     }
 }

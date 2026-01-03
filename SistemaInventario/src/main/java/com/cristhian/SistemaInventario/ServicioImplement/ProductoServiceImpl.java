@@ -5,10 +5,7 @@ import com.cristhian.SistemaInventario.Excepciones.DuplicadoException;
 import com.cristhian.SistemaInventario.Excepciones.RecursoNoEncontradoException;
 import com.cristhian.SistemaInventario.Mensaje.Mensaje;
 import com.cristhian.SistemaInventario.Modelo.*;
-import com.cristhian.SistemaInventario.Repositorio.CategoriaRepository;
-import com.cristhian.SistemaInventario.Repositorio.ProductoRepository;
-import com.cristhian.SistemaInventario.Repositorio.ProveedorRepository;
-import com.cristhian.SistemaInventario.Repositorio.UnidadMedidaRepository;
+import com.cristhian.SistemaInventario.Repositorio.*;
 import com.cristhian.SistemaInventario.Service.IProductoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,15 +28,18 @@ public class ProductoServiceImpl implements IProductoService {
     private final CategoriaRepository categoriaRepository;
     private final UnidadMedidaRepository unidadMedidaRepository;
     private final ProveedorRepository proveedorRepository;
+    private final ImpuestoRepository impuestoRepository;
 
     public ProductoServiceImpl(ProductoRepository productoRepository,
                                CategoriaRepository categoriaRepository,
                                ProveedorRepository proveedorRepository,
-                               UnidadMedidaRepository unidadMedidaRepository) {
+                               UnidadMedidaRepository unidadMedidaRepository,
+                               ImpuestoRepository impuestoRepository) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.unidadMedidaRepository = unidadMedidaRepository;
         this.proveedorRepository = proveedorRepository;
+        this.impuestoRepository = impuestoRepository;
     }
 
     // listamos todos los productos creados.
@@ -85,6 +85,9 @@ public class ProductoServiceImpl implements IProductoService {
         Proveedor proveedor = proveedorRepository.findById(productoDTO.getIdProveedor())
                 .orElseThrow(() -> new RecursoNoEncontradoException("No existe el proveedor seleccionado."));
 
+        Impuesto impuesto = impuestoRepository.findById(productoDTO.getIdImpuesto())
+                .orElseThrow(() -> new RecursoNoEncontradoException("No existe el impuesto seleccionado."));
+
         // --- Crear producto manualmente ---
         Producto producto = new Producto();
         producto.setCodigoProducto(productoDTO.getCodigoProducto());
@@ -100,6 +103,7 @@ public class ProductoServiceImpl implements IProductoService {
         producto.setCategoria(categoria);
         producto.setUnidadMedida(unidad);
         producto.setProveedor(proveedor);
+        producto.setImpuesto(impuesto);
 
         return productoRepository.save(producto);
     }

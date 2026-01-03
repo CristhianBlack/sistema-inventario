@@ -89,5 +89,22 @@ descargarPdf() {
     });
 }
 
+kardexPorPagina = 10;
+paginaActual = 1;
+
+get totalPaginas(): number {
+  return Math.ceil(this.kardex.length / this.kardexPorPagina);
+}
+
+get kardexPaginadas() {
+  const inicio = (this.paginaActual - 1) * this.kardexPorPagina;
+  return this.kardex.slice(inicio, inicio + this.kardexPorPagina);
+}
+
+cambiarPagina(pagina: number) {
+  if (pagina < 1 || pagina > this.totalPaginas) return;
+  this.paginaActual = pagina;
+}
+
 
 }

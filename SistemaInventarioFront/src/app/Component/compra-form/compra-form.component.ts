@@ -293,18 +293,30 @@ export class CompraFormComponent {
   // ============================
 
   agregarItem() {
-    if (!this.productoSeleccionado || this.cantidad <= 0 ) {
-      this.toastr.warning("Complete todos los campos del detalle");
-      return;
-    }
+    if (!this.productoSeleccionado || this.cantidad <= 0) {
+    this.toastr.warning("Complete todos los campos del detalle");
+    return;
+  }
 
-    const precio = this.productoSeleccionado.precioVenta;
-      this.impuestoSeleccionado = this.obtenerImpuestoPorProducto(this.productoSeleccionado);
+  // 🔹 Si el usuario no cambia el precio, usar el del producto
+  const precioUnitario =
+    this.precio > 0
+      ? this.precio
+      : this.productoSeleccionado.precioCompra ?? 0;
 
-    const impuestoPct = this.impuestoSeleccionado?.porcentaje ?? 0;
-      const subtotalLinea = precio * this.cantidad;
-      const impuestoValor = subtotalLinea * impuestoPct;
-      const totalLinea = subtotalLinea + impuestoValor;
+  if (precioUnitario <= 0) {
+    this.toastr.warning("El producto no tiene precio válido");
+    return;
+  }
+
+  // 🔹 Impuesto
+  this.impuestoSeleccionado = this.obtenerImpuestoPorProducto(this.productoSeleccionado);
+  const impuestoPct = this.impuestoSeleccionado?.porcentaje ?? 0;
+
+  // 🔹 Cálculos
+  const subtotalLinea = precioUnitario * this.cantidad;
+  const impuestoLinea = subtotalLinea * impuestoPct;
+  const totalLinea = subtotalLinea + impuestoLinea;
 
   // Si estamos editando un ítem
   if (this.indiceEditando !== null) {
@@ -312,8 +324,7 @@ export class CompraFormComponent {
       idProducto: this.productoSeleccionado.idProducto,
       nombreProducto: this.productoSeleccionado.nombreProducto,
       cantidad: this.cantidad,
-      precioCompra: precio,
-      impuestoValor,
+      precioUnitario,
       subtotalLinea,
       totalLinea
     };
@@ -326,8 +337,7 @@ export class CompraFormComponent {
       idProducto: this.productoSeleccionado.idProducto,
       nombreProducto: this.productoSeleccionado.nombreProducto,
       cantidad: this.cantidad,
-      precioUnitario: precio,
-      impuestoValor,
+      precioUnitario,
       subtotalLinea,
       totalLinea
     });
@@ -349,14 +359,14 @@ export class CompraFormComponent {
   calcularTotal() {
     this.total = this.detalleCompra.reduce((sum, item) => sum + item.totalLinea, 0);
     console.log("Total ", this.total);
-    this.formModel.totalCompra = this.total; // enviarlo al backend
+   // this.formModel.totalCompra = this.total; // enviarlo al backend
   }
 
 
   // ============================
   // MAP A REQUEST FINAL
   // ============================
-  private mapPersonaToRequest(): any {
+  private mapCompraToRequest(): any {
   return {
     idCompra: this.formModel.idCompra ?? null,
     fechaCompra: this.formModel.fechaCompra ?? null,
@@ -364,7 +374,7 @@ export class CompraFormComponent {
 
     detalles: this.detalleCompra.map(item => ({
       cantidad: item.cantidad,
-      precioUnitario: item.precio,
+      precioUnitario: item.precioUnitario,
       idProducto: item.idProducto
     }))
   };
@@ -385,7 +395,7 @@ export class CompraFormComponent {
       return;
     }
 
-    const request = this.mapPersonaToRequest();
+    const request = this.mapCompraToRequest();
     console.log("JSON FINAL:", request);
 
     // EDITAR
@@ -470,6 +480,12 @@ abrirModalProducto() {
   return this.impuestos.find(
     i => i.idImpuesto === producto.idImpuesto
   ) ?? null;
+}
+
+onProductoSeleccionado() {
+  if (this.productoSeleccionado) {
+    this.precio = this.productoSeleccionado.precioCompra ?? 0;
+  }
 }
 
 

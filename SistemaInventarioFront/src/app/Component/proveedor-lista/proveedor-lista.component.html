@@ -24,7 +24,7 @@
 
   <!--  Tarjetas -->
   <div class="row g-4 justify-content-center" *ngIf="!loading && proveedoresPersona.length > 0">
-    <div class="col-md-4 col-sm-6" *ngFor="let proveedor of proveedoresPersona">
+    <div class="col-md-4 col-sm-6" *ngFor="let proveedor of proveedoresPaginadas">
 
       <div class="card persona-card border-0 shadow-sm rounded-4 h-100">
         <div class="card-body p-4">
@@ -91,3 +91,29 @@
     </div>
   </div>
 </div>
+<!-- 🔹 PAGINACIÓN -->
+<nav class="d-flex justify-content-center mt-4" *ngIf="totalPaginas > 1">
+  <ul class="pagination">
+
+    <li class="page-item" [class.disabled]="paginaActual === 1">
+      <button class="page-link" (click)="cambiarPagina(paginaActual - 1)">
+        «
+      </button>
+    </li>
+
+    <li class="page-item"
+        *ngFor="let _ of [].constructor(totalPaginas); let i = index"
+        [class.active]="paginaActual === i + 1">
+      <button class="page-link" (click)="cambiarPagina(i + 1)">
+        {{ i + 1 }}
+      </button>
+    </li>
+
+    <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+      <button class="page-link" (click)="cambiarPagina(paginaActual + 1)">
+        »
+      </button>
+    </li>
+
+  </ul>
+</nav>

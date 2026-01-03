@@ -22,7 +22,9 @@ export class VentaListaComponent {
     private modalInstance: any;
   
     ventaSeleccionada : Venta | null = null;
+    mostrarModalPago = false;
     ventaSeleccionadaId!: number;
+    modoSoloLecturaPago = false;
   
     loading = false;
   
@@ -133,10 +135,20 @@ export class VentaListaComponent {
         this.ventaSeleccionada = null;
       }
   
-mostrarModalPago = false;
 
-abrirModalPago(idVenta: number) {
-  this.ventaSeleccionadaId = idVenta;
+
+abrirModalPago(venta: Venta) {
+
+  if (!venta.idVenta) {
+    console.error('La venta no tiene ID');
+    return;
+  }
+
+  this.ventaSeleccionadaId = venta.idVenta;
+
+  //Si ya está pagada → solo consulta
+  this.modoSoloLecturaPago = venta.estado === 'PAGADA';
+
   this.mostrarModalPago = true;
 }
 
@@ -191,6 +203,83 @@ confirmarVenta(venta: Venta) {
 
   });
 }
+
+cancelarVenta(venta: Venta) {
+
+  Swal.fire({
+    title: 'Cancelar venta?',
+    html: `
+      <b>Venta N° ${venta.idVenta}</b><br>
+      <span style="color:#dc3545">
+        Esta acción no ejecutara ninguna accion en el inventario.<br>
+        
+      </span>
+    `,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#198754', // verde
+    cancelButtonColor: '#dc3545',  // rojo
+    confirmButtonText: 'Sí, confirmar',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+
+    if (!result.isConfirmed) return;
+
+    // 🔁 Llamada al backend
+    this.ventaService.cancelar(venta.idVenta!)
+      .subscribe({
+        next: () => {
+          Swal.fire({
+            title: 'Confirmada',
+            text: `La venta N° ${venta.idVenta} fue cancelada correctamente`,
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+
+          this.obtenerListadoVentas();
+        },
+        error: (err) => {
+          Swal.fire({
+            title: 'Error',
+            text: err.error?.mensaje || 'No se pudo cancelar la venta por que ya esta confirmada o pagada.',
+            icon: 'error'
+          });
+        }
+      });
+
+  });
+}
+
+puedeRegistrarPago(venta: Venta): boolean {
+  return venta.estado === 'CONFIRMADA' || venta.estado === 'PARCIAL';
+}
+
+puedeVerPagos(venta: Venta): boolean {
+  return venta.estado === 'PAGADA';
+}
+
+puedeCancelarVentas(venta : Venta){
+  return venta.estado === 'PENDIENTE';
+}
+
+ventasPorPagina = 6;
+paginaActual = 1;
+
+get totalPaginas(): number {
+  return Math.ceil(this.ventas.length / this.ventasPorPagina);
+}
+
+get ventasPaginadas() {
+  const inicio = (this.paginaActual - 1) * this.ventasPorPagina;
+  return this.ventas.slice(inicio, inicio + this.ventasPorPagina);
+}
+
+cambiarPagina(pagina: number) {
+  if (pagina < 1 || pagina > this.totalPaginas) return;
+  this.paginaActual = pagina;
+}
+
 
 
 }

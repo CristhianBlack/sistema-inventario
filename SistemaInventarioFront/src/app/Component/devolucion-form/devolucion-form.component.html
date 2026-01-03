@@ -1,0 +1,106 @@
+<div class="container py-4">
+
+  <h4 class="fw-bold mb-4">
+    <i class="bi bi-arrow-counterclockwise me-2"></i>
+    Nueva Devolución
+  </h4>
+
+  <!-- ========================= -->
+  <!-- Seleccionar Venta -->
+  <!-- ========================= -->
+  <div class="mb-3">
+    <label class="form-label">Venta</label>
+    <select class="form-select"
+            [(ngModel)]="ventaSeleccionada"
+            (ngModelChange)="onVentaChange()">
+      <option [ngValue]="null">Seleccione venta...</option>
+      <option *ngFor="let v of ventas" [ngValue]="v">
+        Venta #{{ v.idVenta }} - {{ v.idPersona }}
+      </option>
+    </select>
+  </div>
+
+  <!-- ========================= -->
+  <!-- Datos de la venta -->
+  <!-- ========================= -->
+  <div *ngIf="ventaSeleccionada" class="card p-3 mb-3 bg-dark text-white">
+    <div><strong>Cliente:</strong> {{ ventaSeleccionada.idPersona }}</div>
+    <div><strong>Total venta:</strong> {{ ventaSeleccionada.totalVenta | currency:'COP' }}</div>
+  </div>
+
+  <!-- ========================= -->
+  <!-- Producto devuelto -->
+  <!-- ========================= -->
+  <div *ngIf="ventaSeleccionada" class="card p-3 mb-3">
+    <h6>Producto devuelto</h6>
+
+    <select class="form-select mb-2"
+            [(ngModel)]="detalleSeleccionado"
+            (change)="onDetalleChange()">
+      <option value="">Seleccione producto...</option>
+      <option *ngFor="let d of ventaSeleccionada.detalles" [ngValue]="d">
+        {{ d.nombreProducto }} ({{ d.cantidad }})
+      </option>
+    </select>
+
+    <input type="number"
+           class="form-control mb-2"
+           placeholder="Cantidad a devolver"
+           [(ngModel)]="cantidadDevuelta"
+           [max]="detalleSeleccionado?.cantidad ?? 0">
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- Tipo devolución -->
+  <!-- ========================= -->
+  <div class="mb-3">
+    <label class="form-label">Tipo de devolución</label>
+    <select class="form-select"
+            [(ngModel)]="tipoDevolucion"
+            (change)="recalcularDevolucion()">
+      <option value="REEMBOLSO">Reembolso</option>
+      <option value="CAMBIO">Cambio</option>
+      <option value="SALDO_FAVOR">Saldo a favor</option>
+    </select>
+  </div>
+
+  <!-- ========================= -->
+  <!-- Producto cambio -->
+  <!-- ========================= -->
+  <div *ngIf="tipoDevolucion === 'CAMBIO'" class="mb-3">
+    <label class="form-label">Producto de cambio</label>
+    <select class="form-select"
+            [(ngModel)]="idProductoCambio" name="productoCambio">
+      <option value="">Seleccione producto...</option>
+      <option *ngFor="let p of productos" [ngValue]="p.idProducto">
+        {{ p.nombreProducto }}
+      </option>
+    </select>
+  </div>
+
+  <!-- ========================= -->
+  <!-- Motivo -->
+  <!-- ========================= -->
+  <textarea class="form-control mb-3"
+            placeholder="Motivo de la devolución"
+            [(ngModel)]="motivo"></textarea>
+
+  <!-- ========================= -->
+  <!-- Resumen -->
+  <!-- ========================= -->
+  <div class="alert alert-info" *ngIf="valorDevuelto > 0">
+    <div><strong>Valor a devolver:</strong> {{ valorDevuelto | currency:'COP' }}</div>
+    <div *ngIf="tipoDevolucion === 'SALDO_FAVOR'">
+      Se agregará al saldo del cliente
+    </div>
+    <div *ngIf="tipoDevolucion === 'CAMBIO'">
+      Entrada y salida de inventario
+    </div>
+  </div>
+
+  <button class="btn btn-primary" (click)="guardarDevolucion()">
+    Registrar devolución
+  </button>
+
+</div>

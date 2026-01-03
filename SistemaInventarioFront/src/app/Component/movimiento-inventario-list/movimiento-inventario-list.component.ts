@@ -71,4 +71,21 @@ descargarPdf() {
     });
 }
 
+movimientoPorPagina = 12;
+paginaActual = 1;
+
+get totalPaginas(): number {
+  return Math.ceil(this.movimientoInventarios.length / this.movimientoPorPagina);
+}
+
+get movimientoPaginadas() {
+  const inicio = (this.paginaActual - 1) * this.movimientoPorPagina;
+  return this.movimientoInventarios.slice(inicio, inicio + this.movimientoPorPagina);
+}
+
+cambiarPagina(pagina: number) {
+  if (pagina < 1 || pagina > this.totalPaginas) return;
+  this.paginaActual = pagina;
+}
+
 }

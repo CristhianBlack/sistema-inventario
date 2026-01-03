@@ -74,6 +74,10 @@ public class Producto {
     @JsonIgnoreProperties("producto") // 👈 evita recursión infinita
     private List<DetalleVenta> detalleVentas = new ArrayList<>();
 
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("producto") // 👈 evita recursión infinita
+    private List<Devolucion> productos = new ArrayList<>();
+
     @Override
     public String toString() {
         return "Producto{" +
@@ -236,3 +240,4 @@ public class Producto {
         this.stockReservado = stockReservado;
     }
 }
+

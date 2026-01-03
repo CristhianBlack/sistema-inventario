@@ -118,7 +118,7 @@ export class ProveedorListaComponent {
            this.proveedorService.eliminarProveedor(id).pipe(takeUntil(this.destroy$)).subscribe({
                next: () => {
                  this.toastr.success(
-                   'Ciudad eliminada correctamente','Éxito '
+                   'Proveedor eliminado correctamente','Éxito '
                  );
                  this.obtenerProveedores();
                },
@@ -130,5 +130,22 @@ export class ProveedorListaComponent {
          }
        });
      }
+
+proveedorPorPagina = 6;
+paginaActual = 1;
+
+get totalPaginas(): number {
+  return Math.ceil(this.proveedoresPersona.length / this.proveedorPorPagina);
+}
+
+get proveedoresPaginadas() {
+  const inicio = (this.paginaActual - 1) * this.proveedorPorPagina;
+  return this.proveedoresPersona.slice(inicio, inicio + this.proveedorPorPagina);
+}
+
+cambiarPagina(pagina: number) {
+  if (pagina < 1 || pagina > this.totalPaginas) return;
+  this.paginaActual = pagina;
+}
 
 }

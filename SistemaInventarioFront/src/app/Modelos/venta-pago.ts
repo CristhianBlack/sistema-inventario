@@ -1,4 +1,5 @@
 import { EstadoPago } from "./estado-pago";
+import { FormaPago } from "./forma-pago";
 
 export class VentaPago {
 
@@ -9,7 +10,10 @@ idVentaPago?: number;
   numeroCuotas?: number;
   fechaVencimientoCuota?: Date;
 
+  nombreFormaPago?: String = "";
+
   idVenta!: number;
-  idFormaPago!: number | null;
+  //formaPago!: FormaPago | null;
+  idFormaPago! : number;
 }
 

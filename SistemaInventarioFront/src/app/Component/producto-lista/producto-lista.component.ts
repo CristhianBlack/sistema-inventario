@@ -165,5 +165,22 @@ export class ProductoListaComponent {
     console.log('ID enviado al Kardex:', id);
   this.router.navigate(['/Kardex', id]);
   }
+
+  productoPorPagina = 6;
+paginaActual = 1;
+
+get totalPaginas(): number {
+  return Math.ceil(this.productos.length / this.productoPorPagina);
+}
+
+get productosPaginadas() {
+  const inicio = (this.paginaActual - 1) * this.productoPorPagina;
+  return this.productos.slice(inicio, inicio + this.productoPorPagina);
+}
+
+cambiarPagina(pagina: number) {
+  if (pagina < 1 || pagina > this.totalPaginas) return;
+  this.paginaActual = pagina;
+}
 }
   

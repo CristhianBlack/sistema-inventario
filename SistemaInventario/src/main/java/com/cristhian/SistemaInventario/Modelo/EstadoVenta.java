@@ -5,5 +5,7 @@ public enum EstadoVenta {
     CONFIRMADA,
     PARCIAL,
     PAGADA,
-    CANCELADA
+    CANCELADA,
+    DEVUELTA_PARCIAL,
+    DEVUELTA_TOTAL
 }

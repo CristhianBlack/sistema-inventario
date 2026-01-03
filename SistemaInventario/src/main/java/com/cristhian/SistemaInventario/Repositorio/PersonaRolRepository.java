@@ -40,6 +40,7 @@ public interface PersonaRolRepository extends JpaRepository<PersonaRol, Integer>
             p.direccion,
             p.telefono,
             p.email
+            
         )
         FROM PersonaRol pr
         JOIN pr.persona p

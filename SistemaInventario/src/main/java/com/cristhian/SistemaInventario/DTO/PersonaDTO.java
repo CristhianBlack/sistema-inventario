@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 public class PersonaDTO {
@@ -27,6 +29,8 @@ public class PersonaDTO {
     @Email(message = "El correo electrónico no tiene un formato válido")
     @NotBlank(message = "El correo electrónico es obligatorio")
     private String email;
+
+    private BigDecimal saldoFavor = BigDecimal.ZERO;
 
     @JsonAlias({ "tipoDocumento", "idTipoDocumento" })
     private Integer idTipoDocumento;
@@ -52,6 +56,7 @@ public class PersonaDTO {
         this.direccion = persona.getDireccion();
         this.telefono = persona.getTelefono();
         this.email = persona.getEmail();
+        this.saldoFavor = persona.getSaldoFavor();
 
         // Solo enviamos los IDs para no exponer objetos completos
         this.idTipoDocumento = persona.getTipoDocumento() != null
@@ -145,5 +150,11 @@ public class PersonaDTO {
     public List<Integer> getIdsRoles() { return idsRoles; }
     public void setIdsRoles(List<Integer> idsRoles) { this.idsRoles = idsRoles; }
 
+    public BigDecimal getSaldoFavor() {
+        return saldoFavor;
+    }
 
+    public void setSaldoFavor(BigDecimal saldoFavor) {
+        this.saldoFavor = saldoFavor;
+    }
 }

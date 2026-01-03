@@ -50,6 +50,13 @@ export class VentaFormComponent implements OnInit{
   
   
     modoSoloLectura: boolean = false;
+
+    personaSeleccionada: any = null;
+
+    usarSaldoFavor: boolean = true;
+
+    saldoAplicado: number = 0;
+    totalPagar: number = 0;
   
     // ============================
   
@@ -94,6 +101,7 @@ export class VentaFormComponent implements OnInit{
           this.personas = data.personas;
           this.productos = data.productos;
           this.impuestos = data.impuestos;
+          console.log('Datos de la persona', this.personas);
   
           if (this.venta) {
             this.asignarDatosAlFormulario();
@@ -154,6 +162,7 @@ export class VentaFormComponent implements OnInit{
         this.toastr.warning("Complete todos los campos del detalle");
         return;
       }
+     
   
       const precio = this.productoSeleccionado.precioVenta;
       this.impuestoSeleccionado = this.obtenerImpuestoPorProducto(this.productoSeleccionado);
@@ -185,7 +194,7 @@ export class VentaFormComponent implements OnInit{
         idProducto: this.productoSeleccionado.idProducto,
         nombreProducto: this.productoSeleccionado.nombreProducto,
         cantidad: this.cantidad,
-        precioUnitario: precio,
+        precioVenta: precio,
         impuestoPct,
         impuestoValor,
         descuento: this.descuento,
@@ -207,28 +216,32 @@ export class VentaFormComponent implements OnInit{
       this.calcularTotal();
     }
   
-    calcularTotal() {
+  calcularTotal() {
       this.total = this.detalleVenta.reduce((sum, item) => sum + item.totalLinea, 0);
-      //this.formModel.totalVenta = this.totalLinea; // enviarlo al backend
-    }
+
+    this.recalcularTotales();
+  }
   
   
     // ============================
     // MAP A REQUEST FINAL
     // ============================
     private mapDatoToRequest(): any {
-    return {
-      idVenta: this.formModel.idVenta ?? null,
-      fechaVenta: this.formModel.fechaVenta ?? null,
-      idPersona: Number(this.formModel.idPersona),
-  
-      detalles: this.detalleVenta.map(item => ({
-        cantidad: item.cantidad,
-        idProducto: item.idProducto,
-        descuento : item.descuento
-      }))
-    };
-  }
+      return {
+    idVenta: this.formModel.idVenta ?? null,
+    fechaVenta: this.formModel.fechaVenta ?? null,
+    idPersona: Number(this.formModel.idPersona),
+
+    saldoAplicado: this.saldoAplicado,
+
+    detalles: this.detalleVenta.map(item => ({
+      cantidad: item.cantidad,
+      idProducto: item.idProducto,
+      descuento: item.descuento
+    }))
+  };
+}
+
   
   
     // ============================
@@ -321,6 +334,30 @@ export class VentaFormComponent implements OnInit{
   ) ?? null;
 }
 
+recalcularTotales() {
+
+  this.total = this.detalleVenta
+    .reduce((acc, item) => acc + (Number(item.totalLinea)|| 0), 0);
+
+  if (this.usarSaldoFavor && this.personaSeleccionada) {
+  const saldo = Number(this.personaSeleccionada.saldoFavor) || 0;
+  this.saldoAplicado = Math.min(saldo, this.total);
+} else {
+  this.saldoAplicado = 0;
+}
+  console.log("Saldo Aplicado:", this.saldoAplicado);
+  console.log("Total:", this.total);
+  this.totalPagar = (Number(this.total) || 0) - (Number(this.saldoAplicado) || 0);
+  console.log("Total a pagar:", this.totalPagar);
+}
+
+//Detectar la persona seleccionada
+onPersonaChange(idPersona: number) {
+  this.personaSeleccionada =
+    this.personas.find(p => p.idPersona === idPersona) || null;
+
+  this.recalcularTotales();
+}
 
 
 

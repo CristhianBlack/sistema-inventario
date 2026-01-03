@@ -416,4 +416,21 @@ export class CategoriaListaComponent implements OnInit, OnDestroy, AfterViewInit
       }
     });
   }
+
+  compraPorPagina = 6;
+paginaActual = 1;
+
+get totalPaginas(): number {
+  return Math.ceil(this.categorias.length / this.compraPorPagina);
+}
+
+get categoriasPaginadas() {
+  const inicio = (this.paginaActual - 1) * this.compraPorPagina;
+  return this.categorias.slice(inicio, inicio + this.compraPorPagina);
+}
+
+cambiarPagina(pagina: number) {
+  if (pagina < 1 || pagina > this.totalPaginas) return;
+  this.paginaActual = pagina;
+}
 }

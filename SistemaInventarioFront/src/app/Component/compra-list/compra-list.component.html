@@ -24,7 +24,7 @@
 
   <!-- 🔹 Tarjetas -->
   <div class="row g-4 justify-content-center" *ngIf="!loading && compras.length > 0">
-    <div class="col-md-4 col-sm-6" *ngFor="let compra of compras">
+    <div class="col-md-4 col-sm-6" *ngFor="let compra of comprasPaginadas">
       <div class="card persona-card border-0 shadow-sm rounded-4 h-100">
         <div class="card-body p-4">
 
@@ -54,20 +54,25 @@
             
           </ul>
 
+          <div class="d-flex gap-2 justify-content-center" >
+              <button class="btn btn-outline-info btn-sm d-flex align-items-center px-3" *ngIf="puedeRegistrarPago(compra)"
+              (click)="abrirModalPago(compra)">
+                <i class="bi bi-eye me-1"></i> Ingresar Pago              
+              </button>
           
 
-          <div class="d-flex gap-2 justify-content-center" >
-              <button class="btn btn-outline-info btn-sm d-flex align-items-center px-3" *ngIf=" compra.estado !=='PAGADA'"
-              (click)="abrirModalPago(compra.idCompra!)">
-                <i class="bi bi-eye me-1"></i> Ingresar Pago              
+          <div class="d-flex gap-2 justify-content-center">
+              <button class="btn btn-outline-warning btn-sm d-flex align-items-center px-3" *ngIf="puedeVerPagos(compra)"
+              (click)="abrirModalPago(compra)">
+                <i class="bi bi-eye me-1"></i> Informacion Compra
               </button>
  
 
-            <div class="d-flex gap-2 justify-content-center">
+            <!--<div class="d-flex gap-2 justify-content-center">
               <button class="btn btn-outline-warning btn-sm d-flex align-items-center px-3"
               (click)="abrirModalEditar(compra)">
                 <i class="bi bi-eye me-1"></i> Info
-              </button>
+              </button>-->
               <!--<button class="btn btn-outline-danger btn-sm d-flex align-items-center px-3"
                       (click)="eliminarPersona(compra.idCompra!)"
                       [disabled]="true">
@@ -109,9 +114,6 @@
     </div>
   </div>
 </div>
-<!-- 🔹 Modal Pago -->
-<!-- BACKDROP -->
-<div class="modal-dialog modal-dialog-centered modal-xl modal-pagos" *ngIf="mostrarModalPago"></div>
 
 <!-- MODAL -->
 <div class="modal fade show d-block"
@@ -134,6 +136,7 @@
       <div class="modal-body modal-scroll">
        <app-compra-pago
           [idCompra]="compraSeleccionadaId"
+          [soloLectura]="modoSoloLecturaPago"
           (cerrar)="cerrarModalPago()">
         </app-compra-pago>
       </div>
@@ -145,3 +148,29 @@
     </div>
   </div>
 </div>
+<!-- 🔹 PAGINACIÓN -->
+<nav class="d-flex justify-content-center mt-4" *ngIf="totalPaginas > 1">
+  <ul class="pagination">
+
+    <li class="page-item" [class.disabled]="paginaActual === 1">
+      <button class="page-link" (click)="cambiarPagina(paginaActual - 1)">
+        «
+      </button>
+    </li>
+
+    <li class="page-item"
+        *ngFor="let _ of [].constructor(totalPaginas); let i = index"
+        [class.active]="paginaActual === i + 1">
+      <button class="page-link" (click)="cambiarPagina(i + 1)">
+        {{ i + 1 }}
+      </button>
+    </li>
+
+    <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+      <button class="page-link" (click)="cambiarPagina(paginaActual + 1)">
+        »
+      </button>
+    </li>
+
+  </ul>
+</nav>

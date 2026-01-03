@@ -127,4 +127,21 @@ export class CiudadListaComponent implements OnInit {
       }
     });
   }
+
+  ciudadPorPagina = 6;
+paginaActual = 1;
+
+get totalPaginas(): number {
+  return Math.ceil(this.ciudades.length / this.ciudadPorPagina);
+}
+
+get ciudadesPaginadas() {
+  const inicio = (this.paginaActual - 1) * this.ciudadPorPagina;
+  return this.ciudades.slice(inicio, inicio + this.ciudadPorPagina);
+}
+
+cambiarPagina(pagina: number) {
+  if (pagina < 1 || pagina > this.totalPaginas) return;
+  this.paginaActual = pagina;
+}
 }

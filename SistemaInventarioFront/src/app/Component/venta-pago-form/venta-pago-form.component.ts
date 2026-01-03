@@ -15,6 +15,7 @@ import { VentaService } from 'src/app/Servicios/venta.service';
 })
 export class VentaPagoFormComponent{
 
+  @Input() soloLectura: boolean = false;
   @Input() idVenta!: number;
 
   pagos: VentaPago[] = [];
@@ -28,6 +29,9 @@ export class VentaPagoFormComponent{
   codigoVenta ?: number = 0;
   formaPagos : FormaPago[] = [];
   idFormaPago: number | null = null;
+  formaPago?: FormaPago;
+  formaPagoSeleccionada!: FormaPago;
+
 
   constructor(private ventaPagoService: VentaPagoService,
     private ventaService : VentaService,
@@ -47,6 +51,7 @@ ngOnChanges(changes: SimpleChanges): void {
     this.ventaPagoService
   .listarPagosPorVenta(this.idVenta)
   .subscribe(data => {
+    console.log('PAGOS:', data);
     this.pagos = data ?? [];
   });
   } 
@@ -69,20 +74,29 @@ ngOnChanges(changes: SimpleChanges): void {
   }
 
   registrarPago(): void {
-    if (this.monto <= 0) return;
+  if (this.monto <= 0 || !this.idFormaPago) {
+    this.toastr.warning('Debe ingresar monto y forma de pago');
+    return;
+  }
 
-    this.ventaPagoService.registrarPago(this.idVenta, {
-      monto: this.monto,
-      estadoPago: this.estadoPago,
-      idFormaPago : this.idFormaPago,
-      
-    }).subscribe(() => {
+  const pagoRequest = {
+    monto: this.monto,
+    estadoPago: this.estadoPago,
+    idFormaPago : this.idFormaPago
+    
+  
+  };
+
+  this.ventaPagoService
+    .registrarPago(this.idVenta, pagoRequest)
+    .subscribe(() => {
       this.monto = 0;
-      this.toastr.success('Se agrego registro correctamente', 'Éxito');
-      console.log('IdFormaPago recibido es :', this.idFormaPago)
+      console.log('idformapago ', this.idFormaPago),
+      this.idFormaPago = null;
+      this.toastr.success('Se agregó el pago correctamente', 'Éxito');
       this.cargarPagos();
     });
-  }
+}
 
   confirmarPago(idPago: number): void {
     this.ventaPagoService.confirmarPago(idPago).subscribe(() => {

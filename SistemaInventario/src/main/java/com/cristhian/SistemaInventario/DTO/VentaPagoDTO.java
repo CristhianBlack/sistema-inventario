@@ -9,17 +9,20 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class VentaPagoDTO {
 
     private int idVentaPago;
     private BigDecimal monto;
-    private LocalDate fechaPago;
+    private LocalDateTime fechaPago;
     private EstadoPago estadoPago;
     private Integer numeroCuotas; // Si es pago a cuotas
     private LocalDate fechaVencimientoCuota; // Vencimiento de la siguiente cuota
     private Integer idVenta;
     private Integer idFormaPago;
+    private String nombreFormaPago;
+
 
     public VentaPagoDTO(){}
 
@@ -39,6 +42,13 @@ public class VentaPagoDTO {
         this.idFormaPago = ventaPago.getFormaPago() != null
                 ? ventaPago.getFormaPago().getIdFormaPago()
                 : null;
+
+        //this.formaPago = new FormaPagoDTO(ventaPago.getFormaPago());
+
+        // Traemos el nombre de la forma de pago en el detalle
+        this.nombreFormaPago = ventaPago.getFormaPago() != null
+                ? String.valueOf(ventaPago.getFormaPago().getNombreFormaPago())
+                : null;
     }
 
     public int getIdVentaPago() {
@@ -57,11 +67,11 @@ public class VentaPagoDTO {
         this.monto = monto;
     }
 
-    public LocalDate getFechaPago() {
+    public LocalDateTime getFechaPago() {
         return fechaPago;
     }
 
-    public void setFechaPago(LocalDate fechaPago) {
+    public void setFechaPago(LocalDateTime fechaPago) {
         this.fechaPago = fechaPago;
     }
 
@@ -97,11 +107,21 @@ public class VentaPagoDTO {
         this.idVenta = idVenta;
     }
 
+
+
     public Integer getIdFormaPago() {
         return idFormaPago;
     }
 
     public void setIdFormaPago(Integer idFormaPago) {
         this.idFormaPago = idFormaPago;
+    }
+
+    public String getNombreFormaPago() {
+        return nombreFormaPago;
+    }
+
+    public void setNombreFormaPago(String nombreFormaPago) {
+        this.nombreFormaPago = nombreFormaPago;
     }
 }

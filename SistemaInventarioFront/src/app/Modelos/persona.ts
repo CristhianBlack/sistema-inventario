@@ -20,6 +20,7 @@ export class Persona {
     activo : boolean = true;
     idsRoles?: number[] = [];
     roles?: any[] = [];
+    saldoFavor: number = 0;
 
     tipoDocumento? : TipoDocumento;
     ciudad?: Ciudad;

@@ -62,26 +62,27 @@ public class CompraServiceImpl implements ICompraService {
         // Crear compra
         Compra compra = new Compra(compraDTO);
         compra.setProveedor(proveedor);
-        compra.setEstado(EstadoCompra.PENDIENTE);
+        compra.setEstado(EstadoCompra.CONFIRMADA);
 
-        System.out.println("Estado venta: {}"+ compra.getEstado());
-
+        // Inicializar totales en CERO (IMPORTANTE)
         compra.setSubTotalCompra(BigDecimal.ZERO);
         compra.setTotalImpuestos(BigDecimal.ZERO);
         compra.setTotalCompra(BigDecimal.ZERO);
 
-        actualizarEstadoPorPago(compra);
-
         // Guardar compra para obtener ID
-        Compra compraGuardada = compraRepository.save(compra);
+         compra = compraRepository.save(compra);
 
-        guardarDetalleCompra(compraDTO, compraGuardada);
+        System.out.println("Estado venta: {}"+ compra.getEstado());
+
+        guardarDetalleCompra(compraDTO, compra);
 
         if (compraDTO.getPagos() != null && !compraDTO.getPagos().isEmpty()) {
-            guardarCompraPago(compraDTO, compraGuardada);
+            guardarCompraPago(compraDTO, compra);
         }
 
-        return compraGuardada;
+        compra.setEstado(calcularEstadoCompra(compra));
+
+        return compraRepository.save(compra);
     }
 
     public void guardarDetalleCompra(CompraDTO compraDTO, Compra compra){
@@ -98,7 +99,7 @@ public class CompraServiceImpl implements ICompraService {
                                 "Producto no encontrado: " + detalleCompra.getIdProducto()));
 
 
-                BigDecimal precioUnitario = (producto.getPrecioCompra());
+                BigDecimal precioUnitario = detalleCompra.getPrecioUnitario();
                 BigDecimal cantidad = BigDecimal.valueOf(detalleCompra.getCantidad());
                 //BigDecimal descuento = de.getDescuento() != null ? detalleVeta.getDescuento() : BigDecimal.ZERO;
 
@@ -106,7 +107,9 @@ public class CompraServiceImpl implements ICompraService {
                 BigDecimal subTotalLinea = precioUnitario
                         .multiply(cantidad);
 
-                BigDecimal porcentaje = producto.getImpuesto().getPorcentaje(); // 0.19
+                BigDecimal porcentaje = producto.getImpuesto() != null
+                        ? producto.getImpuesto().getPorcentaje()
+                        : BigDecimal.ZERO;
 
                 BigDecimal impuestoLinea = subTotalLinea.multiply(porcentaje);
 
@@ -121,7 +124,7 @@ public class CompraServiceImpl implements ICompraService {
 
                 DetalleCompra detalle = new DetalleCompra();
                 detalle.setCantidad(detalleCompra.getCantidad());
-                detalle.setPrecioUnitario(producto.getPrecioCompra());
+                detalle.setPrecioUnitario(precioUnitario);
                 detalle.setSubtotalLinea(subTotalLinea);
                 detalle.setImpuestoLinea(impuestoLinea);
                 detalle.setTotalLinea(totalLinea);
@@ -133,7 +136,7 @@ public class CompraServiceImpl implements ICompraService {
 
                 registrarMovimiento(detalle, compra);
             }
-            // ACTUALIZAMOS LA VENTA
+            // ACTUALIZAMOS LA COMPRA
             compra.setSubTotalCompra(subTotalCompra);
             compra.setTotalImpuestos(totalImpuestos);
             compra.setTotalCompra(totalCompra);

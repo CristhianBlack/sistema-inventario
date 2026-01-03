@@ -25,6 +25,19 @@
     <!-- Registro de pago -->
     <div class="row g-2 mb-3 align-items-end">
 
+      <div class="col-md-4">
+        <label class="form-label">Forma de pago</label>
+        <select class="form-select"
+                [(ngModel)]="idFormaPago"
+                [ngModelOptions]="{ standalone: true }" [disabled]="soloLectura">
+          <option [ngValue]="null">Seleccione...</option>
+          <option *ngFor="let forma of formaPagos"
+                  [ngValue]="forma.idFormaPago">
+            {{ forma.nombreFormaPago }}
+          </option>
+        </select>
+      </div>
+
       <div class="col-md-3">
         <label class="form-label">Monto</label>
         <input type="number"
@@ -33,14 +46,16 @@
                min="1"
                step="0.01"
                [(ngModel)]="monto"
-               [ngModelOptions]="{ standalone: true }">
+               [ngModelOptions]="{ standalone: true }"
+               [disabled]="soloLectura">
       </div>
 
       <div class="col-md-3">
         <label class="form-label">Estado del pago</label>
         <select class="form-select"
                 [(ngModel)]="estadoPago"
-                [ngModelOptions]="{ standalone: true }">
+                [ngModelOptions]="{ standalone: true }"
+                [disabled]="soloLectura">
           <option [ngValue]="EstadoPago.PENDIENTE_CONFIRMACION">
             Pendiente confirmación
           </option>
@@ -50,21 +65,8 @@
         </select>
       </div>
 
-      <div class="col-md-4">
-        <label class="form-label">Forma de pago</label>
-        <select class="form-select"
-                [(ngModel)]="idFormaPago"
-                [ngModelOptions]="{ standalone: true }">
-          <option [ngValue]="null">Seleccione...</option>
-          <option *ngFor="let forma of formaPagos"
-                  [ngValue]="forma.idFormaPago">
-            {{ forma.nombreFormaPago }}
-          </option>
-        </select>
-      </div>
-
       <div class="col-md-2">
-        <button class="btn btn-success w-100"
+        <button class="btn btn-success w-100" *ngIf="!soloLectura"
                 [disabled]="!monto || monto <= 0 || !idFormaPago"
                 (click)="registrarPago()">
           Registrar
@@ -80,6 +82,7 @@
         <tr>
           <th>Fecha</th>
           <th>Monto</th>
+          <th>Forma de Pago</th>
           <th>Estado</th>
           <th style="width: 160px;">Acciones</th>
         </tr>
@@ -88,9 +91,13 @@
       <tbody>
         <tr *ngFor="let p of pagos; trackBy: trackByPago">
 
-          <td>{{ p.fechaPago | date:'shortDate' }}</td>
+          <td>{{ p.fechaPago | date:'dd/MM/yyyy HH:mm' }}</td>
 
           <td>{{ p.monto | currency:'COP' }}</td>
+
+          <!--<pre>{{ p | json }}</pre>-->
+
+          <td>{{ p.nombreFormaPago }}</td>
 
           <td>
             <span class="badge"

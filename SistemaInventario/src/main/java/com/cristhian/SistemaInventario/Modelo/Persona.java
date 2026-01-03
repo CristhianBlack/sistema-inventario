@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +66,13 @@ public class Persona {
     @Column(nullable = false)
     private boolean activo = true;
 
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal saldoFavor = BigDecimal.ZERO;
+
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("persona") //  evita recursión infinita
+    private List<MovimientoSaldoPersona> movimientoSaldos = new ArrayList<>();
+
     // 🔹 Sobrescribimos el método toString()
     @Override
     public String toString() {
@@ -94,6 +102,7 @@ public class Persona {
         this.direccion = dto.getDireccion();
         this.telefono = dto.getTelefono();
         this.email = dto.getEmail();
+        this.saldoFavor = dto.getSaldoFavor();
 
     }
 
@@ -209,5 +218,19 @@ public class Persona {
         this.personaRoles = personaRoles;
     }
 
+    public BigDecimal getSaldoFavor() {
+        return saldoFavor;
+    }
 
+    public void setSaldoFavor(BigDecimal saldoFavor) {
+        this.saldoFavor = saldoFavor;
+    }
+
+    public List<MovimientoSaldoPersona> getMovimientoSaldos() {
+        return movimientoSaldos;
+    }
+
+    public void setMovimientoSaldos(List<MovimientoSaldoPersona> movimientoSaldos) {
+        this.movimientoSaldos = movimientoSaldos;
+    }
 }

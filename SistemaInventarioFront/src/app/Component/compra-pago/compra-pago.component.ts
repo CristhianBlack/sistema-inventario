@@ -15,6 +15,8 @@ import { FormaPagoService } from 'src/app/Servicios/forma-pago.service';
 })
 export class CompraPagoComponent {
 
+
+  @Input() soloLectura: boolean = false;
   @Input() idCompra!: number;
   
     pagos: CompraPagos[] = [];

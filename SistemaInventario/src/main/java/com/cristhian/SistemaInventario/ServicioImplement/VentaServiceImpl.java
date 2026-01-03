@@ -31,17 +31,20 @@ public class VentaServiceImpl implements IVentaService {
 
     private final VentaPagoRepository ventaPagoRepository;
     private final MovimientoInventarioRepository movimientoInventarioRepository;
+    private final MovimientoSaldoPersonaRepository movimientoSaldoPersonaRepository;
 
     public VentaServiceImpl(VentaRepository ventaRepository, PersonaRepository personaRepository,
                             ProductoRepository productoRepository, DetalleVentaRepository detalleVentaRepository,
                             VentaPagoRepository ventaPagoRepository,
-                            MovimientoInventarioRepository movimientoInventarioRepository) {
+                            MovimientoInventarioRepository movimientoInventarioRepository,
+                            MovimientoSaldoPersonaRepository movimientoSaldoPersonaRepository) {
         this.ventaRepository = ventaRepository;
         this.personaRepository = personaRepository;
         this.productoRepository = productoRepository;
         this.detalleVentaRepository = detalleVentaRepository;
         this.ventaPagoRepository = ventaPagoRepository;
         this.movimientoInventarioRepository = movimientoInventarioRepository;
+        this.movimientoSaldoPersonaRepository = movimientoSaldoPersonaRepository;
     }
 
     @Override
@@ -57,7 +60,7 @@ public class VentaServiceImpl implements IVentaService {
     @Transactional
     @Override
     public Venta guardarVenta(VentaDTO ventaDTO) {
-        // Buscamos la persona
+        // Buscamos la persona el id
          Persona persona = personaRepository.findById(ventaDTO.getIdPersona())
                  .orElseThrow(()-> new RecursoNoEncontradoException("Persona no encontrada."));
          //Crramos la venta
@@ -67,68 +70,91 @@ public class VentaServiceImpl implements IVentaService {
 
         System.out.println("Estado venta: {}"+ venta.getEstado());
 
+        // Inicializamos los totales en cero por que aun no se han calculado
         venta.setSubTotalVenta(BigDecimal.ZERO);
         venta.setTotalImpuestos(BigDecimal.ZERO);
         venta.setTotalVenta(BigDecimal.ZERO);
 
-        actualizarEstadoPorPago(venta);
+        //actualizarEstadoPorPago(venta);
 
          //guardamos la venta para obtener ID
         Venta ventaGuardada = ventaRepository.save(venta);
 
+        //Llamamos al metodo guardar detalle venta donde se almacenaran los registros del detalle
         guardarDetalleVenta(ventaDTO, ventaGuardada);
 
-        /*if (venta.getEstado() != null && venta.getEstado() == EstadoVenta.PENDIENTE) {
-            guardarDetalleVenta(ventaDTO, ventaGuardada);
-            guardarVentaPago(ventaDTO, ventaGuardada);
-        }*/
+        /* Después de calcular total de la venta llamamos el metodo aplicar
+        el saldo a favor si este tiene uno dispnible
+         */
+        BigDecimal saldoAplicado = aplicarSaldoFavor(venta);
+        // actualizamos nuestro saldo aplicado
+        venta.setSaldoAplicado(saldoAplicado);
+        //Actualizamos nuestro total a pagar descontando el valor de la venta con el saldo aplicado que se tiene
+        venta.setTotalPagar(
+                venta.getTotalVenta().subtract(saldoAplicado)
+        );
+
+        //Llamamos al metodo actualizar estado por pago que nos actualiza en que estado se encuentra la venta.
+        actualizarEstadoPorPago(venta);
+
+        /* creamos una condicion donde evaluamos que los pagos no esten vacios y que tienen que ser diferentes
+        * de nulos si se cumple la condicion llamamos al metodo guardar venta pago para rgistrar el pago */
         if (ventaDTO.getPagos() != null && !ventaDTO.getPagos().isEmpty()) {
             guardarVentaPago(ventaDTO, ventaGuardada);
         }
-        /*for (DetalleVenta d : ventaGuardada.getDetalleVentas()) {
-            reservarStock(d);
-        }*/
 
+        //Retornamos nuestra variable venta guardada que es la que almacena el guardado de nuestra venta.
         return ventaGuardada;
     }
 
     // Guardamos nuestro detalle de venta en la base de datos
     public void guardarDetalleVenta(VentaDTO ventaDTO, Venta venta){
-        // Guardado de detalles
+        /*Guardado de detalles de venta primero evaluamos si nuestro detalles no esten vacios y no sean nulos
+        * si se cumple la condicion entramos al if */
         if(ventaDTO.getDetalles() != null && !ventaDTO.getDetalles().isEmpty()) {
-
+            //Inicializamos nuestra variables  totales en cero.
             BigDecimal subTotalVenta = BigDecimal.ZERO;
             BigDecimal totalImpuestos = BigDecimal.ZERO;
             BigDecimal totalVenta = BigDecimal.ZERO;
 
+            /*Recorremos un for con los detalles de la venta que se van a ir agregando para eso
+              creamos una variable de  DetalleVentaDTO  donde iremos alamcenando lo que venga de la
+              lista ventaDTO.getDetalles()*/
             for(DetalleVentaDTO detalleVeta : ventaDTO.getDetalles()) {
+                /*Creamos una variable de tipo producto donde almacenaremos lo que traiga el metodo findBYId del
+                repositorio donde buscamos si existe ese producto en la BD.*/
                 Producto producto = productoRepository.findById(detalleVeta.getIdProducto())
                         .orElseThrow(() -> new RecursoNoEncontradoException(
                                 "Producto no encontrado: " + detalleVeta.getIdProducto()));
 
-
+                /*Creamos nuevas variables donde alamcenaremos los valores que llegan de la BD como desde el
+                frontEnd por ejemplo precion unitario viene de la bd, la cantidad y el descuento llegan desde el front
+                */
                 BigDecimal precioUnitario = BigDecimal.valueOf(producto.getPrecioVenta());
                 BigDecimal cantidad = BigDecimal.valueOf(detalleVeta.getCantidad());
                 BigDecimal descuento = detalleVeta.getDescuento() != null ? detalleVeta.getDescuento() : BigDecimal.ZERO;
 
-
+                //Caluclamos el subtotal  y lo almacenamos en la variable.
                 BigDecimal subTotalLinea = precioUnitario
                         .multiply(cantidad)
                         .subtract(descuento);
 
+                //Caluclamos el porcentaje  y lo almacenamos en la variable.
                 BigDecimal porcentaje = producto.getImpuesto().getPorcentaje(); // 0.19
-
+                //Caluclamos el impuesto de linea  y lo almacenamos en la variable.
                 BigDecimal impuestoLinea = subTotalLinea.multiply(porcentaje);
-
+                //Caluclamos el total linea y lo almacenamos en la variable.
                 BigDecimal totalLinea = subTotalLinea.add(impuestoLinea);
 
                 System.out.println("Descuento: " + descuento);
 
-                // 🔥 Acumulamos totales de la venta
+                // Acumulamos totales de la venta
                 subTotalVenta = subTotalVenta.add(subTotalLinea);
                 totalImpuestos = totalImpuestos.add(impuestoLinea);
                 totalVenta = totalVenta.add(totalLinea);
 
+                /*Creamos un nuevo objeto de la entidad DetalleVenta y asignamos los valores actualizados para guardar
+                en la BD.*/
                 DetalleVenta detalle = new DetalleVenta();
                 detalle.setCantidad(detalleVeta.getCantidad());
                 detalle.setPrecioUnitario(BigDecimal.valueOf(producto.getPrecioVenta()));
@@ -139,42 +165,50 @@ public class VentaServiceImpl implements IVentaService {
                 detalle.setVenta(venta);
                 detalle.setProducto(producto);
                 detalle.setImpuesto(producto.getImpuesto());
-
+                /*guardamos nuestro detalle en la BD  llamando al repositorio y al metodo save donde le pasamos
+                como parametro el objeto detalle*/
                 detalleVentaRepository.save(detalle);
             }
-            // ACTUALIZAMOS LA VENTA
+            // Actualizamos los totales de la venta
             venta.setSubTotalVenta(subTotalVenta);
             venta.setTotalImpuestos(totalImpuestos);
             venta.setTotalVenta(totalVenta);
-
+            // guardamos nuestros totales en la BD.
             ventaRepository.save(venta);
         }
     }
 
+    //Metodo que nos permite guardar en la BD los datos de la tabla venta Pago
     public void guardarVentaPago(VentaDTO ventaDTO, Venta venta){
 
+        //Validamos que la lista de pagos este vacia o este nula si se cumple no retornamos nada.
         if (ventaDTO.getPagos() == null || ventaDTO.getPagos().isEmpty()) {
             return;
         }
-
+        //validamos si el estado de la venta es pagada lazamos un mensaje
         if (venta.getEstado() == EstadoVenta.PAGADA) {
             throw new IllegalStateException("La venta ya está pagada");
         }
-
+        //validamos si el estado de la venta es pagada lazamos un mensaje
         if (venta.getEstado() == EstadoVenta.CANCELADA) {
             throw new IllegalStateException("La venta está cancelada");
         }
 
+        /*Recorremos un for con los pagos de la venta que se van a ir agregando para eso
+              creamos una variable de VentaPagoDTO  donde iremos alamcenando lo que venga de la
+              lista ventaDTO.getPagos()*/
         for (VentaPagoDTO pagoDTO : ventaDTO.getPagos()) {
 
+            //validamos si el estado es nulo mandamo un mensaje
             if (pagoDTO.getEstadoPago() == null) {
                 throw new IllegalArgumentException("El estado del pago es obligatorio");
             }
+            //validamos que el monto no sea menor cero.
             if (pagoDTO.getMonto().compareTo(BigDecimal.ZERO) <= 0) {
                 throw new IllegalArgumentException("El monto del pago debe ser mayor a 0");
             }
 
-            // Reglas de negocio
+            // Creamos las reglas de negocio
             switch (pagoDTO.getEstadoPago()) {
                 case PENDIENTE_CONFIRMACION -> {
                     // El pago se registra
@@ -204,51 +238,66 @@ public class VentaServiceImpl implements IVentaService {
                 }
             }
 
+            /*Creamos un nuevo objeto de la entidad VentaPago y asignamos los valores actualizados para guardar
+                en la BD.*/
             VentaPago pago = new VentaPago();
             pago.setVenta(venta);
             pago.setEstadoPago(pagoDTO.getEstadoPago());
             pago.setMonto(pagoDTO.getMonto());
-            pago.setFechaPago(LocalDate.now());
-
+            pago.setFechaPago(LocalDateTime.now());
+            /*guardamos nuestro ventapago en la BD  llamando al repositorio y al metodo save donde le pasamos
+                como parametro el objeto pago*/
             ventaPagoRepository.save(pago);
+            //agregamos en nuestra lista de pagos llamada VentaPagos los valores que vienen en el objeto pago.
             venta.getVentaPagos().add(pago);
         }
-
+        /*Actualizamos nuestro estado en la tabla venta llamando al metodo calcular estado de venta y
+         pasando como praemtro el objeto venta*/
         venta.setEstado(calcularEstadoVenta(venta));
+        /*guardamos nuestro venta en la BD  para actualizar el estado de la venta.*/
         ventaRepository.save(venta);
     }
 
+    /*Este metodo nos ayuda a calcular en que momento se encuentra nuestro estado de venta
+    * dependiendo del totalpagado*/
     private EstadoVenta calcularEstadoVenta(Venta venta) {
 
+        //Asignmos nuestro listado de pagos en la variable totalpagado filtrando
+        // por el estado que se enctre confirmado
         BigDecimal totalPagado = venta.getVentaPagos().stream()
                 .filter(p -> p.getEstadoPago() == EstadoPago.CONFIRMADO)
                 .map(VentaPago::getMonto)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal totalVenta =(venta.getTotalVenta());
+        //Creamos una variable totalventa donde le pasamos el valor total a pagar si tiene saldo pendiente
+        BigDecimal totalVenta =(venta.getTotalPagar());
 
-
+        //Validamos si el total pagado es igual a cero por defecto el estado seria pendiente
         if (totalPagado.compareTo(BigDecimal.ZERO) == 0) {
             return venta.getEstado();
         }
-
+        //Validamos si el total pagado es menor al totalventa el estado seria parcial
         if (totalPagado.compareTo(totalVenta) < 0) {
             return EstadoVenta.PARCIAL;
         }
-
+        //En caso contrario el estado seria pagada
         return EstadoVenta.PAGADA;
     }
 
+    //Este metodo nos permite cancelar una venta siempre y cuando no este pagada o confirmada
     @Override
     public void cancelarVenta(int idVenta) {
+        //Consutlamos la venta y la almacenamos en una variable llamada venta
         Venta venta = ventaRepository.findById(idVenta)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Venta no encontrada"));
 
+        /*Validamos si el estado es igual a pagado o estado confirmada no se puede cancelar la venta*/
         if (venta.getEstado() == EstadoVenta.PAGADA || venta.getEstado() == EstadoVenta.CONFIRMADA) {
             throw new IllegalStateException("No se puede cancelar una venta confirmada o pagada");
         }
-
+        //Si no se cumpla condicion de arriba actualizamos nuestro estado como cancelada
         venta.setEstado(EstadoVenta.CANCELADA);
+        //guardamos nuestro nuevo estado en la tabla venta.
         ventaRepository.save(venta);
     }
 
@@ -272,29 +321,41 @@ public class VentaServiceImpl implements IVentaService {
     }*/
 
 
+    /*ESte metodo nos permite confirmar la venta actializnado el estado de venta */
     public void confirmarVenta(int idVenta) {
 
+        //consultamos si existe la venta
         Venta venta = ventaRepository.findById(idVenta)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Venta no encontrada"));
 
+        //validamos si el estado es diferente de pendiente mandamos un mensaje donde no se
+        // puede confirmar la venta
         if (venta.getEstado() != EstadoVenta.PENDIENTE) {
             throw new IllegalStateException("Solo se pueden confirmar ventas pendientes");
         }
 
+        //creamos un for y dentro creamos un varavbel de detalle venta  donde alacenaremos
+        // los datos obteneidos en nuestra lista detalleventas.
         for (DetalleVenta d : venta.getDetalleVentas()) {
+            //Llamamos al metodo registrar movimniento que sera el encargado de realizar el
+            // descuento del invetario
             registrarMovimiento(d, venta);
         }
-
+        //Actualizamos nuestro estado venta como confirmada
         venta.setEstado(EstadoVenta.CONFIRMADA);
+        //guardamos nuestro nuevo estado venta.
         ventaRepository.save(venta);
     }
 
-
-
+    // Este metodo nos permite actualizar el estado venta por pago
     private void actualizarEstadoPorPago(Venta venta) {
-
+        //Creamos una variable llamada estadopago donde alcenara los valores que llegan desde el metodo
+        // calcularEstadoVenta
         EstadoVenta estadoPago = calcularEstadoVenta(venta);
 
+        /*con esta variable estado pago hacemos una validacion donde comparamos
+        si el estado pago es igual a parcial entonces mantenga el estado igual o sea parcial en caso cotrario
+        cambie el estado a pagada*/
         if (estadoPago == EstadoVenta.PARCIAL) {
             venta.setEstado(EstadoVenta.PARCIAL);
         }
@@ -303,32 +364,39 @@ public class VentaServiceImpl implements IVentaService {
         }
     }
 
+    //ESte metodo permite realizar el registro del  movimiento de inventario y descontar el stock
+    // de la tabla producto
     public void registrarMovimiento(DetalleVenta detalle, Venta venta) {
 
+        //logs informativos
         log.info("=== INICIO registrarMovimiento ===");
 
         log.info("Venta ID: {}, Estado: {}", venta.getIdVenta(), venta.getEstado());
         log.info("Detalle -> Producto ID: {}, Cantidad: {}",
                 detalle.getProducto().getIdProducto(), detalle.getCantidad());
 
+        //Consultamos que exista nuestra producto
         Producto producto = productoRepository.findById(detalle.getProducto().getIdProducto())
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
         log.info("Producto encontrado -> ID: {}, Stock: {}, StockReservado: {}",
                 producto.getIdProducto(), producto.getStock());
 
+        //Validamos que la venta sea diferente a pendiente
         if (venta.getEstado() != EstadoVenta.PENDIENTE) {
-            log.error("❌ Venta no está PAGADA");
+            log.error(" Venta no está PAGADA");
             throw new IllegalStateException("La venta no esta en estado pendiente.");
         }
-
+        //Validamos que el stock no sea inferior a la cantidad ingresada
         if (producto.getStock() < detalle.getCantidad()) {
-            log.error("❌ Stock reservado insuficiente");
+            log.error(" Stock reservado insuficiente");
             throw new IllegalStateException(
                     "La cantidad reservada es insuficiente"
             );
         }
 
+        /*Creamos un nuevo objeto de la entidad movimientoinventario y asignamos los valores actualizados para guardar
+                en la BD.*/
         MovimientoInventario movimiento = new MovimientoInventario();
 
         movimiento.setTipoMovimiento(TipoMovimiento.SALIDA);
@@ -339,7 +407,7 @@ public class VentaServiceImpl implements IVentaService {
         movimiento.setProveedor(null);
         movimiento.setFechaMovimiento(LocalDateTime.now());
 
-        // 🔍 LOG CLAVE (ANTES DEL SAVE)
+        //  LOG CLAVE (ANTES DEL SAVE)
         log.info("Movimiento a guardar:");
         log.info("  Tipo: {}", movimiento.getTipoMovimiento());
         log.info("  Origen: {}", movimiento.getOrigenMovimiento());
@@ -348,15 +416,63 @@ public class VentaServiceImpl implements IVentaService {
                 movimiento.getProducto() != null ? movimiento.getProducto().getIdProducto() : "NULL");
         log.info("  Proveedor: {}", movimiento.getProveedor());
 
+        //guardamos nuestro movimiento inventario en la BD
         movimientoInventarioRepository.save(movimiento);
 
         log.info("✅ Movimiento guardado correctamente");
 
+        //desde esta linea realizamos el descuento del stock desde la tabla producto
         producto.setStock(producto.getStock() - detalle.getCantidad());
+        //guardamos nuestro productostock actualizado.
         productoRepository.save(producto);
 
         log.info("=== FIN registrarMovimiento ===");
     }
+
+    //Este metodo nos permite aplicar los saldos a favor de los clientes cuando se realiza una devolucion
+    private BigDecimal aplicarSaldoFavor(Venta venta) {
+
+        //Creamos una variable llamada persona donde almacenaremos el valor que viene de la
+        // entidad venta persona
+        Persona persona = venta.getPersona();
+        //Creamos una variable llamada saldo disponible donde almacenaremos el valor que viene de la
+        // entidad persona saldo a favor
+        BigDecimal saldoDisponible = persona.getSaldoFavor();
+
+        //Validamos is el saldo disponible es igual o menor a cero entonces regresa cero
+        if (saldoDisponible.compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+        //Creamos una variable llamada totalVenta donde almacenaremos el valor que viene de la
+        // entidad venta totalVenta
+        BigDecimal totalVenta = venta.getTotalVenta();
+        //Creamos una variable llamada saldousado donde almacenaremos el valor del saldo disponible
+        // teniendo encunta de que no se exceda el valor del saldo disponible con el total de la venta.
+        BigDecimal saldoUsado = saldoDisponible.min(totalVenta);
+
+        // Descontar saldo
+        persona.setSaldoFavor(
+                saldoDisponible.subtract(saldoUsado)
+        );
+
+        //actualizamos nuestra tabla persona el sado a favor
+        personaRepository.save(persona);
+
+        // Registrar movimiento saldo persona
+        MovimientoSaldoPersona mov = new MovimientoSaldoPersona();
+        mov.setPersona(persona);
+        mov.setMonto(saldoUsado);
+        mov.setTipoMovimiento(TipoMovimientoSaldo.SALIDA);
+        mov.setConcepto("Aplicación del saldo a favor en la venta #" + venta.getIdVenta());
+        mov.setFechaMovimiento(LocalDateTime.now());
+
+        //guardamos el movimiento del saldo persona
+        movimientoSaldoPersonaRepository.save(mov);
+
+        //retornamos el saldo usado.
+        return saldoUsado;
+    }
+
 
 
 }

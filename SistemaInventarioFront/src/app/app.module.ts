@@ -42,6 +42,7 @@ import { VentaListaComponent } from './Component/venta-lista/venta-lista.compone
 import { VentaFormComponent } from './Component/venta-form/venta-form.component';
 import { VentaPagoFormComponent } from './Component/venta-pago-form/venta-pago-form.component';
 import { CompraPagoComponent } from './Component/compra-pago/compra-pago.component';
+import { DevolucionFormComponent } from './Component/devolucion-form/devolucion-form.component';
 
 
 
@@ -82,6 +83,7 @@ import { CompraPagoComponent } from './Component/compra-pago/compra-pago.compone
     VentaFormComponent,
     VentaPagoFormComponent,
     CompraPagoComponent,
+    DevolucionFormComponent,
     
     
   ],

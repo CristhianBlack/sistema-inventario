@@ -33,14 +33,14 @@
                min="1"
                step="0.01"
                [(ngModel)]="monto"
-               [ngModelOptions]="{ standalone: true }">
+               [ngModelOptions]="{ standalone: true }" [disabled]="soloLectura">
       </div>
 
       <div class="col-md-3">
         <label class="form-label">Estado del pago</label>
         <select class="form-select"
                 [(ngModel)]="estadoPago"
-                [ngModelOptions]="{ standalone: true }">
+                [ngModelOptions]="{ standalone: true }" [disabled]="soloLectura">
           <option [ngValue]="EstadoPago.PENDIENTE_CONFIRMACION">
             Pendiente confirmación
           </option>
@@ -54,7 +54,7 @@
         <label class="form-label">Forma de pago</label>
         <select class="form-select"
                 [(ngModel)]="idFormaPago"
-                [ngModelOptions]="{ standalone: true }">
+                [ngModelOptions]="{ standalone: true }" [disabled]="soloLectura">
           <option [ngValue]="null">Seleccione...</option>
           <option *ngFor="let forma of formaPagos"
                   [ngValue]="forma.idFormaPago">

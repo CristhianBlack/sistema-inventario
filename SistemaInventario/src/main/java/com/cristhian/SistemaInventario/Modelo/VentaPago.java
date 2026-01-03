@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class VentaPago {
@@ -18,7 +19,7 @@ public class VentaPago {
     private BigDecimal monto;
 
     @Column(nullable = false)
-    private LocalDate fechaPago;
+    private LocalDateTime fechaPago;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -67,11 +68,11 @@ public class VentaPago {
         return monto;
     }
 
-    public LocalDate getFechaPago() {
+    public LocalDateTime getFechaPago() {
         return fechaPago;
     }
 
-    public void setFechaPago(LocalDate fechaPago) {
+    public void setFechaPago(LocalDateTime fechaPago) {
         this.fechaPago = fechaPago;
     }
 

@@ -2,6 +2,7 @@ package com.cristhian.SistemaInventario.DTO;
 
 import com.cristhian.SistemaInventario.Modelo.EstadoVenta;
 import com.cristhian.SistemaInventario.Modelo.Venta;
+import jakarta.persistence.Column;
 
 
 import java.math.BigDecimal;
@@ -16,6 +17,8 @@ public class VentaDTO {
     private BigDecimal subTotalVenta;
     private BigDecimal totalImpuestos;
     private BigDecimal totalVenta;
+    private BigDecimal saldoAplicado = BigDecimal.ZERO;
+    private BigDecimal totalPagar;
     private EstadoVenta estado; // Pendiente, parcial , pagada
     private Integer idPersona;
 
@@ -33,6 +36,8 @@ public class VentaDTO {
         this.totalImpuestos = venta.getTotalImpuestos();
         this.totalVenta = venta.getTotalVenta();
         this.estado = venta.getEstado();
+        this.saldoAplicado = venta.getSaldoAplicado();
+        this.totalPagar = venta.getTotalPagar();
 
         // Enviamos el ID para no exponer objetos completos
         this.idPersona = venta.getPersona() != null
@@ -118,5 +123,21 @@ public class VentaDTO {
 
     public void setPagos(List<VentaPagoDTO> pagos) {
         this.pagos = pagos;
+    }
+
+    public BigDecimal getSaldoAplicado() {
+        return saldoAplicado;
+    }
+
+    public void setSaldoAplicado(BigDecimal saldoAplicado) {
+        this.saldoAplicado = saldoAplicado;
+    }
+
+    public BigDecimal getTotalPagar() {
+        return totalPagar;
+    }
+
+    public void setTotalPagar(BigDecimal totalPagar) {
+        this.totalPagar = totalPagar;
     }
 }

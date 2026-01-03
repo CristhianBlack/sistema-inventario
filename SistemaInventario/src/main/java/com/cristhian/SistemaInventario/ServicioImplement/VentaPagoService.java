@@ -79,7 +79,7 @@ public class VentaPagoService implements IVentaPagoService {
             VentaPago pago = new VentaPago();
             pago.setVenta(venta);
             pago.setMonto(pagoDTO.getMonto());
-            pago.setFechaPago(LocalDate.now());
+            pago.setFechaPago(LocalDateTime.now());
             pago.setNumeroCuotas(numeroCuotas);
 
             // 🔐 El backend decide el estado inicial
@@ -91,13 +91,16 @@ public class VentaPagoService implements IVentaPagoService {
 
             pago.setEstadoPago(EstadoPago.PENDIENTE_CONFIRMACION);
 
-            if (pagoDTO.getIdFormaPago() != null) {
-                FormaPago formaPago = formaPagoRepository
-                        .findById(pagoDTO.getIdFormaPago())
-                        .orElseThrow(() -> new RuntimeException("Forma de pago no encontrada"));
-
-                pago.setFormaPago(formaPago);
+            System.out.println("Forma de Pago "+ pagoDTO.getIdFormaPago());
+            if (pagoDTO.getIdFormaPago() == null) {
+                throw new IllegalArgumentException("La forma de pago es obligatoria");
             }
+
+            FormaPago formaPago = formaPagoRepository
+                    .findById(pagoDTO.getIdFormaPago())
+                    .orElseThrow(() -> new RecursoNoEncontradoException("Forma de pago no encontrada"));
+
+            pago.setFormaPago(formaPago);
 
             ventaPagoRepository.save(pago);
 
@@ -171,50 +174,6 @@ public class VentaPagoService implements IVentaPagoService {
                 .map(VentaPagoDTO::new)
                 .toList();
     }
-
-    // Este metodo permite guardar el movimineto del inventario desde la clase venta de manera automatica.
-   /* public void registrarMovimiento(DetalleVenta detalle, Venta venta){
-
-        //1. Buscamos el producto si existe.
-        Producto producto = productoRepository.findById(detalle.getProducto().getIdProducto())
-                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
-
-        if (venta.getEstado() != EstadoVenta.PAGADA) {
-
-            throw new IllegalStateException(
-                    "No se puede descontar inventario si la venta no está pagada"
-            );
-        }
-
-        // 1️⃣ Validación fuerte
-        if (producto.getStockReservado() < detalle.getCantidad()) {
-            throw new IllegalStateException(
-                    "La cantidad reservada es insuficiente"
-            );
-        }
-            //2. Hacemos el registro de la tabla movimiento inventario
-            MovimientoInventario movimiento = new MovimientoInventario();
-
-            movimiento.setTipoMovimiento(TipoMovimiento.SALIDA);
-            movimiento.setOrigenMovimiento(OrigenMovimiento.VENTA);
-            movimiento.setCantidad(-detalle.getCantidad());
-            movimiento.setObservacion("Salida del producto por venta # " + venta.getIdVenta());
-            movimiento.setProducto(producto);
-            movimiento.setProveedor(null);
-
-            movimientoInventarioRepository.save(movimiento);
-
-            int descuentoStock = producto.getStock() - detalle.getCantidad();
-
-          // 3. Conversión reserva → stock real
-        producto.setStock(producto.getStock() - detalle.getCantidad());
-        producto.setStockReservado(producto.getStockReservado() - detalle.getCantidad());
-
-            productoRepository.save(producto);
-
-    }*/
-
-
 
 }
 

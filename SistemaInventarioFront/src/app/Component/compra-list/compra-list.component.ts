@@ -169,6 +169,8 @@ compras : Compra[] = [];
     compraSeleccionadaId!: number;
   
     loading = false;
+
+    modoSoloLecturaPago = false;
   
     // Referencia al elemento HTML del modal
       @ViewChild('modalCompra') modalElement!: ElementRef;
@@ -279,13 +281,45 @@ compras : Compra[] = [];
   
 mostrarModalPago = false;
 
-abrirModalPago(idCompra: number) {
-  this.compraSeleccionadaId = idCompra;
+abrirModalPago(compra: Compra) {
+  if (!compra.idCompra) {
+    console.error('La venta no tiene ID');
+    return;
+  }
+  
+  this.compraSeleccionadaId = compra.idCompra;
+  //Si ya está pagada → solo consulta
+  this.modoSoloLecturaPago = compra.estado === 'PAGADA';
   this.mostrarModalPago = true;
 }
 
 cerrarModalPago() {
   this.mostrarModalPago = false;
+}
+
+puedeRegistrarPago(compra: Compra): boolean {
+  return compra.estado === 'CONFIRMADA' || compra.estado === 'PARCIAL';
+}
+
+puedeVerPagos(compra: Compra): boolean {
+  return compra.estado === 'PAGADA';
+}
+
+compraPorPagina = 6;
+paginaActual = 1;
+
+get totalPaginas(): number {
+  return Math.ceil(this.compras.length / this.compraPorPagina);
+}
+
+get comprasPaginadas() {
+  const inicio = (this.paginaActual - 1) * this.compraPorPagina;
+  return this.compras.slice(inicio, inicio + this.compraPorPagina);
+}
+
+cambiarPagina(pagina: number) {
+  if (pagina < 1 || pagina > this.totalPaginas) return;
+  this.paginaActual = pagina;
 }
 
 

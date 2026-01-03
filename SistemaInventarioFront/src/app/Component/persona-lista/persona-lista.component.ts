@@ -161,4 +161,21 @@ private abrirModal(): void {
     get tieneRoles(): boolean {
   return !!this.personaDetalle?.roles?.length;
 }
+
+personaPorPagina = 6;
+paginaActual = 1;
+
+get totalPaginas(): number {
+  return Math.ceil(this.personas.length / this.personaPorPagina);
+}
+
+get personasPaginadas() {
+  const inicio = (this.paginaActual - 1) * this.personaPorPagina;
+  return this.personas.slice(inicio, inicio + this.personaPorPagina);
+}
+
+cambiarPagina(pagina: number) {
+  if (pagina < 1 || pagina > this.totalPaginas) return;
+  this.paginaActual = pagina;
+}
 }

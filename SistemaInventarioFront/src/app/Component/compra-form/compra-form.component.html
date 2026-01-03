@@ -110,7 +110,7 @@
         <div class="col-md-5">
           <label class="form-label">Producto</label>
           <select class="form-select" [(ngModel)]="productoSeleccionado" [ngModelOptions]="{standalone: true}"
-            [disabled]="modoSoloLectura">
+                (change)="onProductoSeleccionado()" [disabled]="modoSoloLectura">
             <option value="">Seleccione...</option>
             <option *ngFor="let p of productos" [ngValue]="p">
               {{ p.nombreProducto }}
@@ -127,18 +127,22 @@
         </div>
 
         <!-- Precio -->
-        <div class="col-md-3">
-          <label class="form-label">Precio</label>
-          <input type="text" class="form-control"
-           [ngModel]="productoSeleccionado?.precioVenta"
-  (ngModelChange)="productoSeleccionado && (productoSeleccionado.precioVenta = $event)" [ngModelOptions]="{standalone: true}"  
-  [disabled]="modoSoloLectura">
+<div class="col-md-3">
+  <label class="form-label">Precio de compra</label>
 
-  <!-- Texto formateado con comas -->
-  <div class="mt-1 text-muted" *ngIf="precio">
-    {{ precio | number:'1.0-0' }}
-  </div>
-        </div>
+  <input
+    type="number"
+    class="form-control"
+    [(ngModel)]="precio"
+    [ngModelOptions]="{standalone: true}"
+    [disabled]="modoSoloLectura"
+    min="0"
+  />
+
+  <small class="text-muted">
+    Precio sugerido del producto. Puede modificarlo si es necesario.
+  </small>
+</div>
 
         <div class="col-md-3">
           <label class="form-label">Impuesto</label>

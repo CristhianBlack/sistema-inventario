@@ -10,6 +10,8 @@ export class Venta {
     totalVenta: number = 0;
     estado : string = ""; // Pendiente, parcial , pagada
     pagos?: VentaPago[] | null;
+    saldoAplicado: number = 0;
+    totalPagar: number = 0;
 
     //Relaciones
     idPersona : number | null = null;
