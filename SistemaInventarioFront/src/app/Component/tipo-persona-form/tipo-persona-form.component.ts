@@ -42,32 +42,18 @@ export class TipoPersonaFormComponent implements OnInit{
         }
       }
   
-      onSubmit(formTipoPersona : NgForm): void{
+      onSubmit(): void{
           if(this.formModel.idTipoPersona){
-            // Editamos nuestra tipo persona
-            this.tipoPersonaService.editarTipoPersona(this.formModel.idTipoPersona, this.formModel).subscribe({
+            // consultamos nuestra tipo persona
+            this.tipoPersonaService.obtenerTipoPersonaById(this.formModel.idTipoPersona).subscribe({
               next: () =>{
                 this.toastr.success('Tipo de persona actualizada correctamente', 'Éxito');
                 // Emite el evento hacia el componente padre.
                 this.formGuardado.emit();
-                this.limpiarFormulario(formTipoPersona); // limpiar al editar
+                
               },
               error: (err) =>{
-                this.toastr.error('Error al editar el tipo de persona', 'Error');
-              }
-            });
-          }else{
-            // Creamos nuestra ciudad
-            console.log(' Datos que se envían:', this.formModel);
-            this.tipoPersonaService.agregarTipoPersona(this.formModel).subscribe({
-              next: () =>{
-                this.toastr.success('Tipo de persona agregada correctamente', 'Éxito');
-                // Emite el evento hacia el componente padre.
-                this.formGuardado.emit();
-                this.limpiarFormulario(formTipoPersona); //  limpiar al editar
-              },
-              error: (err) =>{
-                this.toastr.error(err.message, 'Error'); // muestra el mensaje del backend
+                this.toastr.error('Error al consultar el tipo de persona', 'Error');
               }
             });
           }
@@ -77,5 +63,13 @@ export class TipoPersonaFormComponent implements OnInit{
         this.formModel = new TipoPersona(); //  reinicia el modelo
         formTipoPersona?.resetForm();       //  limpia visualmente los inputs
       }
+
+      formatearTipoPersona(valor?: string): string {
+  if (!valor) return '';
+  return valor
+    .toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, l => l.toUpperCase());
+}
 
 }

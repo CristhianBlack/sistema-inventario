@@ -38,12 +38,12 @@ public class ProveedorController {
     //@Autowired
     //private CiudadService ciudadService;
 
-    /*@GetMapping("/Proveedores")
-    public ResponseEntity<List<ProveedorDTO>> listarProveedor(){
-        List<ProveedorDTO> response = proveedorService.listarProveedoresActivos().stream()
-                .map(ProveedorDTO :: new).toList(); // mapeo entidad → DTO
-        return ResponseEntity.ok(response);
-    }*/
+    @GetMapping("/Proveedores")
+    public ResponseEntity<List<ProveedorPersonaDTO>> listarProveedor() {
+        return ResponseEntity.ok(
+                proveedorService.obtenerListadoProveedorPersona()
+        );
+    }
 
     @GetMapping("/Proveedores/{id}")
     public ResponseEntity<?> obtenerProveedorPorId(@PathVariable int id){
@@ -57,7 +57,7 @@ public class ProveedorController {
         return ResponseEntity.ok(new ProveedorDTO(data.get()));
     }
 
-    @PostMapping("/Proveedores")
+    @PostMapping("/Proveedor")
     public ResponseEntity<?> agregarProveedor(@Valid @RequestBody ProveedorDTO proveedorDTO){
         try{
             var proveedor = proveedorService.guardarProveedor(proveedorDTO);

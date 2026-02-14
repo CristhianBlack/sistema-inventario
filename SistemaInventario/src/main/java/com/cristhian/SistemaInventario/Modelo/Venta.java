@@ -1,12 +1,12 @@
 package com.cristhian.SistemaInventario.Modelo;
 
 import com.cristhian.SistemaInventario.DTO.VentaDTO;
+import com.cristhian.SistemaInventario.Enums.EstadoVenta;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +55,15 @@ public class Venta {
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("venta") // evita recursión infinita
     private List<Devolucion> devoluciones = new ArrayList<>();
+
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("venta") // evita recursión infinita
+    private List<AsientoContable> asientos = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Usuario usuario;
 
 
     public Venta() {
@@ -172,5 +181,21 @@ public class Venta {
 
     public void setTotalPagar(BigDecimal totalPagar) {
         this.totalPagar = totalPagar;
+    }
+
+    public List<AsientoContable> getAsientos() {
+        return asientos;
+    }
+
+    public void setAsientos(List<AsientoContable> asientos) {
+        this.asientos = asientos;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

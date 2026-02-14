@@ -1,12 +1,15 @@
 package com.cristhian.SistemaInventario.Modelo;
 
 import com.cristhian.SistemaInventario.DTO.VentaPagoDTO;
+import com.cristhian.SistemaInventario.Enums.EstadoPago;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class VentaPago {
@@ -40,6 +43,10 @@ public class VentaPago {
 
     @Column(nullable = true)
     private LocalDate fechaVencimientoCuota; // Vencimiento de la siguiente cuota
+
+    @OneToMany(mappedBy = "ventaPago", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("ventaPago") // evita recursión infinita
+    private List<AsientoContable> ventaPagos = new ArrayList<>();
 
     public VentaPago() {
     }
@@ -114,5 +121,13 @@ public class VentaPago {
 
     public void setFechaVencimientoCuota(LocalDate fechaVencimientoCuota) {
         this.fechaVencimientoCuota = fechaVencimientoCuota;
+    }
+
+    public List<AsientoContable> getVentaPagos() {
+        return ventaPagos;
+    }
+
+    public void setVentaPagos(List<AsientoContable> ventaPagos) {
+        this.ventaPagos = ventaPagos;
     }
 }

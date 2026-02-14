@@ -15,7 +15,7 @@ export class Compra {
     activo : boolean = true;
 
     //Relacciones
-    idProveedor : number | null = null;
+    idProveedor? : number | null = null;
 
     detalles?: DetalleCompra[];
 }

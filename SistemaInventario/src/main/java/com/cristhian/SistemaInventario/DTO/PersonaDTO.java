@@ -3,6 +3,7 @@ package com.cristhian.SistemaInventario.DTO;
 import com.cristhian.SistemaInventario.Modelo.Persona;
 import com.cristhian.SistemaInventario.Modelo.RolPersona;
 import com.fasterxml.jackson.annotation.JsonAlias;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -43,6 +44,17 @@ public class PersonaDTO {
     // 🔹 NUEVO: lista de IDs de roles
     private List<Integer> idsRoles; // SOLO EL ADMIN LOS ENVÍA
 
+    private String razonSocial;
+    private String nombreContacto;
+    private String apellidoContacto;
+    private String segundoApellidoContacto;
+
+    private String nombreTipoDocumento;
+    private String nombreTipoPersona;
+    private String nombreCiudad;
+
+
+
 
     public PersonaDTO() {
     }
@@ -57,6 +69,10 @@ public class PersonaDTO {
         this.telefono = persona.getTelefono();
         this.email = persona.getEmail();
         this.saldoFavor = persona.getSaldoFavor();
+        this.razonSocial = persona.getRazonSocial();
+        this.nombreContacto = persona.getNombreContacto();
+        this.apellidoContacto = persona.getApellidoContacto();
+        this.segundoApellidoContacto = persona.getSegundoApellidoContacto();
 
         // Solo enviamos los IDs para no exponer objetos completos
         this.idTipoDocumento = persona.getTipoDocumento() != null
@@ -78,18 +94,38 @@ public class PersonaDTO {
                 .map(pr -> pr.getRolPersona().getIdRolPersona()) // CORRECTO
                 .toList()
                 : null;
+
+        // Traemos los nombre para mostrar en la vista persona
+        this.nombreTipoDocumento = persona.getTipoDocumento() != null
+                ? String.valueOf(persona.getTipoDocumento().getNombreTipoDocumento())
+                : null;
+        this.nombreTipoPersona = persona.getTipoPersona() != null
+                ? String.valueOf(persona.getTipoPersona().getNombreTipoPersona())
+                : null;
+        this.nombreCiudad = persona.getCiudad() != null
+                ? persona.getCiudad().getCiudad()
+                : null;
     }
 
-    public PersonaDTO(int idPersona,String documentoPersona,String nombre,String apellido,String segundoApellido,
-            String direccion,String telefono,String email) {
+    public PersonaDTO(Integer idPersona, Integer idTipoPersona, String razonSocial, String nombre,
+                      String apellido, String segundoApellido, String nombreContacto, String apellidoContacto,
+                      String segundoApellidoContacto, String documentoPersona, String telefono, String email,
+                      String direccion, BigDecimal saldoFavor
+    ) {
         this.idPersona = idPersona;
-        this.documentoPersona = documentoPersona;
+        this.idTipoPersona = idTipoPersona;
+        this.razonSocial = razonSocial;
         this.nombre = nombre;
         this.apellido = apellido;
         this.segundoApellido = segundoApellido;
-        this.direccion = direccion;
+        this.nombreContacto = nombreContacto;
+        this.apellidoContacto = apellidoContacto;
+        this.segundoApellidoContacto = segundoApellidoContacto;
+        this.documentoPersona = documentoPersona;
         this.telefono = telefono;
         this.email = email;
+        this.direccion = direccion;
+        this.saldoFavor = saldoFavor;
     }
 
 
@@ -156,5 +192,61 @@ public class PersonaDTO {
 
     public void setSaldoFavor(BigDecimal saldoFavor) {
         this.saldoFavor = saldoFavor;
+    }
+
+    public String getRazonSocial() {
+        return razonSocial;
+    }
+
+    public void setRazonSocial(String razonSocial) {
+        this.razonSocial = razonSocial;
+    }
+
+    public String getNombreContacto() {
+        return nombreContacto;
+    }
+
+    public void setNombreContacto(String nombreContacto) {
+        this.nombreContacto = nombreContacto;
+    }
+
+    public String getApellidoContacto() {
+        return apellidoContacto;
+    }
+
+    public void setApellidoContacto(String apellidoContacto) {
+        this.apellidoContacto = apellidoContacto;
+    }
+
+    public String getSegundoApellidoContacto() {
+        return segundoApellidoContacto;
+    }
+
+    public void setSegundoApellidoContacto(String segundoApellidoContacto) {
+        this.segundoApellidoContacto = segundoApellidoContacto;
+    }
+
+    public String getNombreTipoDocumento() {
+        return nombreTipoDocumento;
+    }
+
+    public void setNombreTipoDocumento(String nombreTipoDocumento) {
+        this.nombreTipoDocumento = nombreTipoDocumento;
+    }
+
+    public String getNombreTipoPersona() {
+        return nombreTipoPersona;
+    }
+
+    public void setNombreTipoPersona(String nombreTipoPersona) {
+        this.nombreTipoPersona = nombreTipoPersona;
+    }
+
+    public String getNombreCiudad() {
+        return nombreCiudad;
+    }
+
+    public void setNombreCiudad(String nombreCiudad) {
+        this.nombreCiudad = nombreCiudad;
     }
 }

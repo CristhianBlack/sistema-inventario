@@ -3,9 +3,11 @@ package com.cristhian.SistemaInventario.ServicioImplement;
 import com.cristhian.SistemaInventario.DTO.DetalleVentaDTO;
 import com.cristhian.SistemaInventario.DTO.VentaDTO;
 import com.cristhian.SistemaInventario.DTO.VentaPagoDTO;
+import com.cristhian.SistemaInventario.Enums.*;
 import com.cristhian.SistemaInventario.Excepciones.RecursoNoEncontradoException;
 import com.cristhian.SistemaInventario.Modelo.*;
 import com.cristhian.SistemaInventario.Repositorio.*;
+import com.cristhian.SistemaInventario.Security.UsuarioAutenticadoProvider;
 import com.cristhian.SistemaInventario.Service.IVentaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +15,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio encargado de gestionar el ciclo completo de una venta:
+ * - Registro de la venta
+ * - Detalles de productos
+ * - Actualización de inventario
+ * - Registro de pagos
+ * - Generación y reversión de asientos contables
+ */
 @Service
 @Transactional
 public class VentaServiceImpl implements IVentaService {
@@ -33,11 +42,19 @@ public class VentaServiceImpl implements IVentaService {
     private final MovimientoInventarioRepository movimientoInventarioRepository;
     private final MovimientoSaldoPersonaRepository movimientoSaldoPersonaRepository;
 
+    private final ValidacionContableService validacionContableService;
+    private final UsuarioAutenticadoProvider usuarioProvider;
+
+    private final VentaContableServiceImpl ventaContableService;
+
     public VentaServiceImpl(VentaRepository ventaRepository, PersonaRepository personaRepository,
                             ProductoRepository productoRepository, DetalleVentaRepository detalleVentaRepository,
                             VentaPagoRepository ventaPagoRepository,
                             MovimientoInventarioRepository movimientoInventarioRepository,
-                            MovimientoSaldoPersonaRepository movimientoSaldoPersonaRepository) {
+                            MovimientoSaldoPersonaRepository movimientoSaldoPersonaRepository,
+                            ValidacionContableService validacionContableService,
+                            UsuarioAutenticadoProvider usuarioProvider,
+                            VentaContableServiceImpl ventaContableService) {
         this.ventaRepository = ventaRepository;
         this.personaRepository = personaRepository;
         this.productoRepository = productoRepository;
@@ -45,11 +62,14 @@ public class VentaServiceImpl implements IVentaService {
         this.ventaPagoRepository = ventaPagoRepository;
         this.movimientoInventarioRepository = movimientoInventarioRepository;
         this.movimientoSaldoPersonaRepository = movimientoSaldoPersonaRepository;
+        this.validacionContableService = validacionContableService;
+        this.usuarioProvider = usuarioProvider;
+        this.ventaContableService = ventaContableService;
     }
 
     @Override
     public List<Venta> listarVentas() {
-        return ventaRepository.findAll();
+        return ventaRepository.findAllByOrderByFechaVentaDesc();
     }
 
     @Override
@@ -57,9 +77,25 @@ public class VentaServiceImpl implements IVentaService {
         return ventaRepository.findById(id);
     }
 
+    /**
+     * Registra una nueva venta completa:
+     * - Valida apertura contable
+     * - Guarda compra
+     * - Guarda detalles
+     * - Actualiza inventario
+     * - Registra pagos
+     * - Genera asiento contable
+     */
     @Transactional
     @Override
     public Venta guardarVenta(VentaDTO ventaDTO) {
+
+        // Usuario autenticado
+        Usuario usuario = usuarioProvider.obtenerUsuarioAutenticado();
+
+        // Validar existencia de asiento de apertura
+        validacionContableService.validarApertura(TipoAsiento.NORMAL);
+
         // Buscamos la persona el id
          Persona persona = personaRepository.findById(ventaDTO.getIdPersona())
                  .orElseThrow(()-> new RecursoNoEncontradoException("Persona no encontrada."));
@@ -67,6 +103,7 @@ public class VentaServiceImpl implements IVentaService {
          Venta venta = new Venta(ventaDTO);
          venta.setPersona(persona);
          venta.setEstado(EstadoVenta.PENDIENTE);
+         venta.setUsuario(usuario);
 
         System.out.println("Estado venta: {}"+ venta.getEstado());
 
@@ -74,6 +111,8 @@ public class VentaServiceImpl implements IVentaService {
         venta.setSubTotalVenta(BigDecimal.ZERO);
         venta.setTotalImpuestos(BigDecimal.ZERO);
         venta.setTotalVenta(BigDecimal.ZERO);
+        venta.setSaldoAplicado(BigDecimal.ZERO);
+        venta.setTotalPagar(BigDecimal.ZERO);
 
         //actualizarEstadoPorPago(venta);
 
@@ -86,22 +125,36 @@ public class VentaServiceImpl implements IVentaService {
         /* Después de calcular total de la venta llamamos el metodo aplicar
         el saldo a favor si este tiene uno dispnible
          */
-        BigDecimal saldoAplicado = aplicarSaldoFavor(venta);
+        BigDecimal saldoAplicado = BigDecimal.ZERO;
+
+        if (Boolean.TRUE.equals(ventaDTO.getUsarSaldoFavor())) {
+            saldoAplicado = aplicarSaldoFavor(ventaGuardada);
+        }
         // actualizamos nuestro saldo aplicado
-        venta.setSaldoAplicado(saldoAplicado);
+        ventaGuardada.setSaldoAplicado(saldoAplicado);
         //Actualizamos nuestro total a pagar descontando el valor de la venta con el saldo aplicado que se tiene
-        venta.setTotalPagar(
-                venta.getTotalVenta().subtract(saldoAplicado)
+        ventaGuardada.setTotalPagar(
+                ventaGuardada.getTotalVenta().subtract(saldoAplicado)
         );
 
-        //Llamamos al metodo actualizar estado por pago que nos actualiza en que estado se encuentra la venta.
-        actualizarEstadoPorPago(venta);
-
         /* creamos una condicion donde evaluamos que los pagos no esten vacios y que tienen que ser diferentes
-        * de nulos si se cumple la condicion llamamos al metodo guardar venta pago para rgistrar el pago */
+         * de nulos si se cumple la condicion llamamos al metodo guardar venta pago para rgistrar el pago */
         if (ventaDTO.getPagos() != null && !ventaDTO.getPagos().isEmpty()) {
             guardarVentaPago(ventaDTO, ventaGuardada);
         }
+
+        //Llamamos al metodo actualizar estado por pago que nos actualiza en que estado se encuentra la venta.
+        actualizarEstadoPorPago(ventaGuardada);
+
+        // Calcular total pagado
+        /*BigDecimal totalPagado = venta.getVentaPagos().stream()
+                .filter(p -> p.getEstadoPago() == EstadoPago.CONFIRMADO)
+                .map(VentaPago::getMonto)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);*/
+
+        venta.setEstado(calcularEstadoVenta(ventaGuardada));
+
+        ventaRepository.save(ventaGuardada);
 
         //Retornamos nuestra variable venta guardada que es la que almacena el guardado de nuestra venta.
         return ventaGuardada;
@@ -130,7 +183,7 @@ public class VentaServiceImpl implements IVentaService {
                 /*Creamos nuevas variables donde alamcenaremos los valores que llegan de la BD como desde el
                 frontEnd por ejemplo precion unitario viene de la bd, la cantidad y el descuento llegan desde el front
                 */
-                BigDecimal precioUnitario = BigDecimal.valueOf(producto.getPrecioVenta());
+                BigDecimal precioUnitario = producto.getPrecioVenta();
                 BigDecimal cantidad = BigDecimal.valueOf(detalleVeta.getCantidad());
                 BigDecimal descuento = detalleVeta.getDescuento() != null ? detalleVeta.getDescuento() : BigDecimal.ZERO;
 
@@ -140,9 +193,11 @@ public class VentaServiceImpl implements IVentaService {
                         .subtract(descuento);
 
                 //Caluclamos el porcentaje  y lo almacenamos en la variable.
-                BigDecimal porcentaje = producto.getImpuesto().getPorcentaje(); // 0.19
+                BigDecimal porcentajeImpuesto = producto.getImpuesto() != null
+                        ? producto.getImpuesto().getPorcentaje()
+                        : BigDecimal.ZERO;
                 //Caluclamos el impuesto de linea  y lo almacenamos en la variable.
-                BigDecimal impuestoLinea = subTotalLinea.multiply(porcentaje);
+                BigDecimal impuestoLinea = subTotalLinea.multiply(porcentajeImpuesto);
                 //Caluclamos el total linea y lo almacenamos en la variable.
                 BigDecimal totalLinea = subTotalLinea.add(impuestoLinea);
 
@@ -157,7 +212,7 @@ public class VentaServiceImpl implements IVentaService {
                 en la BD.*/
                 DetalleVenta detalle = new DetalleVenta();
                 detalle.setCantidad(detalleVeta.getCantidad());
-                detalle.setPrecioUnitario(BigDecimal.valueOf(producto.getPrecioVenta()));
+                detalle.setPrecioUnitario(producto.getPrecioVenta());
                 detalle.setDescuento(descuento);
                 detalle.setSubtotalLinea(subTotalLinea);
                 detalle.setImpuestoLinea(impuestoLinea);
@@ -165,6 +220,7 @@ public class VentaServiceImpl implements IVentaService {
                 detalle.setVenta(venta);
                 detalle.setProducto(producto);
                 detalle.setImpuesto(producto.getImpuesto());
+                detalle.setCostoUnitarioPromedio(producto.getCostoPromedio());
                 /*guardamos nuestro detalle en la BD  llamando al repositorio y al metodo save donde le pasamos
                 como parametro el objeto detalle*/
                 detalleVentaRepository.save(detalle);
@@ -274,7 +330,7 @@ public class VentaServiceImpl implements IVentaService {
 
         //Validamos si el total pagado es igual a cero por defecto el estado seria pendiente
         if (totalPagado.compareTo(BigDecimal.ZERO) == 0) {
-            return venta.getEstado();
+            return EstadoVenta.PENDIENTE;
         }
         //Validamos si el total pagado es menor al totalventa el estado seria parcial
         if (totalPagado.compareTo(totalVenta) < 0) {
@@ -331,7 +387,7 @@ public class VentaServiceImpl implements IVentaService {
         //validamos si el estado es diferente de pendiente mandamos un mensaje donde no se
         // puede confirmar la venta
         if (venta.getEstado() != EstadoVenta.PENDIENTE) {
-            throw new IllegalStateException("Solo se pueden confirmar ventas pendientes");
+            throw new IllegalStateException("La venta ya fue confirmada o no está en estado válido");
         }
 
         //creamos un for y dentro creamos un varavbel de detalle venta  donde alacenaremos
@@ -343,6 +399,9 @@ public class VentaServiceImpl implements IVentaService {
         }
         //Actualizamos nuestro estado venta como confirmada
         venta.setEstado(EstadoVenta.CONFIRMADA);
+
+        ventaContableService.registrarAsientoVenta(venta);
+        ventaContableService.registrarCostoVenta(venta);
         //guardamos nuestro nuevo estado venta.
         ventaRepository.save(venta);
     }
@@ -440,7 +499,7 @@ public class VentaServiceImpl implements IVentaService {
         BigDecimal saldoDisponible = persona.getSaldoFavor();
 
         //Validamos is el saldo disponible es igual o menor a cero entonces regresa cero
-        if (saldoDisponible.compareTo(BigDecimal.ZERO) <= 0) {
+        if (saldoDisponible == null || saldoDisponible.compareTo(BigDecimal.ZERO) <= 0) {
             return BigDecimal.ZERO;
         }
         //Creamos una variable llamada totalVenta donde almacenaremos el valor que viene de la
@@ -457,7 +516,6 @@ public class VentaServiceImpl implements IVentaService {
 
         //actualizamos nuestra tabla persona el sado a favor
         personaRepository.save(persona);
-
         // Registrar movimiento saldo persona
         MovimientoSaldoPersona mov = new MovimientoSaldoPersona();
         mov.setPersona(persona);

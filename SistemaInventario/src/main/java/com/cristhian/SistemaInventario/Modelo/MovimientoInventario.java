@@ -1,11 +1,12 @@
 package com.cristhian.SistemaInventario.Modelo;
 
 import com.cristhian.SistemaInventario.DTO.MovimientoInventarioDTO;
+import com.cristhian.SistemaInventario.Enums.OrigenMovimiento;
+import com.cristhian.SistemaInventario.Enums.TipoMovimiento;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity

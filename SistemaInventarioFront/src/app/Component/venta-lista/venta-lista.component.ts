@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
+import { TIPO_PERSONA } from 'src/app/Constantes/tipo-persona.const';
+import { Persona } from 'src/app/Modelos/persona';
 import { Venta } from 'src/app/Modelos/venta';
 import { VentaService } from 'src/app/Servicios/venta.service';
 import Swal from 'sweetalert2';
@@ -45,11 +47,12 @@ export class VentaListaComponent {
   
     ngAfterViewInit(): void {
       // Inicializamos el modal una sola vez cuando la vista está lista
-      if (this.modalElement?.nativeElement) {
+      /*if (this.modalElement?.nativeElement) {
         this.modalInstance = bootstrap.Modal.getOrCreateInstance(
           this.modalElement.nativeElement
         );
-      }
+      }*/
+     console.log('modalElement:', this.modalElement);
     }
   
     // Método del ciclo de vida que se ejecuta cuando el componente se destruye
@@ -77,6 +80,7 @@ export class VentaListaComponent {
     }
   
   abrirModalEditar(venta?: Venta): void {
+    console.log('Click en abrir modal editar venta');
   
     if (!venta?.idVenta) {
       this.ventaSeleccionada = null;

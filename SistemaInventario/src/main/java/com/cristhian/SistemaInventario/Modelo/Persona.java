@@ -22,6 +22,8 @@ public class Persona {
     private TipoDocumento tipoDocumento;
     @Column(nullable = false, unique = true, length = 20)
     private String documentoPersona;
+    @Column(nullable = true, length = 50)
+    private String razonSocial;
     @Column(nullable = false, length = 50)
     private String nombre;
 
@@ -39,6 +41,13 @@ public class Persona {
 
     @Column(nullable = false, length = 50)
     private String email;
+
+    @Column(length = 50)
+    private String nombreContacto;
+    @Column(length = 50)
+    private String apellidoContacto;
+    @Column(length = 50)
+    private String segundoApellidoContacto;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_tipo_persona")
@@ -59,10 +68,6 @@ public class Persona {
     @JsonIgnore
     private List<PersonaRol> personaRoles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("persona") //  evita recursión infinita
-    private List<Venta> ventas = new ArrayList<>();
-
     @Column(nullable = false)
     private boolean activo = true;
 
@@ -72,6 +77,11 @@ public class Persona {
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("persona") //  evita recursión infinita
     private List<MovimientoSaldoPersona> movimientoSaldos = new ArrayList<>();
+
+    @OneToOne(mappedBy = "persona")
+    @JsonIgnoreProperties("persona")
+    @JsonIgnore
+    private Usuario usuario;
 
     // 🔹 Sobrescribimos el método toString()
     @Override
@@ -103,7 +113,10 @@ public class Persona {
         this.telefono = dto.getTelefono();
         this.email = dto.getEmail();
         this.saldoFavor = dto.getSaldoFavor();
-
+        this.razonSocial = dto.getRazonSocial();
+        this.nombreContacto = dto.getNombreContacto();
+        this.apellidoContacto = dto.getApellidoContacto();
+        this.segundoApellidoContacto = dto.getSegundoApellidoContacto();
     }
 
     public int getIdPersona() {
@@ -232,5 +245,45 @@ public class Persona {
 
     public void setMovimientoSaldos(List<MovimientoSaldoPersona> movimientoSaldos) {
         this.movimientoSaldos = movimientoSaldos;
+    }
+
+    public String getRazonSocial() {
+        return razonSocial;
+    }
+
+    public void setRazonSocial(String razonSocial) {
+        this.razonSocial = razonSocial;
+    }
+
+    public String getNombreContacto() {
+        return nombreContacto;
+    }
+
+    public void setNombreContacto(String nombreContacto) {
+        this.nombreContacto = nombreContacto;
+    }
+
+    public String getApellidoContacto() {
+        return apellidoContacto;
+    }
+
+    public void setApellidoContacto(String apellidoContacto) {
+        this.apellidoContacto = apellidoContacto;
+    }
+
+    public String getSegundoApellidoContacto() {
+        return segundoApellidoContacto;
+    }
+
+    public void setSegundoApellidoContacto(String segundoApellidoContacto) {
+        this.segundoApellidoContacto = segundoApellidoContacto;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

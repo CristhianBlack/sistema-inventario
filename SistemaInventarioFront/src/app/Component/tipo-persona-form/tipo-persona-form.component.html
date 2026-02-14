@@ -1,44 +1,66 @@
 <div class="container">
-    <form (ngSubmit)="onSubmit(formTipoPersona)" #formTipoPersona="ngForm" novalidate>
-        
-        <!--Titulo dinamico-->
-        <div class="text-center mb-4">
-            <h4 class="fw-bold"><i class="bi bi-person-fill text-white me-2 "></i>
-                {{formModel.nombreTipoPersona ? 'Editar Tipo Persona' : 'Nuevo Tipo Persona'  }}
-            </h4>
-        </div>
+  <form (ngSubmit)="onSubmit()" #formTipoPersona="ngForm" novalidate>
 
-        <div class="mb-3">
-            <label for="nombreTipoPersona" class="form-label">Tipo Persona</label>
-            <input type="text" id="nombreTipoPersona" name="nombreTipoPersona" class="form-control"
-            [(ngModel)]="formModel.nombreTipoPersona" required minlength="3" placeholder="EJ: Persona natural">
+    <!-- Título -->
+    <div class="text-center mb-4">
+      <h4 class="fw-bold">
+        <i class="bi bi-person-fill text-white fs-4"></i>
+        {{
+          formModel.idTipoPersona
+            ? "Tipo de Persona"
+            : ""
+        }}
+      </h4>
+    </div>
 
-            <!-- Mensajes de error -->
-            <div *ngIf="formTipoPersona.submitted && !formModel.nombreTipoPersona" class="text-danger small mt-1">
-                El tipo de persona es obligatorio
-            </div>
-        </div>
-
-        <!-- Campo: Activo (opcional)
-    <div class="form-check mb-4">
-      <input 
-        class="form-check-input" 
-        type="checkbox" 
-        id="activo" 
-        name="activo"
-        [(ngModel)]="formModel.activo">
-      <label class="form-check-label" for="activo">
-        Activo
+    <!-- Tipo Persona -->
+    <div class="mb-3">
+      <label for="nombreTipoPersona" class="form-label">
+        <i class="bi bi-tag me-1"></i> Tipo Persona
       </label>
-    </div>-->
 
-        <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-secondary me-2"  data-bs-dismiss="modal" >Cancelar</button>
+      <input
+        type="text"
+        id="nombreTipoPersona"
+        name="nombreTipoPersona"
+        class="form-control"
+        [value]="formatearTipoPersona(formModel.nombreTipoPersona)"
+        disabled
+      />
 
-            <button type="submit" class="btn btn-primary" [disabled]="formTipoPersona.invalid">
-                {{formModel.idTipoPersona ? 'Guardar cambios' : 'Agregar Tipo Persona'}}
-            </button>
-        </div>
-    </form>
+      <div
+        *ngIf="formTipoPersona.submitted && !formModel.nombreTipoPersona"
+        class="text-danger small mt-1"
+      >
+        <i class="bi bi-exclamation-circle me-1"></i>
+        El tipo de persona es obligatorio
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="d-flex justify-content-end gap-2">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        data-bs-dismiss="modal"
+        title="Cerrar"
+      >
+        <i class="bi bi-x-circle"></i>
+        Cerrar
+      </button>
+
+      <!--
+      <button
+        type="submit"
+        class="btn btn-outline-primary"
+        [disabled]="formTipoPersona.invalid"
+        title="Guardar"
+      >
+        <i class="bi bi-save"></i>
+      </button>
+      -->
+    </div>
+
+  </form>
 </div>
 

@@ -21,34 +21,53 @@ public interface PersonaRolRepository extends JpaRepository<PersonaRol, Integer>
     @Query("SELECT pr.rolPersona FROM PersonaRol pr WHERE pr.persona.idPersona = :idPersona AND pr.activo = true")
     List<RolPersona> findRolesByPersonaId(@Param("idPersona") Integer idPersona);
 
-    @Query("SELECT pr FROM PersonaRol pr WHERE pr.persona.idPersona = :idPersona")
+    @Query("SELECT pr.rolPersona FROM PersonaRol pr WHERE pr.persona.idPersona = :idPersona AND pr.activo = true")
     List<PersonaRol> findByPersonaId(@Param("idPersona") Integer idPersona);
+
+    @Query("""
+        SELECT pr
+        FROM PersonaRol pr
+        JOIN FETCH pr.rolPersona rp
+        WHERE pr.persona.idPersona = :idPersona
+        AND pr.activo = true
+    """)
+    List<PersonaRol> findRolesActivosByPersonaId(@Param("idPersona") Integer idPersona);
+
 
     boolean existsByPersonaIdPersonaAndRolPersonaIdRolPersona(Integer idPersona, Integer idRolPersona);
 
     @Query("SELECT pr.persona FROM PersonaRol pr WHERE pr.rolPersona.idRolPersona = :idRol AND pr.activo = true")
     List<Persona> findPersonasConRol(@Param("idRol") Integer idRol);
 
-    // Obtener personas CON DTO (para mostrarlas en frontend)
+    // Obtener personas CON DTO rol puede ser proveedor o cliente (para mostrarlas en frontend)
     @Query("""
-        SELECT new com.cristhian.SistemaInventario.DTO.PersonaDTO(
-            p.idPersona,
-            p.documentoPersona,
-            p.nombre,
-            p.apellido,
-            p.segundoApellido,
-            p.direccion,
-            p.telefono,
-            p.email
-            
-        )
-        FROM PersonaRol pr
-        JOIN pr.persona p
-        WHERE pr.rolPersona.idRolPersona = :idRol
-          AND pr.activo = true
-    """)
+    SELECT new com.cristhian.SistemaInventario.DTO.PersonaDTO(
+        p.idPersona,
+        p.tipoPersona.idTipoPersona,
+        p.razonSocial,
+        p.nombre,
+        p.apellido,
+        p.segundoApellido,
+        p.nombreContacto,
+        p.apellidoContacto,
+        p.segundoApellidoContacto,
+        p.documentoPersona,
+        p.telefono,
+        p.email,
+        p.direccion,
+        p.saldoFavor
+    )
+    FROM PersonaRol pr
+    JOIN pr.persona p
+    WHERE pr.rolPersona.idRolPersona = :idRol
+      AND pr.activo = true
+""")
     List<PersonaDTO> findPersonasConRolDTO(@Param("idRol") Integer idRol);
 
+    boolean existsByPersona_IdPersonaAndRolPersona_IdRolPersonaAndActivoTrue(
+            Integer idPersona,
+            Integer idRolPersona
+    );
 
 
 }

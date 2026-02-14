@@ -268,41 +268,6 @@ public class PersonaController {
         this.personaService = personaService;
     }
 
-    /*@PostMapping("/Personas")
-    public ResponseEntity<?> crearPersona(@Valid @RequestBody PersonaDTO personaDto) {
-        System.out.println("DEBUG DTO completo: " + personaDto);
-        System.out.println("DEBUG tipoDocumento: " + personaDto.getIdTipoDocumento());
-        System.out.println("DEBUG tipoPersona: " + personaDto.getIdTipoPersona());
-        System.out.println("DEBUG ciudad: " + personaDto.getIdCiudad());
-        System.out.println("DEBUG idsRoles: " + personaDto.getIdsRoles());
-        personaService.crearPersonaConRolDefault(personaDto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new Mensaje("Persona creada correctamente"));
-    }
-
-    @PutMapping("/Personas/{id}")
-    public ResponseEntity<?> actualizarPersona(@PathVariable Integer id,
-                                               @Valid @RequestBody PersonaDTO dto) {
-        personaService.actualizarPersona(id, dto);
-        return ResponseEntity.ok(new Mensaje("Persona actualizada correctamente"));
-    }
-
-    @GetMapping("/Personas")
-    public ResponseEntity<List<Persona>> listarPersonas() {
-        return ResponseEntity.ok(personaService.listarPersonas());
-    }
-
-    @GetMapping("/Personas/{id}")
-    public ResponseEntity<?> obtenerPersona(@PathVariable Integer id) {
-        return ResponseEntity.ok(personaService.buscarPorId(id));
-    }
-
-    @DeleteMapping("/Personas/{id}")
-    public ResponseEntity<?> eliminarPersona(@PathVariable Integer id){
-        personaService.eliminarPersona(id);
-        return new ResponseEntity<>(new Mensaje("Se eliminó la persona con éxito"), HttpStatus.OK);
-    }*/
-
     @GetMapping("/Personas")
     public ResponseEntity<List<PersonaDTO>> listarPersona(){
         List<PersonaDTO> response = personaService.listarPersonas().stream()
@@ -328,6 +293,13 @@ public class PersonaController {
         List<PersonaDTO> personas = personaService.listarPersonasConRolProveedor();
         return ResponseEntity.ok(personas);
     }
+
+    @GetMapping("/Personas/clientes")
+    public ResponseEntity<List<PersonaDTO>> obtenerPersonasConRolCliente() {
+        List<PersonaDTO> personas = personaService.listarClientes();
+        return ResponseEntity.ok(personas);
+    }
+
 
     @PostMapping("/Personas")
     public ResponseEntity<?> crearPersona(@Valid @RequestBody PersonaDTO personaDTO) {

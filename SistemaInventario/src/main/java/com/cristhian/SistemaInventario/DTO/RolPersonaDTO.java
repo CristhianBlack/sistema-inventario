@@ -1,5 +1,6 @@
 package com.cristhian.SistemaInventario.DTO;
 
+import com.cristhian.SistemaInventario.Enums.NombreRol;
 import com.cristhian.SistemaInventario.Modelo.RolPersona;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
@@ -7,8 +8,8 @@ import jakarta.validation.constraints.NotBlank;
 public class RolPersonaDTO {
 
     private int idRolPersona;
-    @NotBlank(message = "La ciudad  es obligatoria")
-    private String nombreRol;
+    @NotBlank(message = "El rol  es obligatoria")
+    private NombreRol nombreRol;
     private String descripcion;
 
     private boolean activo;
@@ -32,11 +33,11 @@ public class RolPersonaDTO {
         this.idRolPersona = idRolPersona;
     }
 
-    public String getNombreRol() {
+    public NombreRol getNombreRol() {
         return nombreRol;
     }
 
-    public void setNombreRol(String nombreRol) {
+    public void setNombreRol(NombreRol nombreRol) {
         this.nombreRol = nombreRol;
     }
 

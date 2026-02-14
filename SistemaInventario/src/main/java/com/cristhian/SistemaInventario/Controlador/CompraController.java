@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -54,8 +56,18 @@ public class CompraController {
         }
     }
 
+    @PutMapping("/Compras/{id}/confirmar")
+    public ResponseEntity<?> confirmarCompra(@PathVariable("id") int id) {
+        compraService.confirmarCompra(id);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("mensaje", "Compra confirmada correctamente");
+
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping("/Compras/{id}/cancelar")
-    public ResponseEntity<Void> cancelarVenta(@PathVariable int id) {
+    public ResponseEntity<Void> cancelarCompra(@PathVariable int id) {
         compraService.cancelarCompra(id);
         return ResponseEntity.noContent().build();
     }

@@ -1,6 +1,8 @@
 package com.cristhian.SistemaInventario.Modelo;
 
 import com.cristhian.SistemaInventario.DTO.FormaPagoDTO;
+import com.cristhian.SistemaInventario.Enums.NombreFormaPago;
+import com.cristhian.SistemaInventario.Enums.TipoPago;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 

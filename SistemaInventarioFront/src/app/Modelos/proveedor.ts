@@ -8,6 +8,7 @@ export class Proveedor {
   direccion!: string;
   telefono!: string;
   email!: string;
+  razonSocial!: String;
 
   // Datos propios del proveedor
     idProveedor? : number;

@@ -74,3 +74,4 @@ public class PersonaRol {
         this.activo = activo;
     }
 }
+

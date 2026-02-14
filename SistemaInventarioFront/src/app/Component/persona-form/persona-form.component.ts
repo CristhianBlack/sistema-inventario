@@ -1,282 +1,12 @@
-/*import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
-import { forkJoin } from 'rxjs';
-import { Ciudad } from 'src/app/Modelos/ciudad';
-import { Persona } from 'src/app/Modelos/persona';
-import { TipoDocumento } from 'src/app/Modelos/tipo-documento';
-import { TipoPersona } from 'src/app/Modelos/tipo-persona';
-import { CiudadService } from 'src/app/Servicios/ciudad.service';
-import { PersonaService } from 'src/app/Servicios/persona.service';
-import { RolPersonaService } from 'src/app/Servicios/rol-persona.service';
-import { TipoDocumentoService } from 'src/app/Servicios/tipo-documento.service';
-import { TipoPersonaService } from 'src/app/Servicios/tipo-persona.service';
-
-@Component({
-  selector: 'app-persona-form',
-  templateUrl: './persona-form.component.html',
-  styleUrls: ['./persona-form.component.css']
-})
-export class PersonaFormComponent implements OnInit {
-
-  @Input() persona?: Persona | null = null;
-  @Output() formGuardado = new EventEmitter<void>();
-
-  formModel: Persona = new Persona();
-  tipoDocumentos: TipoDocumento[] = [];
-  ciudades: Ciudad[] = [];
-  tipoPersonas: TipoPersona[] = [];
-  listaRoles: any[] = [];
-  roles?: any[];
-
-  constructor(
-    private personaService: PersonaService,
-    private toastr: ToastrService,
-    private tipoDocumentoService: TipoDocumentoService,
-    private ciudadService: CiudadService,
-    private tipoPersonaService: TipoPersonaService,
-    private rolPersonaService : RolPersonaService
-  ) {}
-
-  ngOnInit(): void {
-    
-    forkJoin({
-    documentos: this.tipoDocumentoService.obtenerListaTipoDocumento(),
-    ciudades: this.ciudadService.obtenerListaciudades(),
-    tiposPersona: this.tipoPersonaService.obtenerListaTipoPersona(),
-    roles: this.rolPersonaService.obtenerListaRolPersona()
-  }).subscribe({
-    next: (resp) => {
-      this.tipoDocumentos = resp.documentos;
-      this.ciudades = resp.ciudades;
-      this.tipoPersonas = resp.tiposPersona;
-      this.listaRoles = resp.roles;
-
-      // 🔥 Si es edición, asigno ahora los valores
-      if (this.persona) {
-        this.ngOnChanges({
-          persona: {
-            currentValue: this.persona,
-            previousValue: null,
-            firstChange: false,
-            isFirstChange: () => false
-          }
-        });
-      }
-    }
-  });
-
-    if (this.persona) {
-      this.formModel = { ...this.persona };
-
-      if (this.persona.roles && this.persona.roles.length > 0) {
-      this.formModel.idsRoles = this.persona.roles.map((rol: any) => rol.idRolPersona);
-    }
-    }
-  }
-
-  /*ngOnChanges(changes: SimpleChanges): void {
-     if (changes['persona'] && this.persona) {
-    this.formModel = { ...this.persona };
-
-    this.formModel.idTipoDocumento = this.persona.idTipoDocumento;
-    this.formModel.idCiudad = this.persona.idCiudad;
-    this.formModel.idTipoPersona = this.persona.idTipoPersona;
-
-    // roles
-    this.formModel.idsRoles = this.persona.roles?.map(r => r.idRolPersona) || [];
-  }else {
-      this.formModel = new Persona();
-    }
-  }*/
-
-  /*  ngOnChanges(changes: SimpleChanges) {
-  if (changes['persona'] && this.persona) {
-    this.formModel = { ...this.persona };
-
-    // 🔥 Mapeo correcto según lo que devuelve tu backend
-    this.formModel.idTipoDocumento = this.persona.tipoDocumento?.idTipoDocumento ?? null;
-    this.formModel.idCiudad = this.persona.ciudad?.idCiudad ?? null
-    this.formModel.idTipoPersona = this.persona.tipoPersona?.idTipoPersona ?? null;
-
-    // Roles
-    this.formModel.idsRoles = this.persona.roles?.map(r => r.idRolPersona) || [];
-  }
-}
-
-
-  obtenerListaTipoDocumento(): void {
-     
-    this.tipoDocumentoService.obtenerListaTipoDocumento().subscribe({
-      next: (data) => {
-      this.tipoDocumentos = data;
-      console.log("lista tipoDocumentos:", this.tipoDocumentos);
-      if (this.persona) {
-        this.formModel.idTipoDocumento = this.persona.idTipoDocumento; // sincronizar
-      }
-    }
-    });
-  }
-
-  obtenerListaCiudades(): void {
-  this.ciudadService.obtenerListaciudades().subscribe({
-    next: (data) => {
-      this.ciudades = data;
-
-      if (this.persona) {
-        this.formModel.idCiudad = this.persona.idCiudad; // sincronizar
-      }
-    }
-  });
-}
-
-  obtenerListaTipoPersona(): void {
-    this.tipoPersonaService.obtenerListaTipoPersona().subscribe({
-      next: (data) => {
-      this.tipoPersonas = data;
-
-      if (this.persona) {
-        this.formModel.idTipoPersona = this.persona.idTipoPersona; // sincronizar
-      }
-    }
-    });
-  }
-
-  cargarRoles(): void {
-  this.rolPersonaService.obtenerListaRolPersona().subscribe({
-    next: (data) => {
-      this.listaRoles = data;
-
-      if (this.persona) {
-        this.formModel.idsRoles = this.persona.idsRoles; // sincronizar
-      }
-    }
-  });
-}
-
-
-  Mapeo limpio para enviar solo los IDs relacionados
-  private mapPersonaToRequest(): any {
-    return {
-      idPersona: this.formModel.idPersona || null,
-      nombre: this.formModel.nombre,
-      apellido: this.formModel.apellido,
-      segundoApellido: this.formModel.segundoApellido,
-      direccion: this.formModel.direccion,
-      telefono: this.formModel.telefono,
-      email: this.formModel.email,
-      documentoPersona: this.formModel.documentoPersona,
-     tipoDocumento: this.formModel.idTipoDocumento,
-     ciudad: this.formModel.idCiudad,
-     tipoPersona: this.formModel.idTipoPersona,
-      idsRoles: this.formModel.idsRoles
-    };
-  }
-
-  onSubmit(formPersona: NgForm): void {
-    if (formPersona.invalid) {
-      this.toastr.warning('Por favor complete todos los campos requeridos.', 'Campos incompletos');
-      return;
-    }
-
-    const personaAEnviar = this.mapPersonaToRequest();
-    console.log(' Enviando al backend:', personaAEnviar);
-
-    if (this.formModel.idPersona) {
-      // Editar
-      this.personaService.editarPersona(this.formModel.idPersona, personaAEnviar).subscribe({
-        next: () => {
-          console.log("lista tipoDocumentos en boton editar:", this.tipoDocumentos);
-          this.toastr.success('Persona actualizada correctamente', 'Éxito');
-          this.formGuardado.emit();
-          this.limpiarFormulario(formPersona);
-        },
-        error: (err) => {
-          this.toastr.error(err.message || 'Error al editar persona', 'Error');
-        }
-      });
-    } else {
-      // Crear
-      this.personaService.agregarPersona(personaAEnviar).subscribe({
-        next: () => {
-          this.toastr.success('Persona agregada correctamente', 'Éxito');
-          this.formGuardado.emit();
-          this.limpiarFormulario(formPersona);
-        },
-        error: (err) => {
-          this.toastr.error(err.message || 'Error al crear persona', 'Error');
-        }
-      });
-    }
-  }
-
-  limpiarFormulario(formPersona?: NgForm): void {
-    this.formModel = new Persona();
-    formPersona?.resetForm();
-  }
-
-  compareById(a: any, b: any): boolean {
-  return a && b ? 
-    (a.id === b.id ||
-     a.idTipoDocumento === b.idTipoDocumento ||
-     a.idCiudad === b.idCiudad ||
-     a.idTipoPersona === b.idTipoPersona ||
-     a.idsRoles === b.idsRoles)
-    : a === b;
-}
-
-onRolChange(event: any, idRol: number): void {
-  if (!this.formModel.idsRoles) this.formModel.idsRoles = [];
-
-  if (event.target.checked) {
-    // Añadir rol si fue seleccionado
-    if (!this.formModel.idsRoles.includes(idRol)) {
-      this.formModel.idsRoles.push(idRol);
-    }
-  } else {
-    // Quitar rol si fue desmarcado
-    this.formModel.idsRoles = this.formModel.idsRoles.filter(id => id !== idRol);
-  }
-}
-
-obtnerSelects(): void {
-
-  forkJoin({
-    tipoDocumentos: this.tipoDocumentoService.obtenerListaTipoDocumento(),
-    ciudades: this.ciudadService.obtenerListaciudades(),
-    tipoPersonas: this.tipoPersonaService.obtenerListaTipoPersona(),
-    roles: this.rolPersonaService.obtenerListaRolPersona()
-  }).subscribe({
-    next: (data) => {
-
-      this.tipoDocumentos = data.tipoDocumentos;
-      this.ciudades = data.ciudades;
-      this.tipoPersonas = data.tipoPersonas;
-      this.listaRoles = data.roles;
-
-      // 🔥 Al editar
-      if (this.persona) {
-
-        this.formModel = { ...this.persona };
-
-        // 🔥 Asignar IDs DIRECTOS
-        this.formModel.idTipoDocumento = this.persona.idTipoDocumento ?? null;
-        this.formModel.idCiudad = this.persona.idCiudad ?? null;
-        this.formModel.idTipoPersona = this.persona.idTipoPersona ?? null;
-
-        // 🔥 Roles
-        this.formModel.idsRoles = this.persona.roles?.map(r => r.idRolPersona) ?? [];
-      }
-    },
-    error: (err) => console.error("Error cargando datos", err)
-  });
-}
-
-
-}*/
-
-
-import { Component, EventEmitter, Input, OnInit, OnChanges, SimpleChanges, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  Output,
+} from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
@@ -294,22 +24,41 @@ import { RolPersonaService } from 'src/app/Servicios/rol-persona.service';
 @Component({
   selector: 'app-persona-form',
   templateUrl: './persona-form.component.html',
-  styleUrls: ['./persona-form.component.css']
+  styleUrls: ['./persona-form.component.css'],
 })
 export class PersonaFormComponent implements OnInit, OnChanges {
+  // ============================
+  // INPUTS / OUTPUTS
+  // ============================
 
+  // Persona recibida desde el componente padre (editar)
   @Input() persona: Persona | null = null;
+
+  // Evento para notificar al padre que se guardó el formulario
   @Output() formGuardado = new EventEmitter<void>();
 
+  // ============================
+  // MODELO DEL FORMULARIO
+  // ============================
+
+  // Modelo interno para evitar mutar directamente el @Input
   formModel: Persona = new Persona();
+
+  // ============================
+  // LISTAS PARA SELECTS / CHECKS
+  // ============================
 
   tipoDocumentos: TipoDocumento[] = [];
   ciudades: Ciudad[] = [];
   tipoPersonas: TipoPersona[] = [];
   listaRoles: any[] = [];
 
-  esJuridica: boolean = false;
+  // ============================
+  // FLAGS DE CONTROL
+  // ============================
 
+  esNatural: boolean = true; // Controla si es persona natural o jurídica
+  esAdminSistema = false; // Controla permisos del rol administrador
 
   constructor(
     private personaService: PersonaService,
@@ -317,167 +66,188 @@ export class PersonaFormComponent implements OnInit, OnChanges {
     private tipoDocumentoService: TipoDocumentoService,
     private ciudadService: CiudadService,
     private tipoPersonaService: TipoPersonaService,
-    private rolPersonaService: RolPersonaService
+    private rolPersonaService: RolPersonaService,
   ) {}
 
+  // ============================
+  // CICLO DE VIDA
+  // ============================
+
   ngOnInit(): void {
+    // Carga catálogos necesarios para el formulario
     this.cargarListas();
+
+    // Obtiene el rol desde el localStorage para control de permisos
+    const rol = localStorage.getItem('rol');
+    this.esAdminSistema = rol === 'ADMIN_SISTEMA';
   }
 
-  /*ngOnChanges(changes: SimpleChanges): void {
-  if (changes['persona']) {
-    // Cuando cambie la persona, recargamos las listas
-    // y luego asignamos correctamente
-    //this.cargarListas();
+  ngOnChanges(changes: SimpleChanges): void {
+    // Cuando llega una persona para editar
+    if (changes['persona'] && this.persona?.idPersona) {
+      // Reset completo del formulario
+      this.formModel = new Persona();
+      this.formModel.idsRoles = [];
+
+      // Se obtiene la persona + roles reales desde backend
+      forkJoin({
+        persona: this.personaService.obtnerPersonaPorID(this.persona.idPersona),
+        roles: this.personaService.obtenerRolesPorPersona(
+          this.persona.idPersona,
+        ),
+      }).subscribe(({ persona, roles }) => {
+        // Se asignan SOLO los IDs de roles activos
+        persona.idsRoles = roles.map((r) => r.idRolPersona);
+
+        this.persona = persona;
+        this.asignarPersonaAlFormulario();
+        this.onTipoPersonaChange();
+
+        console.log('ROLES DESDE BACKEND:', persona.idsRoles);
+      });
+    }
+
+    // Si se limpia la persona → modo crear
+    if (changes['persona'] && !this.persona) {
+      this.limpiarFormulario();
+    }
   }
-}*/
 
-  /*ngOnChanges(changes: SimpleChanges): void {
-
-  // SI persona existe → es edición
-  if (changes['persona'] && this.persona) {
-    this.formModel = {
-      ...this.persona,
-      idTipoDocumento: this.persona.tipoDocumento?.idTipoDocumento ?? null,
-      idCiudad: this.persona.ciudad?.idCiudad ?? null,
-      idTipoPersona: this.persona.tipoPersona?.idTipoPersona ?? null,
-      idsRoles: this.persona.roles?.map(r => r.idRolPersona) ?? []
-    };
-  } 
-  else {
-    // SI persona es null → NUEVA PERSONA
-    this.formModel = new Persona();
-  }
-}*/
-ngOnChanges(changes: SimpleChanges): void {
-  if (changes['persona'] && this.persona) {
-    this.asignarPersonaAlFormulario(); // ✔ Solo asignar datos
-    // Asegurar que si es jurídica, deshabilite los apellidos
-    this.onTipoPersonaChange();
-  }
-
-  if (changes['persona'] && !this.persona) {
-    this.formModel = new Persona(); // ✔ para modo crear
-  }
-}
-
-
+  // ============================
+  // CARGA DE CATÁLOGOS
+  // ============================
 
   private cargarListas(): void {
     forkJoin({
       documentos: this.tipoDocumentoService.obtenerListaTipoDocumento(),
       ciudades: this.ciudadService.obtenerListaciudades(),
       tiposPersona: this.tipoPersonaService.obtenerListaTipoPersona(),
-      roles: this.rolPersonaService.obtenerListaRolPersona()
+      roles: this.rolPersonaService.obtenerListaRolPersona(),
     }).subscribe({
-      next: data => {
+      next: (data) => {
         this.tipoDocumentos = data.documentos;
         this.ciudades = data.ciudades;
         this.tipoPersonas = data.tiposPersona;
         this.listaRoles = data.roles;
 
+        // Si se está editando, asigna datos al formulario
         if (this.persona) {
           this.asignarPersonaAlFormulario();
         }
-      }
+      },
     });
   }
 
+  // ============================
+  // ASIGNAR PERSONA AL FORMULARIO
+  // ============================
+
   private asignarPersonaAlFormulario(): void {
-  if (!this.persona) return;
+    if (!this.persona) return;
 
-  this.formModel = {
-    ...this.persona,
-
-     idTipoDocumento: this.persona.idTipoDocumento ?? null,
-    idCiudad: this.persona.idCiudad ?? null,
-    idTipoPersona: this.persona.idTipoPersona ?? null,
-    idsRoles: this.persona.idsRoles ?? []
-  };
-  console.log("FORM MODEL AL ABRIR EDITAR:", this.formModel);
-  console.log("LISTAS:", {
-    documentos: this.tipoDocumentos,
-    ciudades: this.ciudades,
-    tipoPersonas: this.tipoPersonas,
-    roles: this.listaRoles
-  });
-}
-
-
-  /*private asignarPersonaAlFormulario(): void {
     this.formModel = {
-      ...this.persona!,
+      ...this.persona,
 
-      idTipoDocumento: this.persona?.tipoDocumento?.idTipoDocumento ?? null,
-      idCiudad: this.persona?.ciudad?.idCiudad ?? null,
-      idTipoPersona: this.persona?.tipoPersona?.idTipoPersona ?? null,
+      // Normaliza nombres (contacto vs persona)
+      nombre: this.persona.nombre?.trim()
+        ? this.persona.nombre
+        : this.persona.nombreContacto,
 
-      // roles
-      idsRoles: this.persona?.roles?.map(r => Number(r.idRolPersona)) ?? []
+      apellido: this.persona.apellido?.trim()
+        ? this.persona.apellido
+        : this.persona.apellidoContacto,
+
+      segundoApellido: this.persona.segundoApellido?.trim()
+        ? this.persona.segundoApellido
+        : this.persona.segundoApellidoContacto,
+
+      idTipoDocumento: this.persona.idTipoDocumento ?? null,
+      idCiudad: this.persona.idCiudad ?? null,
+      idTipoPersona: this.persona.idTipoPersona ?? null,
+
+      // Copia segura de roles
+      idsRoles: [...(this.persona.idsRoles ?? [])],
     };
-  }*/
+
+    console.log('IDS ROLES EN FORM:', this.formModel.idsRoles);
+  }
+
+  // ============================
+  // MAPEO A REQUEST BACKEND
+  // ============================
 
   private mapPersonaToRequest(): any {
-  return {
-    idPersona: this.formModel.idPersona ?? null,
-    documentoPersona: this.formModel.documentoPersona,
-    nombre: this.formModel.nombre,
-    apellido: this.formModel.apellido,
-    segundoApellido: this.formModel.segundoApellido,
-    direccion: this.formModel.direccion,
-    telefono: this.formModel.telefono,
-    email: this.formModel.email,
+    return {
+      idPersona: this.formModel.idPersona ?? null,
+      documentoPersona: this.formModel.documentoPersona,
+      nombre: this.formModel.nombre,
+      apellido: this.formModel.apellido,
+      segundoApellido: this.formModel.segundoApellido,
+      direccion: this.formModel.direccion,
+      telefono: this.formModel.telefono,
+      email: this.formModel.email,
+      razonSocial: this.formModel.razonSocial,
 
-    // 🔥 NOMBRES CORRECTOS que espera tu DTO
-    idTipoDocumento: Number(this.formModel.idTipoDocumento),
-    idTipoPersona: Number(this.formModel.idTipoPersona),
-    idCiudad: Number(this.formModel.idCiudad),
+      // Contacto (para personas jurídicas)
+      nombreContacto: this.formModel.nombre,
+      apellidoContacto: this.formModel.apellido,
+      segundoApellidoContacto: this.formModel.segundoApellido,
 
-    idsRoles: this.formModel.idsRoles || []
-  };
-}
+      // IDs que espera el DTO
+      idTipoDocumento: Number(this.formModel.idTipoDocumento),
+      idTipoPersona: Number(this.formModel.idTipoPersona),
+      idCiudad: Number(this.formModel.idCiudad),
 
+      idsRoles: this.formModel.idsRoles || [],
+    };
+  }
 
+  // ============================
+  // GUARDAR PERSONA
+  // ============================
 
   onSubmit(formPersona: NgForm): void {
     if (formPersona.invalid) {
       this.toastr.warning('Complete todos los campos requeridos');
       return;
     }
+
     const request = this.mapPersonaToRequest();
-    console.log("JSON que envío:", JSON.stringify(request, null, 2));
+    console.log('JSON enviado:', request);
 
     // EDITAR
     if (this.formModel.idPersona) {
-      this.personaService.editarPersona(this.formModel.idPersona, request)
-        .subscribe(() => {
-          console.log("EStoy validando donde estoy entrando ");
-          this.toastr.success('Persona actualizada');
-          this.formGuardado.emit();
-          this.limpiarFormulario();
+      this.personaService
+        .editarPersona(this.formModel.idPersona, request)
+        .subscribe({
+          next: () => {
+            this.toastr.success('Persona actualizada');
+            this.formGuardado.emit();
+            this.limpiarFormulario();
+          },
+          error: (err) => {
+            this.toastr.error(err.mensaje || 'Error al actualizar', 'Error');
+          },
         });
       return;
-    }else{
-      console.log("Entro al else de crear");
-      // CREAR
-      this.personaService.agregarPersona(request)
-      .subscribe({
-        next: () => {
-          console.log("Entro al subscribe y al next ");
-          this.toastr.success('Persona agregada correctamente', 'Éxito');
-          this.formGuardado.emit();
-          this.limpiarFormulario(formPersona);
-          console.log("Enviando REAL al backend:", JSON.stringify(request, null, 2));
-        console.log("JSON FINAL:", request);
-        this.toastr.success('Persona creada');
-        },
-        error: (err) => {
-          console.error("ERROR COMPLETO DEL SERVIDOR:", err);
-          this.toastr.error(err.message || 'Error al crear persona', 'Error');
-        }
+    }
+
+    // CREAR
+    this.personaService.agregarPersona(request).subscribe({
+      next: () => {
+        this.toastr.success('Persona creada correctamente', 'Éxito');
+        this.formGuardado.emit();
+        this.limpiarFormulario(formPersona);
+      },
+      error: (err) => {
+        this.toastr.error(err.mensaje || 'Error al crear persona', 'Error');
+      },
     });
-    }   
   }
+
+  // ============================
+  // MANEJO DE ROLES
+  // ============================
 
   onRolChange(event: any, idRol: number): void {
     if (!this.formModel.idsRoles) this.formModel.idsRoles = [];
@@ -487,32 +257,50 @@ ngOnChanges(changes: SimpleChanges): void {
         this.formModel.idsRoles.push(idRol);
       }
     } else {
-      this.formModel.idsRoles = this.formModel.idsRoles.filter(r => r !== idRol);
+      this.formModel.idsRoles = this.formModel.idsRoles.filter(
+        (r) => r !== idRol,
+      );
     }
   }
+
+  // ============================
+  // TIPO DE PERSONA
+  // ============================
+
+  private readonly ID_PERSONA_NATURAL = 1;
+  private readonly ID_OTRO = 3;
+
+  onTipoPersonaChange(): void {
+    this.esNatural =
+      this.formModel.idTipoPersona === this.ID_PERSONA_NATURAL ||
+      this.formModel.idTipoPersona === this.ID_OTRO;
+
+    if (this.esNatural) {
+      this.formModel.razonSocial = '';
+    }
+  }
+
+  // ============================
+  // UTILIDADES
+  // ============================
+
+  // Formatea enums (TIPO_DOCUMENTO → Tipo Documento)
+  formatearTipoDocumento(valor?: string): string {
+    if (!valor) return '';
+    return valor
+      .toLowerCase()
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (letra) => letra.toUpperCase());
+  }
+
   limpiarFormulario(formPersona?: NgForm): void {
-    this.formModel = new Persona();
     formPersona?.resetForm();
-      this.persona = null;
-  this.formModel = new Persona();
-
-  this.formModel.idTipoDocumento = null;
-  this.formModel.idTipoPersona = null;
-  this.formModel.idCiudad = null;
-
-  this.formModel.idsRoles = [];
+    this.persona = null;
+    this.formModel = new Persona();
+    this.formModel.idsRoles = [];
   }
 
-  private readonly ID_PERSONA_JURIDICA = 2;
-
-onTipoPersonaChange() {
-  this.esJuridica = this.formModel.idTipoPersona === this.ID_PERSONA_JURIDICA; // el 2 es el id de la base de datos que tiene persona juridica
-
-  if (this.esJuridica) {
-    this.formModel.apellido = "";
-    this.formModel.segundoApellido = "";
+  trackByRol(index: number, rol: any) {
+    return rol.idRolPersona;
   }
-}
-
-
 }

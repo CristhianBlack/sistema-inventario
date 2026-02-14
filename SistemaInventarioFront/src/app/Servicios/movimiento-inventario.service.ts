@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -22,17 +22,40 @@ export class MovimientoInventarioService {
     );
   }
   
-  exportarExcel(desde: string, hasta: string) {
-    return this.httpClient.get(
-      `${this.URL}/excel?desde=${desde}&hasta=${hasta}`,
-      { responseType: 'blob' }
-    );
+  exportarExcel(desde: string | null, hasta: string | null) {
+  let params = new HttpParams();
+
+  if (desde && hasta) {
+    params = params
+      .set('desde', desde)
+      .set('hasta', hasta);
   }
+
+  return this.httpClient.get(
+    `${this.URL}/excel`,
+    {
+      params,
+      responseType: 'blob'
+    }
+  );
+}
+
   
-  exportarPdf(desde: string, hasta: string) {
-    return this.httpClient.get(
-      `${this.URL}/pdf?desde=${desde}&hasta=${hasta}`,
-      { responseType: 'blob' }
-    );
+  exportarPdf(desde: string | null, hasta: string | null) {
+  let params = new HttpParams();
+
+  if (desde && hasta) {
+    params = params
+      .set('desde', desde)
+      .set('hasta', hasta);
   }
+
+  return this.httpClient.get(
+    `${this.URL}/pdf`,
+    {
+      params,
+      responseType: 'blob'
+    }
+  );
+}
 }

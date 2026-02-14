@@ -1,0 +1,71 @@
+<div class="card apertura-card shadow-sm border-0 rounded-4">
+  <div class="card-body">
+    <div class="container">
+
+      <!-- Título -->
+      <h5 class="form-label mb-3">
+        <i class="bi bi-door-open-fill me-2 text-primary"></i>
+        Apertura de cuenta
+      </h5>
+
+      <div class="row g-3">
+
+        <!-- Cuenta contable -->
+        <div class="col-md-6">
+          <label class="form-label">
+            <i class="bi bi-journal-text me-1 text-secondary"></i>
+            Cuenta contable
+          </label>
+          <select class="form-select" [(ngModel)]="form.idCuenta">
+            <option [ngValue]="null">Seleccione</option>
+            <option *ngFor="let c of cuentas" [ngValue]="c.idCuenta">
+              {{ c.codigo }} - {{ c.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Monto -->
+        <div class="col-md-6">
+          <label class="form-label">
+            <i class="bi bi-cash-coin me-1 text-success"></i>
+            Monto inicial
+          </label>
+          <input type="number" class="form-control" [(ngModel)]="form.monto" />
+        </div>
+
+        <!-- Fecha -->
+        <div class="col-md-6">
+          <label class="form-label">
+            <i class="bi bi-calendar-event me-1 text-info"></i>
+            Fecha
+          </label>
+          <input type="date" class="form-control" [(ngModel)]="form.fecha" />
+        </div>
+
+        <!-- Descripción -->
+        <div class="col-md-6">
+          <label class="form-label">
+            <i class="bi bi-card-text me-1 text-muted"></i>
+            Descripción
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="form.descripcion"
+            disabled="true"
+          />
+        </div>
+
+      </div>
+
+      <!-- Botón -->
+      <div class="mt-4 text-end">
+        <button class="btn btn-primary" (click)="guardar()">
+          <i class="bi bi-check-circle-fill me-1"></i>
+          Abrir cuenta
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

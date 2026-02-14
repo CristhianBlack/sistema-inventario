@@ -1,6 +1,7 @@
 package com.cristhian.SistemaInventario.Modelo;
 
 import com.cristhian.SistemaInventario.DTO.ImpuestoDTO;
+import com.cristhian.SistemaInventario.Enums.TipoImpuesto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 

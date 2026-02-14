@@ -1,6 +1,7 @@
 package com.cristhian.SistemaInventario.ServicioImplement;
 
 import com.cristhian.SistemaInventario.DTO.DevolucionDTO;
+import com.cristhian.SistemaInventario.Enums.*;
 import com.cristhian.SistemaInventario.Excepciones.RecursoNoEncontradoException;
 import com.cristhian.SistemaInventario.Modelo.*;
 import com.cristhian.SistemaInventario.Repositorio.*;

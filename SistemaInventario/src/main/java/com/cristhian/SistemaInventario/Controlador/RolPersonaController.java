@@ -12,11 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
+@PreAuthorize("hasAnyRole('ADMIN_SISTEMA', 'ADMIN')")//ADMIN es el adminde negocio
 @RestController
 @RequestMapping("/Inventario")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -48,26 +50,6 @@ public class RolPersonaController {
         return ResponseEntity.ok(new RolPersonaDTO(data.get()));
     }
 
-    @PostMapping("/rolPersonas")
-    public ResponseEntity<?> guardarRolPersona(@Valid @RequestBody RolPersonaDTO rolPersonaDTO){
-        try{
-            var rol = rolPersonaService.guardarRolPersona(rolPersonaDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new RolPersonaDTO(rol));
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
-        }
-    }
-
-    @PutMapping("/rolPersonas/{id}")
-    public ResponseEntity<?> actualizarRolPersona(@PathVariable int id, @RequestBody RolPersonaDTO rolPersonaDTO){
-        try{
-            var actualizado = rolPersonaService.actualizarRolPersona(id, rolPersonaDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(new RolPersonaDTO(actualizado));
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
-        }
-    }
-
     @DeleteMapping("/rolPersonas/{id}")
     public ResponseEntity<?> eliminarRolPersona(@PathVariable int id){
         try{
@@ -78,3 +60,4 @@ public class RolPersonaController {
         }
     }
 }
+

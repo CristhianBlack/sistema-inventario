@@ -1,6 +1,9 @@
 package com.cristhian.SistemaInventario.ServicioImplement;
 
 import com.cristhian.SistemaInventario.DTO.VentaPagoDTO;
+import com.cristhian.SistemaInventario.Enums.EstadoPago;
+import com.cristhian.SistemaInventario.Enums.EstadoVenta;
+import com.cristhian.SistemaInventario.Enums.TipoAsiento;
 import com.cristhian.SistemaInventario.Excepciones.RecursoNoEncontradoException;
 import com.cristhian.SistemaInventario.Modelo.*;
 import com.cristhian.SistemaInventario.Repositorio.*;
@@ -12,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,21 +29,37 @@ public class VentaPagoService implements IVentaPagoService {
         private final MovimientoInventarioRepository movimientoInventarioRepository;
         private final ProductoRepository productoRepository;
         private final FormaPagoRepository formaPagoRepository;
+        // Repositorio de asientos contables
+        private final AsientoContableRepository asientoContableRepository;
+
+        // Servicio de validaciones contables generales
+        private final ValidacionContableService validacionContableService;
+
+        private final VentaContableServiceImpl ventaContableService;
 
         public VentaPagoService(VentaRepository ventaRepository,
                                 VentaPagoRepository ventaPagoRepository,
                                 MovimientoInventarioRepository movimientoInventarioRepository,
                                 ProductoRepository productoRepository,
-                                FormaPagoRepository formaPagoRepository) {
+                                FormaPagoRepository formaPagoRepository,
+                                AsientoContableRepository asientoContableRepository,
+                                ValidacionContableService validacionContableService,
+                                VentaContableServiceImpl ventaContableService) {
             this.ventaRepository = ventaRepository;
             this.ventaPagoRepository = ventaPagoRepository;
             this.movimientoInventarioRepository = movimientoInventarioRepository;
             this.productoRepository = productoRepository;
             this.formaPagoRepository = formaPagoRepository;
+            this.asientoContableRepository = asientoContableRepository;
+            this.validacionContableService = validacionContableService;
+            this.ventaContableService = ventaContableService;
         }
 
         @Override
         public void registrarPago(int idVenta, VentaPagoDTO pagoDTO) {
+
+            // Validación: debe existir asiento de apertura contable
+            validacionContableService.validarApertura(TipoAsiento.NORMAL);
 
             Venta venta = ventaRepository.findById(idVenta)
                     .orElseThrow(() -> new RecursoNoEncontradoException("Venta no encontrada"));
@@ -82,7 +100,7 @@ public class VentaPagoService implements IVentaPagoService {
             pago.setFechaPago(LocalDateTime.now());
             pago.setNumeroCuotas(numeroCuotas);
 
-            // 🔐 El backend decide el estado inicial
+            // El backend decide el estado inicial
             /*pago.setEstadoPago(
                     pagoDTO.getEstadoPago() != null
                             ? pagoDTO.getEstadoPago()
@@ -122,6 +140,9 @@ public class VentaPagoService implements IVentaPagoService {
 
             pago.setEstadoPago(EstadoPago.CONFIRMADO);
             ventaPagoRepository.save(pago);
+
+            // Registro del asiento contable del pago
+            ventaContableService.registrarAsientoPagoVenta(pago.getVenta(), pago);
 
             recalcularEstadoVenta(pago.getVenta());
 

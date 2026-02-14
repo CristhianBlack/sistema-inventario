@@ -11,8 +11,8 @@ public interface IRolPersonaService {
 
     public List<RolPersona> listarRolPersonaActivo();
     public Optional<RolPersona> buscarRolPersonaId(int id);
-    public RolPersona guardarRolPersona(RolPersonaDTO rolPersonaDTO);
-    public RolPersona actualizarRolPersona(int id, RolPersonaDTO rolPersonaDTO);
+    public void guardarRolPersonaAutomatico();
     public void eliminarRolPersona(int id);
 
 }
+

@@ -50,19 +50,22 @@ export class CategoriaService implements ICategoriaService{
       .pipe(catchError(this.manejarError));
   }
 
-  // Manejo centralizado de errores
   private manejarError(error: HttpErrorResponse) {
-    let mensaje = '';
-    if (error.error instanceof ErrorEvent) {
-      // Error del cliente
-      mensaje = `Error del cliente: ${error.error.message}`;
-    } else {
-      // Error del servidor
-      mensaje = `Error del servidor (Código ${error.status}): ${error.message}`;
-    }
-    console.error(mensaje);
-    return throwError(() => new Error(mensaje));
+  let mensaje = 'Ocurrió un error';
+
+  if (error.error?.mensaje) {
+    mensaje = error.error.mensaje;
+  } else if (error.status === 404) {
+    mensaje = 'Recurso no encontrado';
+  } else if (error.status === 500) {
+    mensaje = error.error.mensaje;
   }
+
+  return throwError(() => ({
+    status: error.status,
+    mensaje
+  }));
+}
 }
 
 

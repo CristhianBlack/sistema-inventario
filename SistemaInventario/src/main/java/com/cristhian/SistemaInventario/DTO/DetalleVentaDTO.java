@@ -27,6 +27,7 @@ public class DetalleVentaDTO {
     private Integer idImpuesto;
     private String nombreProducto;
     private BigDecimal porcentajeImpuesto;
+    private BigDecimal costoUnitarioPromedio;
 
     public DetalleVentaDTO() {
     }
@@ -39,6 +40,7 @@ public class DetalleVentaDTO {
         this.subtotalLinea = detalleVenta.getSubtotalLinea();
         this.impuestoLinea = detalleVenta.getImpuestoLinea();
         this.totalLinea = detalleVenta.getTotalLinea();
+        this.costoUnitarioPromedio = detalleVenta.getCostoUnitarioPromedio();
 
         // Enviamos el ID para no exponer objetos completos
         this.idVenta = detalleVenta.getVenta() != null
@@ -159,5 +161,13 @@ public class DetalleVentaDTO {
 
     public void setPorcentajeImpuesto(BigDecimal porcentajeImpuesto) {
         this.porcentajeImpuesto = porcentajeImpuesto;
+    }
+
+    public BigDecimal getCostoUnitarioPromedio() {
+        return costoUnitarioPromedio;
+    }
+
+    public void setCostoUnitarioPromedio(BigDecimal costoUnitarioPromedio) {
+        this.costoUnitarioPromedio = costoUnitarioPromedio;
     }
 }

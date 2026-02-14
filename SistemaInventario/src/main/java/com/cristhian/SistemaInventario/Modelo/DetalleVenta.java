@@ -38,6 +38,9 @@ public class DetalleVenta {
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal totalLinea;
 
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal costoUnitarioPromedio;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_venta")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "detalleVentas"})
@@ -63,6 +66,7 @@ public class DetalleVenta {
         this.subtotalLinea = detalleVentaDto.getSubtotalLinea();
         this.impuestoLinea = detalleVentaDto.getImpuestoLinea();
         this.totalLinea = detalleVentaDto.getTotalLinea();
+        this.costoUnitarioPromedio = detalleVentaDto.getCostoUnitarioPromedio();
     }
 
     public int getIdDetalleVenta() {
@@ -145,5 +149,13 @@ public class DetalleVenta {
 
     public void setTotalLinea(BigDecimal totalLinea) {
         this.totalLinea = totalLinea;
+    }
+
+    public BigDecimal getCostoUnitarioPromedio() {
+        return costoUnitarioPromedio;
+    }
+
+    public void setCostoUnitarioPromedio(BigDecimal costoUnitarioPromedio) {
+        this.costoUnitarioPromedio = costoUnitarioPromedio;
     }
 }

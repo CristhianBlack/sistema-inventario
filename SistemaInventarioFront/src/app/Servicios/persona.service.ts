@@ -41,6 +41,11 @@ obtenerPersonasConRolProveedor() {
     return this.httpClient.get<Persona[]>(`${this.URL}/proveedores`).pipe(catchError(this.manejarError));
   }
 
+  // Obtenemos un listado personas con el rol de cliente
+obtenerPersonasConRolCliente() {
+    return this.httpClient.get<Persona[]>(`${this.URL}/clientes`).pipe(catchError(this.manejarError));
+  }
+
 // Asignar un rol a una persona
 asignarRolPersona(idPersona: number, idRol: number): Observable<any> {
   return this.httpClient.post(`${this.URL}/PersonaRol/asignar/${idPersona}/${idRol}`, {});

@@ -21,6 +21,14 @@ export class Persona {
     idsRoles?: number[] = [];
     roles?: any[] = [];
     saldoFavor: number = 0;
+    razonSocial: string = '';
+    nombreContacto: string ='';
+    apellidoContacto: string ='';
+    segundoApellidoContacto: string ='';
+
+    nombreTipoDocumento?: string;
+    nombreTipoPersona?: String;
+    nombreCiudad?: String;
 
     tipoDocumento? : TipoDocumento;
     ciudad?: Ciudad;

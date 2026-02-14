@@ -45,25 +45,6 @@ public class TipoPersonaController {
         return ResponseEntity.ok(new TipoPersonaDTO(data.get()));
     }
 
-    @PostMapping("tipoPersonas")
-    public ResponseEntity<?> guardarTipoPersona(@Valid @RequestBody TipoPersonaDTO tipoPersonaDTO){
-        try{
-            var tipoPersona = tipoPersonaImpl.guardarTipoPersona(tipoPersonaDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new TipoPersonaDTO(tipoPersona));
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
-        }
-    }
-
-    @PutMapping("/tipoPersonas/{id}")
-    public ResponseEntity<?> actualizarTipoPersona(@PathVariable int id, @RequestBody TipoPersonaDTO tipoPersonaDTO){
-        try{
-            var actualizado = tipoPersonaImpl.actualizarTipoPersona(id, tipoPersonaDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(new TipoPersonaDTO(actualizado));
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
-        }
-    }
 
     @DeleteMapping("/tipoPersonas/{id}")
     public ResponseEntity<?> desactivarTipoPersona(@PathVariable int id){
@@ -75,3 +56,4 @@ public class TipoPersonaController {
         }
     }
 }
+

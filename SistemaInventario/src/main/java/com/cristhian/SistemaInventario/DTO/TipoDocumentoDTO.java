@@ -1,14 +1,14 @@
 package com.cristhian.SistemaInventario.DTO;
 
+import com.cristhian.SistemaInventario.Enums.NombreTipoDocumento;
 import com.cristhian.SistemaInventario.Modelo.TipoDocumento;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 
 public class TipoDocumentoDTO {
 
     private int idTipoDocumento;
     @NotBlank(message = "El tipo de documento es obligstorio")
-    private String nombreTipoDocumento;
+    private NombreTipoDocumento nombreTipoDocumento;
 
     @NotBlank(message = "La sigla es obligatoria")
     private String sigla;
@@ -33,11 +33,11 @@ public class TipoDocumentoDTO {
         this.idTipoDocumento = idTipoDocumento;
     }
 
-    public String getNombreTipoDocumento() {
+    public NombreTipoDocumento getNombreTipoDocumento() {
         return nombreTipoDocumento;
     }
 
-    public void setNombreTipoDocumento(String nombreTipoDocumento) {
+    public void setNombreTipoDocumento(NombreTipoDocumento nombreTipoDocumento) {
         this.nombreTipoDocumento = nombreTipoDocumento;
     }
 

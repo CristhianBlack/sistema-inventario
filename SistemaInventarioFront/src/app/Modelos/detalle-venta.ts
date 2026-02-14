@@ -9,6 +9,7 @@ export class DetalleVenta {
     totalLinea : number = 0;
 
      nombreProducto ?: String = "";
+     codigoProducto ?: String = "";
 
     idVenta : number | null = null;
     idProducto : number | null = null;

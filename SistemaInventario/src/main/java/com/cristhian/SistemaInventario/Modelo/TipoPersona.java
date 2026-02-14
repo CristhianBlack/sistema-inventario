@@ -1,6 +1,7 @@
 package com.cristhian.SistemaInventario.Modelo;
 
 import com.cristhian.SistemaInventario.DTO.TipoPersonaDTO;
+import com.cristhian.SistemaInventario.Enums.NombreTipoPersona;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -14,8 +15,9 @@ public class TipoPersona {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idTipoPersona;
 
-    @Column(nullable = false, length = 45)
-    private String nombreTipoPersona;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private NombreTipoPersona nombreTipoPersona;
 
     @Column(nullable = false)
     private boolean activo = true;
@@ -40,11 +42,11 @@ public class TipoPersona {
         this.idTipoPersona = idTipoPersona;
     }
 
-    public String getNombreTipoPersona() {
+    public NombreTipoPersona getNombreTipoPersona() {
         return nombreTipoPersona;
     }
 
-    public void setNombreTipoPersona(String nombreTipoPersona) {
+    public void setNombreTipoPersona(NombreTipoPersona nombreTipoPersona) {
         this.nombreTipoPersona = nombreTipoPersona;
     }
 
@@ -73,3 +75,4 @@ public class TipoPersona {
                 '}';
     }
 }
+

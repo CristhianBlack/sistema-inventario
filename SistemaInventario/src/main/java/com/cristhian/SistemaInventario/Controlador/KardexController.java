@@ -2,12 +2,14 @@ package com.cristhian.SistemaInventario.Controlador;
 
 import com.cristhian.SistemaInventario.DTO.KardexDTO;
 import com.cristhian.SistemaInventario.Service.IKardexService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -30,11 +32,12 @@ public class KardexController {
     @GetMapping("/Kardex/{id}/filtro")
     public ResponseEntity<List<KardexDTO>> obtenerKardexPorFechas(
             @PathVariable int id,
-            @RequestParam String desde,
-            @RequestParam String hasta) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta
+    ) {
 
-        LocalDate fechaDesde = LocalDate.parse(desde);
-        LocalDate fechaHasta = LocalDate.parse(hasta);
+        LocalDateTime fechaDesde = desde.atStartOfDay();
+        LocalDateTime fechaHasta = hasta.atTime(23, 59, 59);
 
         return ResponseEntity.ok(
                 kardexService.generarKardexPorFechas(id, fechaDesde, fechaHasta)
@@ -44,10 +47,13 @@ public class KardexController {
     @GetMapping("/Kardex/{id}/excel")
     public ResponseEntity<byte[]> exportarExcel(
             @PathVariable int id,
-            @RequestParam LocalDate desde,
-            @RequestParam LocalDate hasta) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
 
-        byte[] excel = kardexService.exportarKardexExcel(id, desde, hasta);
+        LocalDateTime fechaDesde = desde.atStartOfDay();
+        LocalDateTime fechaHasta = hasta.atTime(23, 59, 59);
+
+        byte[] excel = kardexService.exportarKardexExcel(id, fechaDesde, fechaHasta);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=kardex.xlsx")
@@ -58,10 +64,13 @@ public class KardexController {
     @GetMapping("/Kardex/{id}/pdf")
     public ResponseEntity<byte[]> exportarPdf(
             @PathVariable int id,
-            @RequestParam LocalDate desde,
-            @RequestParam LocalDate hasta) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta) {
 
-        byte[] pdf = kardexService.exportarKardexPdf(id, desde, hasta);
+        LocalDateTime fechaDesde = desde.atStartOfDay();
+        LocalDateTime fechaHasta = hasta.atTime(23, 59, 59);
+
+        byte[] pdf = kardexService.exportarKardexPdf(id, fechaDesde, fechaHasta);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=kardex.pdf")

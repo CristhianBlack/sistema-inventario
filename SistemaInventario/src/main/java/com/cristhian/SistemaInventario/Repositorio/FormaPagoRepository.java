@@ -2,7 +2,7 @@ package com.cristhian.SistemaInventario.Repositorio;
 
 
 import com.cristhian.SistemaInventario.Modelo.FormaPago;
-import com.cristhian.SistemaInventario.Modelo.NombreFormaPago;
+import com.cristhian.SistemaInventario.Enums.NombreFormaPago;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

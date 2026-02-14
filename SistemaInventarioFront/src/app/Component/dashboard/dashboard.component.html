@@ -1,0 +1,276 @@
+<!--<h1 class="h3 mb-4 text-gray-800">Bienvenido al Dashboard</h1>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        Contenido inicial
+      </div>
+    </div>
+  </div>
+</div>-->
+
+<!-- Tema general -->
+<div [class.dark-mode]="darkMode">
+
+  <!-- Wrapper principal -->
+  <div id="wrapper" class="d-flex">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion sidebar-scroll"
+    id="accordionSidebar">
+
+      <!-- Marca / Logo -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" routerLink="/dashboard">
+        <div class="sidebar-brand-icon">
+          <i class="bi bi-buildings me-1"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">SIGCO</div>
+      </a>
+
+      <hr class="sidebar-divider my-0" />
+
+      
+
+      <!-- Sub menú Personas -->
+<li class="nav-item">
+
+  <a class="nav-link collapsed"
+     href="#"
+     data-bs-toggle="collapse"
+     data-bs-target="#collapsePersonas"
+     aria-expanded="false"
+     aria-controls="collapsePersonas">
+
+    <i class="fas fa-fw fa-users"></i>
+    <span>Personas</span>
+  </a>
+
+  <div id="collapsePersonas"
+       class="collapse"
+       data-bs-parent="#accordionSidebar">
+
+    <div class="bg-white py-2 collapse-inner rounded">
+      <a class="collapse-item" routerLink="/dashboard/Personas"
+      (click)="cerrarSubmenuPersona()">Personas</a>
+      <a class="collapse-item" routerLink="/dashboard/Proveedores"
+      (click)="cerrarSubmenuPersona()">Proveedores</a>
+    </div>
+  </div>
+
+</li>
+<!-- Fin Personas -->
+
+
+      <!-- Sub menú Inventario -->
+<li class="nav-item">
+
+  <a class="nav-link collapsed"
+     href="#"
+     data-bs-toggle="collapse"
+     data-bs-target="#collapseInventario"
+     aria-expanded="false"
+     aria-controls="collapseInventario">
+
+    <i class="fas fa-fw fa-boxes"></i>
+    <span>Inventario</span>
+  </a>
+
+  <div id="collapseInventario"
+       class="collapse"
+       data-bs-parent="#accordionSidebar">
+
+    <div class="bg-white py-2 collapse-inner rounded">
+
+      <a class="collapse-item" routerLink="/dashboard/Productos"
+      (click)="cerrarSubmenuInventario()">Productos</a>
+      <a class="collapse-item" routerLink="/dashboard/Compras"
+      (click)="cerrarSubmenuInventario()">Compras</a>
+      <a class="collapse-item" routerLink="/dashboard/MovimientoInventario"
+      (click)="cerrarSubmenuInventario()">Movimientos</a>
+    </div>
+  </div>
+
+</li>
+<!-- Fin Inventario -->
+
+  <!-- Sub menú Ventas -->
+<li class="nav-item">
+
+  <a class="nav-link collapsed"
+     href="#"
+     data-bs-toggle="collapse"
+     data-bs-target="#collapseVentas"
+     aria-expanded="false"
+     aria-controls="collapseVentas">
+
+    <i class="fas fa-fw fa-boxes"></i>
+    <span>Ventas</span>
+  </a>
+
+  <div id="collapseVentas"
+       class="collapse"
+       data-bs-parent="#accordionSidebar">
+
+    <div class="bg-white py-2 collapse-inner rounded">
+
+      <a class="collapse-item" routerLink="/dashboard/Ventas"
+      (click)="cerrarSubmenuInventario()">Ventas</a>
+      <a class="collapse-item" routerLink="/dashboard/Devolucion"
+      (click)="cerrarSubmenuInventario()">Devolucion</a>
+      
+
+    </div>
+  </div>
+
+</li>
+<!-- Fin Inventario -->
+
+      <!--Sub menu Contabilidad-->
+      <li class="nav-item"  *ngIf="esAdmin">
+
+  <!-- TÍTULO Contabilidad -->
+  <a class="nav-link collapsed"
+     href="#"
+     data-bs-toggle="collapse"
+     data-bs-target="#collapseContabilidad"
+     aria-expanded="false"
+     aria-controls="collapseContabilidad">
+
+    <i class="fas fa-fw fa-book"></i>
+    <span>Contabilidad</span>
+  </a>
+
+  <!-- SUBMENÚ -->
+  <div id="collapseContabilidad"
+       class="collapse"
+       aria-labelledby="headingContabilidad"
+       data-bs-parent="#accordionSidebar">
+
+    <div class="bg-white py-2 collapse-inner rounded">
+
+      <a class="collapse-item" routerLink="/dashboard/Contabilidad/AperturaCuenta" routerLinkActive="active"
+       (click)="cerrarSubmenuContabilidad()">Cuenta Patrimonio</a>
+      <a class="collapse-item" routerLink="/dashboard/Contabilidad/LibroDiario" routerLinkActive="active"
+       (click)="cerrarSubmenuContabilidad()">Libro Diario</a>
+    <a class="collapse-item" routerLink="/dashboard/Contabilidad/MayorGeneral" routerLinkActive="active"
+       (click)="cerrarSubmenuContabilidad()">Mayor General</a>
+    <a class="collapse-item" routerLink="/dashboard/Contabilidad/BalanceGeneral" routerLinkActive="active"
+       (click)="cerrarSubmenuContabilidad()">Balance General</a>
+    </div>
+  </div>
+
+</li>
+<!--fin del sub menu Contabilidad-->
+
+  <!-- Sub menú Configuración -->
+<li class="nav-item">
+
+  <a class="nav-link collapsed"
+     href="#"
+     data-bs-toggle="collapse"
+     data-bs-target="#collapseConfiguracion"
+     aria-expanded="false"
+     aria-controls="collapseConfiguracion">
+
+    <i class="fas fa-fw fa-cogs"></i>
+    <span>Configuración</span>
+  </a>
+
+  <div id="collapseConfiguracion"
+       class="collapse"
+       data-bs-parent="#accordionSidebar">
+
+    <div class="bg-white py-2 collapse-inner rounded">
+
+      <a class="collapse-item" routerLink="/dashboard/Categorias"
+      (click)="cerrarSubmenuConfiguracion()">Categorías</a>
+      <a class="collapse-item" routerLink="/dashboard/Ciudades"
+      (click)="cerrarSubmenuConfiguracion()">Ciudad</a>
+       <a *ngIf="esAdmin" class="collapse-item" routerLink="/dashboard/FormaPago"
+      (click)="cerrarSubmenuConfiguracion()">Forma de Pago</a>
+      <a *ngIf="esAdmin" class="collapse-item" routerLink="/dashboard/Impuesto"
+      (click)="cerrarSubmenuConfiguracion()">Impuesto</a>
+      <a *ngIf="esAdmin" class="collapse-item" routerLink="/dashboard/Roles"
+      (click)="cerrarSubmenuConfiguracion()">Roles</a>
+      <a *ngIf="esAdmin" class="collapse-item" routerLink="/dashboard/TipoDocumentos"
+      (click)="cerrarSubmenuConfiguracion()">Tipo Documento</a>
+      <a *ngIf="esAdmin" class="collapse-item" routerLink="/dashboard/TipoPersonas"
+      (click)="cerrarSubmenuConfiguracion()">Tipo Persona</a>
+      <a class="collapse-item" routerLink="/dashboard/Unidades"
+      (click)="cerrarSubmenuConfiguracion()">Unidad Medida</a>
+      <a *ngIf="esAdmin" class="collapse-item" routerLink="/dashboard/Usuario/Usuario"
+      (click)="cerrarSubmenuConfiguracion()">Usuario</a>
+    </div>
+  </div>
+</li>
+<!-- Fin Configuración -->
+
+
+      <hr class="sidebar-divider" />
+
+      <!-- Botón colapsar -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+    </ul>
+
+    <!-- Contenedor principal -->
+    <div id="content-wrapper" class="d-flex flex-column w-100">
+
+      <div id="content">
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"
+             [ngClass]="{ 'navbar-dark bg-dark': darkMode }">
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle me-3">
+            <i class="fa fa-bars"></i>
+          </button>
+            
+            <h5 class="fw-bold text-primary mb-0" >SIGCO</h5>
+            
+          
+
+          <ul class="navbar-nav ms-auto">
+            <li>
+              
+                <!--<span class="badge bg-primary">-->
+                <label class="fw-bold text-primary mr-3 mt-1">
+                  {{ formatearRolSistema(rolUsuario) }}: {{ formatearRolSistema( nombreUsuario )}}
+                </label>  
+                 
+                <!--</span>-->
+              </li>
+            <li class="nav-item">
+              <button class="btn btn-sm btn-outline-secondary mr-3" (click)="toggleDarkMode()">
+                <i class="fas" [ngClass]="darkMode ? 'fa-sun' : 'fa-moon'"></i>
+              </button>
+            </li>
+            
+            <li class="nav-item">
+              
+              <button class="btn btn-danger btn-sm" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+              </button>
+            </li>
+          </ul>
+        </nav>
+        <!-- 🟢 Aquí va tu contenido Angular -->
+        <div class="container-fluid">
+          <router-outlet></router-outlet>
+        </div>
+        
+    </div>  
+
+    <!-- Footer -->
+      <footer class="sticky-footer bg-white shadow-sm mt-auto"
+              [ngClass]="{ 'bg-dark text-light': darkMode }">
+        <div class="container my-auto">
+          <div class="text-center text-muted small">
+            © {{ currentYear }} SIGCO
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+</div>
+

@@ -12,7 +12,6 @@ public interface ITipoPersonaService {
 
     List<TipoPersona> listarTipoPersonaActiva();
     Optional<TipoPersona> buscarTipoPersonaId(int id);
-    public TipoPersona guardarTipoPersona(TipoPersonaDTO tipoPersonaDTO);
-    public TipoPersona actualizarTipoPersona(int id, TipoPersonaDTO tipoPersonaDTO);
+    public void guardarTipoPersonaPorDefecto();
     public void desactivarTipoDocumento(int id);
 }

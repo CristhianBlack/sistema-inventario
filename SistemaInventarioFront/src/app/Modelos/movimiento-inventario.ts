@@ -6,6 +6,12 @@ export class MovimientoInventario {
     cantidad : number = 0;
     observacion: String = "";
     fechaMovimiento : Date = new Date;
+    nombreProducto?: String;
+    nombre?: String;
+    apellido?: String;
+    segundoApellido?: String;
+    razonSocial?: String;
+    nombreProveedor?:String;
 
     //Relacciones
     idProducto : number | null = null;

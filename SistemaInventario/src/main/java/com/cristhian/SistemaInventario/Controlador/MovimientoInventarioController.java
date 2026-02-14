@@ -3,12 +3,14 @@ package com.cristhian.SistemaInventario.Controlador;
 import com.cristhian.SistemaInventario.DTO.KardexDTO;
 import com.cristhian.SistemaInventario.DTO.MovimientoInventarioDTO;
 import com.cristhian.SistemaInventario.Service.IMovimientoInventario;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -23,19 +25,18 @@ public class MovimientoInventarioController {
     }
 
     @GetMapping("MovimientoInventario")
-    public ResponseEntity<List<MovimientoInventarioDTO>> listarMoviminetosInvetario(){
-        List<MovimientoInventarioDTO> response = movimientoInventarioService.listarMovimientosInventario().stream()
-                .map(MovimientoInventarioDTO :: new).toList();// mapeo entidad → DTO
-        return  ResponseEntity.ok(response);
+    public List<MovimientoInventarioDTO> listar() {
+        return movimientoInventarioService.listarMovimientosInventario();
     }
 
     @GetMapping("/MovimientoInventario/filtro")
-    public ResponseEntity<List<MovimientoInventarioDTO>> obtenerKardexPorFechas(
-            @RequestParam String desde,
-            @RequestParam String hasta) {
+    public ResponseEntity<List<MovimientoInventarioDTO>> obtenerMovimientoInventarioPorFechas(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta
+    ) {
 
-        LocalDate fechaDesde = LocalDate.parse(desde);
-        LocalDate fechaHasta = LocalDate.parse(hasta);
+        LocalDateTime fechaDesde = desde.atStartOfDay();
+        LocalDateTime fechaHasta = hasta.atTime(23, 59, 59);
 
         return ResponseEntity.ok(
                 movimientoInventarioService.generarMovimientoInventarioPorFechas( fechaDesde, fechaHasta)
@@ -44,11 +45,19 @@ public class MovimientoInventarioController {
 
     @GetMapping("/MovimientoInventario/excel")
     public ResponseEntity<byte[]> exportarExcel(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta
+    ) {
 
-            @RequestParam LocalDate desde,
-            @RequestParam LocalDate hasta) {
+        LocalDateTime fechaDesde = null;
+        LocalDateTime fechaHasta = null;
 
-        byte[] excel = movimientoInventarioService.exportarMovimientoInventarioExcel(desde, hasta);
+        if (desde != null && hasta != null) {
+            fechaDesde = desde.atStartOfDay();
+            fechaHasta = hasta.atTime(23, 59, 59);
+        }
+
+        byte[] excel = movimientoInventarioService.exportarMovimientoInventarioExcel(fechaDesde, fechaHasta);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=MovimientoInventario.xlsx")
@@ -58,11 +67,19 @@ public class MovimientoInventarioController {
 
     @GetMapping("/MovimientoInventario/pdf")
     public ResponseEntity<byte[]> exportarPdf(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate desde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate hasta
+    ) {
 
-            @RequestParam LocalDate desde,
-            @RequestParam LocalDate hasta) {
+        LocalDateTime fechaDesde = null;
+        LocalDateTime fechaHasta = null;
 
-        byte[] pdf = movimientoInventarioService.exportarMovimientoInventarioPdf(desde, hasta);
+        if (desde != null && hasta != null) {
+            fechaDesde = desde.atStartOfDay();
+            fechaHasta = hasta.atTime(23, 59, 59);
+        }
+
+        byte[] pdf = movimientoInventarioService.exportarMovimientoInventarioPdf(fechaDesde, fechaHasta);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=MovimientoInventario.pdf")

@@ -77,4 +77,13 @@ export class RolPersonaFormComponent implements OnInit{
         this.formModel = new RolPersona();
         formRolPersona?.resetForm();
       }
+
+       formatearRol(rol: any): string {
+  if (!rol) return '';
+
+  return String(rol)
+    .toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, letra => letra.toUpperCase());
+}
 }

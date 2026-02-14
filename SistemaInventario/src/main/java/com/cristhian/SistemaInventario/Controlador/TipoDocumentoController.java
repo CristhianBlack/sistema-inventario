@@ -37,7 +37,7 @@ public class TipoDocumentoController {
     }
 
     @GetMapping("/tipoDocumentos/{id}")
-    public ResponseEntity<?> buscarTipoDocumento(@PathVariable int id){
+    public ResponseEntity<?> buscarTipoDocumento(@PathVariable int id) {
         Optional<TipoDocumento> data = tipoDocumentoImpl.buscarTipoDucmentoId(id);
 
         if (data.isEmpty()) {
@@ -46,27 +46,6 @@ public class TipoDocumentoController {
                     .body(new Mensaje("No existe el registro buscado"));
         }
         return ResponseEntity.ok(new TipoDocumentoDTO(data.get()));
-    }
-
-    @PostMapping("/tipoDocumentos")
-    public ResponseEntity<?> guardarTipoDocumento(@RequestBody TipoDocumentoDTO tipoDocumentoDTO){
-        try{
-            var tipo = tipoDocumentoImpl.guardarTipoDocumento(tipoDocumentoDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new TipoDocumentoDTO(tipo));
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
-        }
-
-    }
-
-    @PutMapping("/tipoDocumentos/{id}")
-    public ResponseEntity<?> actualizarTipoDocumento(@PathVariable int id, @RequestBody TipoDocumentoDTO tipoDocumentoDTO){
-        try{
-            var actualizado = tipoDocumentoImpl.actualizarTipoDocumento(id , tipoDocumentoDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(new TipoDocumentoDTO(actualizado));
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(new Mensaje(e.getMessage()));
-        }
     }
 
     @DeleteMapping("tipoDocumentos/{id}")

@@ -1,11 +1,8 @@
 package com.cristhian.SistemaInventario.DTO;
 
 import com.cristhian.SistemaInventario.Modelo.FormaPago;
-import com.cristhian.SistemaInventario.Modelo.NombreFormaPago;
-import com.cristhian.SistemaInventario.Modelo.TipoPago;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.cristhian.SistemaInventario.Enums.NombreFormaPago;
+import com.cristhian.SistemaInventario.Enums.TipoPago;
 
 public class FormaPagoDTO {
 

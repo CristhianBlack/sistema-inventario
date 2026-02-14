@@ -1,116 +1,98 @@
-<!--<div class="container">
-  <form (ngSubmit)="onSubmit(formCompra)" #formCompra="ngForm" novalidate>
-    
-     Título dinámico 
-    <div class="text-center mb-4">
-      <h4 class="fw-bold"> <i class="bi bi-tags-fill text-white fs-4 me-2"></i>
-        {{ formModel.idCompra ? 'Editar Compra' : 'Nueva Compra' }}
-      </h4>
-    </div>
-
-     Campo: total compra 
-    <div class="mb-3">
-      <label for="total" class="form-label">Total de Compra</label>
-      <input 
-        type="text"
-        id="total"
-        name="total"
-        class="form-control"
-        [(ngModel)]="formModel.total"
-        [ngModelOptions]="{standalone: true}"
-        required
-        minlength="3"
-        placeholder="Ej: $25.000">
-
-      <!-- Mensajes de error 
-      <div *ngIf="formCompra.submitted && !formModel.total" class="text-danger small mt-1">
-        El total de compra es obligatorio.
-      </div>
-    </div>
-
-    <!-- proveedores 
-        <div class="col-md-6">
-          <label class="form-label">Proveedor del Producto</label>
-          <select
-            class="form-select"
-            name="idProveedor"
-            [(ngModel)]="formModel.idProveedor"
-            required
-          >
-            <option [ngValue]="null" disabled>Seleccione...</option>
-            <option *ngFor="let proveedor of proveedores" [ngValue]="proveedor.idProveedor">
-              {{ proveedor.nombre }} {{proveedor.apellido}} {{proveedor.segundoApellido}}
-            </option>
-          </select>
-        </div>
-
-    
-
-    <!-- Botones 
-    <div class="d-flex justify-content-end">
-      <button 
-        type="button" 
-        class="btn btn-secondary me-2"
-        data-bs-dismiss="modal" >
-        Cancelar
-      </button>
-
-      <button 
-        type="submit" 
-        class="btn btn-primary"
-        [disabled]="formCompra.invalid">
-        {{ formModel.idCompra ? 'Guardar cambios' : 'Agregar Compra' }}
-      </button>
-    </div>
-
-  </form>
-</div>-->
-
 <div class="container">
   <form (ngSubmit)="onSubmit(formCompra)" #formCompra="ngForm" novalidate>
 
-    <!-- Título dinámico -->
+    <!-- ========================= -->
+    <!-- TÍTULO -->
+    <!-- ========================= -->
     <div class="text-center mb-4">
       <h4 class="fw-bold">
-        <i class="bi bi-tags-fill text-white fs-4 me-2"></i>
+        <i class="bi bi-cart-check-fill text-primary fs-4 me-2"></i>
         {{ formModel.idCompra ? 'Editar Compra' : 'Nueva Compra' }}
       </h4>
     </div>
 
-    <!-- Campo: Proveedor -->
+    <!-- ========================= -->
+    <!-- PROVEEDOR -->
+    <!-- ========================= -->
     <div class="mb-4">
-      <label class="form-label">Proveedor del Producto</label>
-      <select
+      <label class="form-label">
+        <i class="bi bi-truck me-1"></i>
+        Proveedor del Producto
+      </label>
+
+      <div class="row">
+        <input
+          class="form-control"
+          #inputBusqueda
+          type="text"
+          id="buscar"
+          name="buscar"
+          placeholder="Buscar persona..."
+          [value]="searchTerm"
+          (input)="onBuscar(inputBusqueda.value)"
+          (focus)="mostrarResultados = true" />
+      </div>
+
+    <!-- Resultados -->
+    <ul class="list-group mt-2" *ngIf="mostrarResultados && personasFiltradas.length > 0">
+      <li
+        class="list-group-item list-group-item-action"
+        *ngFor="let p of personasFiltradas"
+        (click)="seleccionarPersona(p)">
+        <i class="bi bi-person-circle me-2"></i>
+        {{ obtenerNombrePersona(p) }}
+      </li>
+    </ul>
+
+    <div class="text-muted mt-2" *ngIf="mostrarResultados && personasFiltradas.length === 0">
+      <i class="bi bi-info-circle me-1"></i>
+      No hay resultados
+    </div>
+
+
+      <!--<select
         class="form-select"
         name="idProveedor"
         [(ngModel)]="formModel.idProveedor"
-        required 
+        required
         [disabled]="modoSoloLectura">
-      >
+
         <option [ngValue]="null" disabled>Seleccione...</option>
+
         <option *ngFor="let proveedor of proveedores" [ngValue]="proveedor.idProveedor">
-          {{ proveedor.nombre }} {{ proveedor.apellido }} {{ proveedor.segundoApellido }}
+          {{
+            proveedor.razonSocial.trim()
+              ? proveedor.razonSocial
+              : (proveedor.nombre + ' ' + proveedor.apellido + ' ' + proveedor.segundoApellido)
+          }}
         </option>
-      </select>
+      </select>-->
     </div>
 
-    <button type="button" class="btn btn-gradient px-4 shadow-sm "  (click)="abrirModalProducto()"
-  [disabled]="modoSoloLectura">
-      <i class="bi bi-plus-circle me-2"></i> Nuevo Producto</button>
-
     <!-- ========================= -->
-    <!-- AGREGAR PRODUCTO -->
+    <!-- AGREGAR PRODUCTOS -->
     <!-- ========================= -->
-    <div class="card bg-dark text-white p-3 mb-4 mt-3">
-      <h5 class="mb-3">Agregar Productos a la Compra</h5>
+    <div class="card bg-dark text-white p-4 mb-4">
+      <h5 class="mb-3 fw-semibold">
+        <i class="bi bi-box-seam me-2"></i>
+        Agregar productos a la compra
+      </h5>
 
-      <div class="row g-3">
+      <div class="row g-3 align-items-end">
 
         <!-- Producto -->
         <div class="col-md-5">
-          <label class="form-label">Producto</label>
-          <select class="form-select" [(ngModel)]="productoSeleccionado" [ngModelOptions]="{standalone: true}"
-                (change)="onProductoSeleccionado()" [disabled]="modoSoloLectura">
+          <label class="form-label">
+            <i class="bi bi-tag me-1"></i>
+            Producto
+          </label>
+          <select
+            class="form-select"
+            [(ngModel)]="productoSeleccionado"
+            [ngModelOptions]="{standalone: true}"
+            (change)="onProductoSeleccionado()"
+            [disabled]="modoSoloLectura">
+
             <option value="">Seleccione...</option>
             <option *ngFor="let p of productos" [ngValue]="p">
               {{ p.nombreProducto }}
@@ -119,43 +101,55 @@
         </div>
 
         <!-- Cantidad -->
-        <div class="col-md-3">
-          <label class="form-label">Cantidad</label>
-          <input type="number" class="form-control"
-            [(ngModel)]="cantidad" [ngModelOptions]="{standalone: true}" 
-  [disabled]="modoSoloLectura">
+        <div class="col-md-2">
+          <label class="form-label">
+            <i class="bi bi-123 me-1"></i>
+            Cantidad
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="cantidad"
+            [ngModelOptions]="{standalone: true}"
+            min="1"
+            [disabled]="modoSoloLectura">
         </div>
 
         <!-- Precio -->
-<div class="col-md-3">
-  <label class="form-label">Precio de compra</label>
+        <div class="col-md-2">
+          <label class="form-label">
+            <i class="bi bi-cash-coin me-1"></i>
+            Precio de compra
+          </label>
+          <input
+            type="number"
+            class="form-control"
+            [(ngModel)]="precio"
+            [ngModelOptions]="{standalone: true}"
+            min="0"
+            [disabled]="modoSoloLectura">
+        </div>
 
-  <input
-    type="number"
-    class="form-control"
-    [(ngModel)]="precio"
-    [ngModelOptions]="{standalone: true}"
-    [disabled]="modoSoloLectura"
-    min="0"
-  />
-
-  <small class="text-muted">
-    Precio sugerido del producto. Puede modificarlo si es necesario.
-  </small>
-</div>
-
-        <div class="col-md-3">
-          <label class="form-label">Impuesto</label>
-          <input type="text" class="form-control"
-            [value]="obtenerImpuestoPorProducto(productoSeleccionado)?.porcentaje || 0"  
-  [disabled]="modoSoloLectura">
+        <!-- Impuesto -->
+        <div class="col-md-2">
+          <label class="form-label">
+            <i class="bi bi-percent me-1"></i>
+            Impuesto
+          </label>
+          <div class="form-control bg-secondary text-center fw-bold">
+            {{ (obtenerImpuestoPorProducto(productoSeleccionado)?.porcentaje ?? 0) | percent:'1.0-0' }}
+          </div>
         </div>
 
         <!-- Botón agregar -->
-        <div class="col-md-1 d-flex align-items-end">
-          <button type="button" class="btn btn-primary w-100" (click)="agregarItem()"
-          [disabled]="modoSoloLectura">
-            +
+        <div class="col-md-1">
+          <button
+            type="button"
+            class="btn btn-success w-100"
+            (click)="agregarItem()"
+            [disabled]="modoSoloLectura"
+            title="Agregar producto">
+            <i class="bi bi-plus-circle"></i>
           </button>
         </div>
 
@@ -165,67 +159,88 @@
     <!-- ========================= -->
     <!-- TABLA DETALLE -->
     <!-- ========================= -->
-    <table class="table table-dark table-striped align-middle" *ngIf="detalleCompra.length > 0">
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Precio</th>
-          <th>IVA %</th>
-          <th>Subtotal</th>
-          <th>IVA</th>
-          <th>Total</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
+    <div class="table-responsive" *ngIf="detalleCompra.length > 0">
+      <table class="table table-dark table-striped align-middle">
+        <thead>
+          <tr>
+            <th><i class="bi bi-upc-scan"></i></th>
+            <th>Producto</th>
+            <th class="text-end">Cantidad</th>
+            <th class="text-end">Precio</th>
+            <th class="text-end">IVA %</th>
+            <th class="text-end">Subtotal</th>
+            <th class="text-end">IVA</th>
+            <th class="text-end">Total</th>
+            <th class="text-center">
+              <i class="bi bi-gear"></i>
+            </th>
+          </tr>
+        </thead>
 
-      <tbody>
-        <tr *ngFor="let item of detalleCompra; let i = index">
-          <td>{{ item.nombreProducto }}</td>
-          <td>{{ item.cantidad }}</td>
-          <td>{{ item.precioUnitario | number }}</td>
-          <td>{{ item.ivaPorcentaje * 100 }}%</td>
-          <td>{{ item.subtotalLinea | number }}</td>
-          <td>{{ item.impuestoLinea | number }}</td>
-          <td>{{ item.totalLinea | number }}</td>
-          <td>
-            <button type="button" class="btn btn-warning btn-sm me-3" 
-            (click)="editarItem(i)"      
-            [disabled]="modoSoloLectura"> <i class="bi bi-pencil-square me-1"></i> </button>
-            <button type="button" class="btn btn-danger btn-sm" 
-            (click)="eliminarItem(i)"
-            [disabled]="modoSoloLectura"><i class="bi bi-trash me-1"></i></button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        <tbody>
+          <tr *ngFor="let item of detalleCompra; let i = index">
+            <td>{{ item.codigoProducto }}</td>
+            <td>{{ item.nombreProducto }}</td>
+            <td class="text-end">{{ item.cantidad }}</td>
+            <td class="text-end">{{ item.precioUnitario | number }}</td>
+            <td class="text-end">{{ item.impuestoPct * 100 }}%</td>
+            <td class="text-end">{{ item.subtotalLinea | number }}</td>
+            <td class="text-end">{{ item.impuestoLinea | number }}</td>
+            <td class="text-end fw-semibold">{{ item.totalLinea | number }}</td>
+            <td class="text-center">
+              <button
+                type="button"
+                class="btn btn-warning btn-sm me-2"
+                (click)="editarItem(i)"
+                [disabled]="modoSoloLectura"
+                title="Editar">
+                <i class="bi bi-pencil"></i>
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-danger btn-sm"
+                (click)="eliminarItem(i)"
+                [disabled]="modoSoloLectura"
+                title="Eliminar">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- ========================= -->
     <!-- TOTAL -->
     <!-- ========================= -->
-    <div class="text-end fs-5 fw-bold mt-3" *ngIf="total > 0">
-      Total: {{ total | currency:'COP' : 'symbol' }}
+    <div class="d-flex justify-content-end mt-4" *ngIf="total > 0">
+      <div class="bg-primary bg-opacity-25 px-4 py-2 rounded fs-5 fw-bold">
+        <i class="bi bi-calculator me-2"></i>
+        Total: {{ total | currency:'COP' }}
+      </div>
     </div>
 
-    <br>
-
-    <!-- Botones -->
-    <div class="d-flex justify-content-end">
-      <button 
-        type="button" 
+    <!-- ========================= -->
+    <!-- BOTONES -->
+    <!-- ========================= -->
+    <div class="d-flex justify-content-end mt-4">
+      <button
+        type="button"
         class="btn btn-secondary me-2"
         data-bs-dismiss="modal">
+        <i class="bi bi-x-circle me-1"></i>
         Cancelar
       </button>
 
-      <button 
-        type="submit" 
+      <button
+        type="submit"
         class="btn btn-primary"
         [disabled]="formCompra.invalid || detalleCompra.length === 0 || modoSoloLectura">
+        <i class="bi bi-save me-1"></i>
         {{ formModel.idCompra ? 'Guardar cambios' : 'Agregar Compra' }}
       </button>
     </div>
 
   </form>
 </div>
-

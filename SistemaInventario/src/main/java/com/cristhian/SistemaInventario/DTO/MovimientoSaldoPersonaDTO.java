@@ -1,10 +1,7 @@
 package com.cristhian.SistemaInventario.DTO;
 
 import com.cristhian.SistemaInventario.Modelo.MovimientoSaldoPersona;
-import com.cristhian.SistemaInventario.Modelo.Persona;
-import com.cristhian.SistemaInventario.Modelo.TipoMovimientoSaldo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+import com.cristhian.SistemaInventario.Enums.TipoMovimientoSaldo;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

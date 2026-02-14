@@ -1,11 +1,7 @@
 package com.cristhian.SistemaInventario.DTO;
 
-import com.cristhian.SistemaInventario.Modelo.Compra;
 import com.cristhian.SistemaInventario.Modelo.CompraPago;
-import com.cristhian.SistemaInventario.Modelo.EstadoPago;
-import com.cristhian.SistemaInventario.Modelo.FormaPago;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+import com.cristhian.SistemaInventario.Enums.EstadoPago;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

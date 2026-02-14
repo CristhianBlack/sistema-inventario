@@ -5,12 +5,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {FormsModule} from '@angular/forms'
+import { ReactiveFormsModule } from '@angular/forms';
 
 //librerias externas
-import  {  BrowserAnimationsModule  }  from  '@angular/platform-browser/animations' ;
-import  {  ToastrModule  }  from  'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 import { CategoriaListaComponent } from './Component/categoria-lista/categoria-lista.component';
 import { CategoriaFormComponent } from './Component/categoria-form/categoria-form.component';
 import { CiudadListaComponent } from './Component/ciudad-lista/ciudad-lista.component';
@@ -43,12 +44,18 @@ import { VentaFormComponent } from './Component/venta-form/venta-form.component'
 import { VentaPagoFormComponent } from './Component/venta-pago-form/venta-pago-form.component';
 import { CompraPagoComponent } from './Component/compra-pago/compra-pago.component';
 import { DevolucionFormComponent } from './Component/devolucion-form/devolucion-form.component';
-
-
-
-
-
-
+import { LibroDiarioComponent } from './Component/libro-diario/libro-diario.component';
+import { MayorGeneralComponent } from './Component/mayor-general/mayor-general.component';
+import { BalanceGeneralComponent } from './Component/balance-general/balance-general.component';
+import { AperturaCuentaComponent } from './Component/apertura-cuenta/apertura-cuenta.component';
+import { LoginFormComponent } from './Auth/login-form/login-form.component';
+import { DashboardComponent } from './Component/dashboard/dashboard.component';
+import { AuthInterceptor } from './Interceptors/auth-interceptors';
+import { UsuarioFormComponent } from './Component/usuario-form/usuario-form.component';
+import { UsuarioListComponent } from './Component/usuario-list/usuario-list.component';
+import { CambiarPasswordComponent } from './Component/cambiar-password/cambiar-password.component';
+import { InicioComponent } from './Component/dashboard/inicio/inicio.component';
+import { PasswordRecoveryComponent } from './Auth/password-recovery/password-recovery.component';
 
 @NgModule({
   declarations: [
@@ -84,19 +91,35 @@ import { DevolucionFormComponent } from './Component/devolucion-form/devolucion-
     VentaPagoFormComponent,
     CompraPagoComponent,
     DevolucionFormComponent,
-    
-    
+    LibroDiarioComponent,
+    MayorGeneralComponent,
+    BalanceGeneralComponent,
+    AperturaCuentaComponent,
+    LoginFormComponent,
+    DashboardComponent,
+    UsuarioFormComponent,
+    UsuarioListComponent,
+    CambiarPasswordComponent,
+    InicioComponent,
+    PasswordRecoveryComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule , //módulo de animaciones requerido 
-    ToastrModule.forRoot ( ),
+    BrowserAnimationsModule, //módulo de animaciones requerido
+    ToastrModule.forRoot(),
     HttpClientModule,
     FormsModule,
-    MatDialogModule
+    MatDialogModule,
+    ReactiveFormsModule,
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+  ],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

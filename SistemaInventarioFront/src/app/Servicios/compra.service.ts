@@ -26,23 +26,31 @@ export class CompraService implements ICompra{
   editarCompra(id: number, compra: Compra): Observable<any> {
     return this.httpClient.put<any>(`${this.URL}/${id}`, compra).pipe(catchError(this.manejarError));
   }
+
+  cancelar(id: number) {
+    return this.httpClient.put(`${this.URL}/${id}/cancelar`, {});
+  }
+
+  confirmarCompra(id: number) {
+    return this.httpClient.put(`${this.URL}/${id}/confirmar`, {});
+  }
+  
   eliminarCompra(id: number): Observable<any> {
     return this.httpClient.delete<any>(`${this.URL}/${id}`).pipe(catchError(this.manejarError));
   }
 
    // Manejo centralizado de errores
-      private manejarError(error: HttpErrorResponse) {
-    console.error("🔥 ERROR COMPLETO DEL SERVIDOR:", error);
-  
-    // si el backend envía un JSON con "mensaje", úsalo
-    const mensaje =
-      error.error?.mensaje ||
-      error.error ||
-      "Error desconocido en el servidor";
-  
-    console.error("🔥 MENSAJE DEL BACKEND:", mensaje);
-  
-    // devolvemos el error REAL
-    return throwError(() => error);
+  private manejarError(error : HttpErrorResponse){
+    console.error('Error del servidor:', error)
+    let mensaje = '';
+    if(error.status === 400 && error.error?.mensaje){
+      mensaje = error.error.mensaje; // mensaje personalizado del backend
+    }else if (error.status === 404) {
+          mensaje = error.error.mensaje
+        } else if (error.status === 500) {
+          mensaje = 'Error interno del servidor';
+        }
+        console.error(mensaje);
+        return throwError(() => ({mensaje}));
   }
 }

@@ -30,9 +30,31 @@ import { VentaFormComponent } from './Component/venta-form/venta-form.component'
 import { VentaPagoFormComponent } from './Component/venta-pago-form/venta-pago-form.component';
 import { CompraPagoComponent } from './Component/compra-pago/compra-pago.component';
 import { DevolucionFormComponent } from './Component/devolucion-form/devolucion-form.component';
+import { LoginFormComponent } from './Auth/login-form/login-form.component';
+import { CambiarPasswordComponent } from './Component/cambiar-password/cambiar-password.component';
+import { AuthGuard } from './Guards/auth-guard';
+import { PasswordRecoveryComponent } from './Auth/password-recovery/password-recovery.component';
+import { DashboardComponent } from './Component/dashboard/dashboard.component';
+import { PasswordGuard } from './Guards/password-guard';
+import { InicioComponent } from './Component/dashboard/inicio/inicio.component';
+import { RoleGuard } from './Guards/role-guard';
+import { UsuarioListComponent } from './Component/usuario-list/usuario-list.component';
+import { UsuarioFormComponent } from './Component/usuario-form/usuario-form.component';
+import { LibroDiarioComponent } from './Component/libro-diario/libro-diario.component';
+import { MayorGeneralComponent } from './Component/mayor-general/mayor-general.component';
+import { BalanceGeneralComponent } from './Component/balance-general/balance-general.component';
+import { AperturaCuentaComponent } from './Component/apertura-cuenta/apertura-cuenta.component';
 
 
 const routes: Routes = [
+
+  { path: 'login', component: LoginFormComponent },
+  { path: 'cambiar-password', component: CambiarPasswordComponent, canActivate: [AuthGuard] },
+  { path: 'recuperar-password', component: PasswordRecoveryComponent },
+
+  { path: 'dashboard', component: DashboardComponent,canActivate: [AuthGuard, PasswordGuard],
+    children:[
+  {path: '', component: InicioComponent},
   {path:'Categorias', component: CategoriaListaComponent},
   {path: 'Categoria', component: CategoriaFormComponent},
   {path: 'Categoria/:id', component: CategoriaFormComponent},
@@ -60,19 +82,40 @@ const routes: Routes = [
   {path: 'Producto/:id', component: ProductoFormComponent},
   {path: 'Compras', component: CompraListComponent},
   {path: 'Compra/:id', component: CompraFormComponent},
-  {path: 'Compra/:id', component: CompraFormComponent},
   {path: 'Kardex/:id', component: KardexListaComponent},
   {path: 'MovimientoInventario', component: MovimientoInventarioListComponent},
   {path: 'FormaPago', component: FormaPagoListaComponent},
   {path: 'FormaPago/:id', component: FormaPagoFormComponent},
   {path: 'Impuesto', component: ImpuestoListaComponent},
   {path: 'Impuesto/:id', component: ImpuestoFormComponent},
-  {path: 'Ventas', component: VentaListaComponent},
-  {path: 'Impuesta/:id', component: VentaFormComponent},
-  {path: 'Ventapago/:id', component: VentaPagoFormComponent},
   {path: 'CompraPago/:id', component: CompraPagoComponent},
+  {path: 'Ventas', component: VentaListaComponent},
+  {path: 'Ventapago/:id', component: VentaPagoFormComponent},
   {path: 'Devolucion', component: DevolucionFormComponent},
-  {path:'**', redirectTo:'Categorias', pathMatch:'full'}
+  {
+  path: 'Usuario',
+  canActivate: [RoleGuard],
+  children: [
+    {path: 'Usuario', component: UsuarioListComponent},
+    {path: 'Usuario/:id', component: UsuarioFormComponent},
+  ]
+},
+
+  {
+  path: 'Contabilidad',
+  canActivate: [RoleGuard],
+  children: [
+    { path: 'LibroDiario', component: LibroDiarioComponent },
+    { path: 'MayorGeneral', component: MayorGeneralComponent },
+    { path: 'BalanceGeneral', component: BalanceGeneralComponent },
+    { path: 'AperturaCuenta', component: AperturaCuentaComponent }
+  ]
+}
+    ]
+  },
+  
+  
+  { path: '**', redirectTo: 'login' }
 ];
 
 @NgModule({

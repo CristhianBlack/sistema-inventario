@@ -1,12 +1,10 @@
 package com.cristhian.SistemaInventario.DTO;
 
-import com.cristhian.SistemaInventario.Modelo.EstadoVenta;
+import com.cristhian.SistemaInventario.Enums.EstadoVenta;
 import com.cristhian.SistemaInventario.Modelo.Venta;
-import jakarta.persistence.Column;
 
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,6 +22,8 @@ public class VentaDTO {
 
     private List<DetalleVentaDTO> detalles;
     private List<VentaPagoDTO> pagos;
+
+    private Boolean usarSaldoFavor = false;
 
     public VentaDTO(){
 
@@ -139,5 +139,13 @@ public class VentaDTO {
 
     public void setTotalPagar(BigDecimal totalPagar) {
         this.totalPagar = totalPagar;
+    }
+
+    public Boolean getUsarSaldoFavor() {
+        return usarSaldoFavor;
+    }
+
+    public void setUsarSaldoFavor(Boolean usarSaldoFavor) {
+        this.usarSaldoFavor = usarSaldoFavor;
     }
 }

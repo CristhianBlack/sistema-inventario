@@ -11,9 +11,7 @@ public interface ITipoDocumentoService {
 
     List<TipoDocumento> listarTipoDocumentoActivo();
     Optional<TipoDocumento> buscarTipoDucmentoId(int id);
-    public TipoDocumento guardarTipoDocumento(TipoDocumentoDTO tipoDocumentoDTO);
-
-    public TipoDocumento actualizarTipoDocumento(int id, TipoDocumentoDTO tipoDocumentoDTO);
+    public void guardarTipoDocumentoAutomatico();
     public void desactivarTipoDcomuento(int id);
 
 }

@@ -1,8 +1,7 @@
 package com.cristhian.SistemaInventario.DTO;
 
 import com.cristhian.SistemaInventario.Modelo.Impuesto;
-import com.cristhian.SistemaInventario.Modelo.TipoImpuesto;
-import jakarta.persistence.Column;
+import com.cristhian.SistemaInventario.Enums.TipoImpuesto;
 
 import java.math.BigDecimal;
 

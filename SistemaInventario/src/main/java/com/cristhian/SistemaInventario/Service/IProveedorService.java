@@ -15,3 +15,4 @@ public interface IProveedorService {
     public Proveedor actualizarProveedor( int id, ProveedorDTO proveedorDTO);
     public void borrarProveedor(int id);
 }
+

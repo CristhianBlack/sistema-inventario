@@ -1,0 +1,65 @@
+<div class="container mt-5" style="max-width: 400px">
+  <div class="card login-card shadow-sm border-0 rounded-4">
+    <div class="card-body">
+      <!-- Título -->
+      <div class="text-center mb-3">
+        <!-- Logo -->
+
+        <!--<i class="bi bi-buildings me-2 form-label"></i>-->
+        <i class="bi bi-buildings text-primary" style="font-size: 3rem"></i>
+
+        <h1 class="text-center fw-bold mb-1 form-label">SIGCO</h1>
+        <p class="text-center text-muted mb-4">
+          Sistema Integral de Gestión Constructora
+        </p>
+        <h6 class="text-center mb-4 form-label">
+          <i class="bi bi-shield-lock me-1"></i>
+          Acceso al Sistema
+        </h6>
+
+        <form [formGroup]="form" (ngSubmit)="login()">
+          <!-- Usuario -->
+          <div class="mb-3 input-group">
+            <span class="input-group-text">
+              <i class="bi bi-person-fill"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Usuario"
+              formControlName="username"
+            />
+          </div>
+
+          <!-- Contraseña -->
+          <div class="mb-3 input-group">
+            <span class="input-group-text">
+              <i class="bi bi-lock-fill"></i>
+            </span>
+            <input
+              type="password"
+              class="form-control"
+              placeholder="Contraseña"
+              formControlName="password"
+            />
+          </div>
+
+          <!-- Error -->
+          <div *ngIf="error" class="alert alert-danger text-center">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            {{ error }}
+          </div>
+
+          <!-- Botón -->
+          <button class="btn btn-primary w-100" type="submit" title="Entrar">
+            <i class="bi bi-box-arrow-in-right me-2"></i>
+            Ingresar
+          </button>
+        </form>
+        <a class="forgot-link" routerLink="/recuperar-password">
+          ¿Olvidaste tu contraseña?
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

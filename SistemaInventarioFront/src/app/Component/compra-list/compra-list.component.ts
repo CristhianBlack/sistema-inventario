@@ -5,7 +5,7 @@ import { Compra } from 'src/app/Modelos/compra';
 import { CompraService } from 'src/app/Servicios/compra.service';
 import Swal from 'sweetalert2';
 
-// Necesario para usar el JS de Bootstrap (modal)
+// Permite usar Bootstrap JS (Modal) sin errores de TypeScript
 declare var bootstrap: any;
 
 @Component({
@@ -14,313 +14,343 @@ declare var bootstrap: any;
   styleUrls: ['./compra-list.component.css']
 })
 export class CompraListComponent {
-/*compras : Compra[] = [];
-  compraDetalle: Compra | null = null;
-  
-    private destroy$ = new Subject<void>();
-    private modalInstance: any;
-  
-    compraSeleccionada : Compra | null = null;
-  
-    loading = false;
-  
-    // Referencia al elemento HTML del modal
-      @ViewChild('modalCompra') modalElement!: ElementRef;
-      @ViewChild('modalDetalle') modalDetalle!: ElementRef;
-  
-    constructor(
-      private compraService : CompraService,
-      private toastr : ToastrService
-    ){}
-  
-    ngOnInit(): void {
-      this.obtenerListaCompras();
-    }
-  
-    ngAfterViewInit(): void {
-      // Inicializamos el modal una sola vez cuando la vista está lista
-      if (this.modalElement?.nativeElement) {
-        this.modalInstance = bootstrap.Modal.getOrCreateInstance(
-          this.modalElement.nativeElement
-        );
-      }
-    }
-  
-    // Método del ciclo de vida que se ejecuta cuando el componente se destruye
-    // Se usa para cerrar suscripciones y liberar memoria
-    ngOnDestroy(): void {
-      this.destroy$.next();
-      this.destroy$.complete();
-    }
-  
-    obtenerListaCompras(): void{
-      this.loading = true;
-      this.compraService.obtenerListaCompra().pipe(takeUntil(this.destroy$)).subscribe({
-        next: (datos) =>{
+
+  /** Lista completa de compras */
+  compras: Compra[] = [];
+
+  /** Compra utilizada para mostrar el detalle */
+  CompraDetalle: Compra | null = null;
+
+  /** Subject para cancelar subscripciones y evitar memory leaks */
+  private destroy$ = new Subject<void>();
+
+  /** Instancia del modal de Bootstrap */
+  private modalInstance: any;
+
+  /** Compra seleccionada para edición */
+  compraSeleccionada: Compra | null = null;
+
+  /** ID de la compra seleccionada para pagos */
+  compraSeleccionadaId!: number;
+
+  /** Indicador de carga */
+  loading = false;
+
+  /** Indica si el modal de pago es solo lectura */
+  modoSoloLecturaPago = false;
+
+  /** Referencia al modal principal de compra */
+  @ViewChild('modalCompra') modalElement!: ElementRef;
+
+  /** Referencia al modal de detalle */
+  @ViewChild('modalDetalle') modalDetalle!: ElementRef;
+
+  /** Controla la visibilidad del modal de pagos */
+  mostrarModalPago = false;
+
+  constructor(
+    private compraService: CompraService,
+    private toastr: ToastrService
+  ) {}
+
+  /**
+   * Se ejecuta al inicializar el componente
+   * Carga el listado de compras
+   */
+  ngOnInit(): void {
+    this.obtenerListadoCompras();
+  }
+
+  /**
+   * Se ejecuta cuando la vista está renderizada
+   * (Aquí solo se usa para debugging del modal)
+   */
+  ngAfterViewInit(): void {
+    console.log('modalElement:', this.modalElement);
+  }
+
+  /**
+   * Se ejecuta al destruir el componente
+   * Cancela todas las subscripciones activas
+   */
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Obtiene el listado de compras desde el backend
+   */
+  obtenerListadoCompras(): void {
+    this.loading = true;
+
+    this.compraService
+      .obtenerListaCompra()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (datos) => {
           console.log('Datos recibidos:', datos);
           this.compras = datos;
         },
-        error: (err) =>{
+        error: (err) => {
           console.error('Error al obtener compras:', err);
           this.toastr.error('Error al cargar las compras', 'Error');
         },
-        complete: () =>{
-          this.loading = false
+        complete: () => {
+          this.loading = false;
         }
       });
-    }
-  
+  }
+
+  /**
+   * Abre el modal para crear o editar una compra
+   * @param compra Compra opcional para edición
+   */
   abrirModalEditar(compra?: Compra): void {
-  
+    console.log('Click en abrir modal editar compra');
+
+    // Si no hay ID, se abre en modo creación
     if (!compra?.idCompra) {
       this.compraSeleccionada = null;
-      this.abrirModal(); 
+      this.abrirModal();
       return;
     }
-  
+
+    // Si hay ID, se consulta la compra completa
     this.compraService.obtenerCompraPorId(compra.idCompra).subscribe({
       next: (data) => {
-        console.log("COMPRA EDITAR RECIBIDA:", data);
-  
-        this.compraSeleccionada = data; // 🔥 ahora sí con todos los objetos
+        console.log('COMPRA EDITAR RECIBIDA:', data);
+        this.compraSeleccionada = data;
         this.abrirModal();
       },
       error: (err) => {
-        console.error("Error al cargar compra:", err);
-        this.toastr.error("No se pudo cargar el compra", "Error");
+        console.error('Error al cargar compra:', err);
+        this.toastr.error('No se pudo cargar la compra', 'Error');
       }
     });
   }
-  
+
+  /**
+   * Abre el modal principal de compra
+   */
   private abrirModal(): void {
     setTimeout(() => {
       const modalEl = this.modalElement?.nativeElement;
       if (modalEl) {
-        this.modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+        this.modalInstance =
+          bootstrap.Modal.getOrCreateInstance(modalEl);
         this.modalInstance.show();
       }
     }, 0);
   }
-  
-      // Abrir modal del detalle
-     abrirModalDetalle(compra: Compra): void {
+
+  /**
+   * Abre el modal de detalle de una compra
+   * @param compra Compra seleccionada
+   */
+  abrirModalDetalle(compra: Compra): void {
     if (!compra.idCompra) return;
-  
+
     this.compraService.obtenerCompraPorId(compra.idCompra).subscribe({
       next: (data) => {
-        console.log("COMPRA DETALLADO RECIBIDA:", data);
-        this.compraDetalle = { ...compra };
-        const modal = new bootstrap.Modal(this.modalDetalle.nativeElement);
+        console.log('COMPRA DETALLE RECIBIDA:', data);
+        this.CompraDetalle = { ...compra };
+
+        const modal =
+          new bootstrap.Modal(this.modalDetalle.nativeElement);
         modal.show();
       },
       error: (err) => {
-        console.error("Error al cargar compra:", err);
-        this.toastr.error("No se pudo cargar el compra", "Error");
+        console.error('Error al cargar detalle:', err);
+        this.toastr.error('No se pudo cargar la compra', 'Error');
       }
     });
   }
-    
-      // Cerrar modal y refrescar lista
-      cerrarModalYActualizarLista(): void {
-        if (this.modalInstance) {
-          this.modalInstance.hide();
-        }
-        this.obtenerListaCompras();
-        this.compraSeleccionada = null;
-      }
+
+  /**
+   * Cierra el modal principal y refresca la lista
+   */
+  cerrarModalYActualizarLista(): void {
+    if (this.modalInstance) {
+      this.modalInstance.hide();
+    }
+    this.obtenerListadoCompras();
+    this.compraSeleccionada = null;
+  }
+
+  /* =======================
+     GESTIÓN DE PAGOS
+     ======================= */
+
+  /**
+   * Abre el modal de pagos
+   * @param compra Compra seleccionada
+   */
+  abrirModalPago(compra: Compra): void {
+    if (!compra.idCompra) {
+      console.error('La compra no tiene ID');
+      return;
+    }
+
+    this.compraSeleccionadaId = compra.idCompra;
+
+    // Si está pagada, el modal es solo lectura
+    this.modoSoloLecturaPago = compra.estado === 'PAGADA';
+    this.mostrarModalPago = true;
+  }
+
+  /**
+   * Cierra el modal de pagos
+   */
+  cerrarModalPago(): void {
+    this.mostrarModalPago = false;
+  }
+
+  confirmarCompra(compra: Compra) {
   
-    // Eliminar una persona
-      eliminarPersona(id: number): void {
-        Swal.fire({
-          title: '¿Eliminar Compra?',
-          text: 'Esta acción no se puede deshacer.',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Sí, eliminar',
-          cancelButtonText: 'Cancelar',
-          confirmButtonColor: '#d33',
-          cancelButtonColor: '#6c757d',
-        }).then((resultado) => {
-          if (resultado.isConfirmed) {
-            this.compraService.eliminarCompra(id).pipe(takeUntil(this.destroy$)).subscribe({
-                next: () => {
-                  this.toastr.success(
-                    'Producto eliminado correctamente','Éxito'
-                  );
-                  this.obtenerListaCompras();
-                },
-                error: (err) => {
-                  console.error('Error al eliminar producto:', err);
-                  this.toastr.error('No se pudo eliminar la producto', 'Error ');
-                },
-              });
+    Swal.fire({
+      title: '¿Confirmar compra?',
+      html: `
+        <b>Compra N° ${compra.idCompra}</b><br>
+        Total: <b>$${compra.totalCompra}</b><br><br>
+        <span style="color:#dc3545">
+          Esta acción aumentara el inventario<br>
+          y no podrá deshacerse.
+        </span>
+      `,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#198754', // verde
+      cancelButtonColor: '#dc3545',  // rojo
+      confirmButtonText: 'Sí, confirmar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+  
+      if (!result.isConfirmed) return;
+  
+      // 🔁 Llamada al backend
+      this.compraService.confirmarCompra(compra.idCompra!)
+        .subscribe({
+          next: () => {
+            Swal.fire({
+              title: 'Confirmada',
+              text: `La compra N° ${compra.idCompra} fue confirmada correctamente`,
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
+  
+            this.obtenerListadoCompras();
+          },
+          error: (err) => {
+            Swal.fire({
+              title: 'Error',
+              text: err.error?.mensaje || 'No se pudo confirmar la compra',
+              icon: 'error'
+            });
           }
         });
-      }
-}*/
-
-compras : Compra[] = [];
-  CompraDetalle: Compra | null = null;
   
-    private destroy$ = new Subject<void>();
-    private modalInstance: any;
-  
-    compraSeleccionada : Compra | null = null;
-    compraSeleccionadaId!: number;
-  
-    loading = false;
-
-    modoSoloLecturaPago = false;
-  
-    // Referencia al elemento HTML del modal
-      @ViewChild('modalCompra') modalElement!: ElementRef;
-      @ViewChild('modalDetalle') modalDetalle!: ElementRef;
-      //@ViewChild('modalPago') modalPago!:ElementRef;
-      
-  
-    constructor(
-      private compraService : CompraService,
-      private toastr : ToastrService
-    ){}
-  
-    ngOnInit(): void {
-      this.obtenerListadoCompras();
-    }
-  
-    ngAfterViewInit(): void {
-      // Inicializamos el modal una sola vez cuando la vista está lista
-      if (this.modalElement?.nativeElement) {
-        this.modalInstance = bootstrap.Modal.getOrCreateInstance(
-          this.modalElement.nativeElement
-        );
-      }
-    }
-  
-    // Método del ciclo de vida que se ejecuta cuando el componente se destruye
-    // Se usa para cerrar suscripciones y liberar memoria
-    ngOnDestroy(): void {
-      this.destroy$.next();
-      this.destroy$.complete();
-    }
-  
-    obtenerListadoCompras(): void{
-      this.loading = true;
-      this.compraService.obtenerListaCompra().pipe(takeUntil(this.destroy$)).subscribe({
-        next: (datos) =>{
-          console.log('Datos recibidos:', datos);
-          this.compras = datos;
-        },
-        error: (err) =>{
-          console.error('Error al obtener ventas:', err);
-          this.toastr.error('Error al cargar las ventas', 'Error');
-        },
-        complete: () =>{
-          this.loading = false
-        }
-      });
-    }
-  
-  abrirModalEditar(compra?: Compra): void {
-  
-    if (!compra?.idCompra) {
-      this.compraSeleccionada = null;
-      this.abrirModal(); 
-      return;
-    }
-  
-    this.compraService.obtenerCompraPorId(compra.idCompra).subscribe({
-      next: (data) => {
-        console.log("VENTA EDITAR RECIBIDA:", data);
-  
-        this.compraSeleccionada = data; //  ahora sí con todos los objetos
-        this.abrirModal();
-      },
-      error: (err) => {
-        console.error("Error al cargar venta:", err);
-        this.toastr.error("No se pudo cargar la venta", "Error");
-      }
     });
   }
   
-  private abrirModal(): void {
-    setTimeout(() => {
-      const modalEl = this.modalElement?.nativeElement;
-      if (modalEl) {
-        this.modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
-        this.modalInstance.show();
-      }
-    }, 0);
-  }
+  cancelarCompra(compra: Compra) {
   
-      // Abrir modal del detalle
-     abrirModalDetalle(compra : Compra): void {
-    if (!compra.idCompra) return;
+    Swal.fire({
+      title: 'Cancelar Compra?',
+      html: `
+        <b>Compra N° ${compra.idCompra}</b><br>
+        <span style="color:#dc3545">
+          Esta acción no ejecutara ninguna accion en el inventario.<br>
+          
+        </span>
+      `,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#198754', // verde
+      cancelButtonColor: '#dc3545',  // rojo
+      confirmButtonText: 'Sí, confirmar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
   
-    this.compraService.obtenerCompraPorId(compra.idCompra).subscribe({
-      next: (data) => {
-        console.log("VENTA DETALLADO RECIBIDA:", data);
-        this.CompraDetalle = { ...compra };
-        const modal = new bootstrap.Modal(this.modalDetalle.nativeElement);
-        modal.show();
-      },
-      error: (err) => {
-        console.error("Error al cargar venta:", err);
-        this.toastr.error("No se pudo cargar la venta", "Error");
-      }
+      if (!result.isConfirmed) return;
+  
+      // 🔁 Llamada al backend
+      this.compraService.cancelar(compra.idCompra!)
+        .subscribe({
+          next: () => {
+            Swal.fire({
+              title: 'Confirmada',
+              text: `La compra N° ${compra.idCompra} fue cancelada correctamente`,
+              icon: 'success',
+              timer: 2000,
+              showConfirmButton: false
+            });
+  
+            this.obtenerListadoCompras();
+          },
+          error: (err) => {
+            Swal.fire({
+              title: 'Error',
+              text: err.error?.mensaje || 'No se pudo cancelar la compra por que ya esta confirmada o pagada.',
+              icon: 'error'
+            });
+          }
+        });
+  
     });
   }
-    
-      // Cerrar modal y refrescar lista
-      cerrarModalYActualizarLista(): void {
-        if (this.modalInstance) {
-          this.modalInstance.hide();
-        }
-        this.obtenerListadoCompras();
-        this.compraSeleccionada = null;
-      }
-  
-mostrarModalPago = false;
 
-abrirModalPago(compra: Compra) {
-  if (!compra.idCompra) {
-    console.error('La venta no tiene ID');
-    return;
+  /**
+   * Indica si se puede registrar un pago
+   */
+  puedeRegistrarPago(compra: Compra): boolean {
+    return compra.estado === 'CONFIRMADA'
+        || compra.estado === 'PARCIAL';
   }
-  
-  this.compraSeleccionadaId = compra.idCompra;
-  //Si ya está pagada → solo consulta
-  this.modoSoloLecturaPago = compra.estado === 'PAGADA';
-  this.mostrarModalPago = true;
-}
 
-cerrarModalPago() {
-  this.mostrarModalPago = false;
-}
+  /**
+   * Indica si se pueden visualizar pagos
+   */
+  puedeVerPagos(compra: Compra): boolean {
+    return compra.estado === 'PAGADA';
+  }
 
-puedeRegistrarPago(compra: Compra): boolean {
-  return compra.estado === 'CONFIRMADA' || compra.estado === 'PARCIAL';
-}
+  puedeCancelarCompra(compra : Compra){
+    return compra.estado === 'PENDIENTE';
+  }
 
-puedeVerPagos(compra: Compra): boolean {
-  return compra.estado === 'PAGADA';
-}
+  /* =======================
+     PAGINACIÓN
+     ======================= */
 
-compraPorPagina = 6;
-paginaActual = 1;
+  /** Cantidad de registros por página */
+  compraPorPagina = 6;
 
-get totalPaginas(): number {
-  return Math.ceil(this.compras.length / this.compraPorPagina);
-}
+  /** Página actual */
+  paginaActual = 1;
 
-get comprasPaginadas() {
-  const inicio = (this.paginaActual - 1) * this.compraPorPagina;
-  return this.compras.slice(inicio, inicio + this.compraPorPagina);
-}
+  /** Total de páginas */
+  get totalPaginas(): number {
+    return Math.ceil(this.compras.length / this.compraPorPagina);
+  }
 
-cambiarPagina(pagina: number) {
-  if (pagina < 1 || pagina > this.totalPaginas) return;
-  this.paginaActual = pagina;
-}
+  /** Compras según la página actual */
+  get comprasPaginadas() {
+    const inicio =
+      (this.paginaActual - 1) * this.compraPorPagina;
+    return this.compras.slice(
+      inicio,
+      inicio + this.compraPorPagina
+    );
+  }
 
-
+  /**
+   * Cambia la página actual
+   * @param pagina Número de página
+   */
+  cambiarPagina(pagina: number): void {
+    if (pagina < 1 || pagina > this.totalPaginas) return;
+    this.paginaActual = pagina;
+  }
 }

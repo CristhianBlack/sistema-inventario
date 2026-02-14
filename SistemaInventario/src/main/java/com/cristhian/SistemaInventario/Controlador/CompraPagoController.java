@@ -48,6 +48,6 @@ public class CompraPagoController {
 
     @GetMapping("/Compras/{id}/Pagos")
     public List<CompraPagoDTO> listarPagosPorCompra(@PathVariable Long id) {
-        return compraPagoService.listarPorVenta(id);
+        return compraPagoService.listarPorCompra(id);
     }
 }

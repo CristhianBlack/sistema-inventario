@@ -1,0 +1,93 @@
+<div class="container">
+  <form (ngSubmit)="onSubmit(formUsuario)" #formUsuario="ngForm" novalidate>
+
+    <!-- Título dinámico -->
+    <div class="text-center mb-4">
+      <h4 class="fw-bold">
+        <i class="bi bi-person-badge fs-4"></i>
+      </h4>
+    </div>
+
+    <!-- Usuario -->
+    <div class="mb-3">
+      <label for="nombreUsuario" class="form-label">
+        <i class="bi bi-person-fill"></i>
+      </label>
+      <input
+        type="text"
+        id="nombreUsuario"
+        name="nombreUsuario"
+        class="form-control"
+        [(ngModel)]="formModel.username"
+        required
+        minlength="3"
+        placeholder="Usuario"
+      />
+
+      <div *ngIf="formUsuario.submitted && !formModel.username"
+           class="text-danger small mt-1">
+        <i class="bi bi-exclamation-circle"></i>
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="mb-3">
+      <label for="password" class="form-label">
+        <i class="bi bi-lock-fill"></i>
+      </label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        class="form-control"
+        [(ngModel)]="formModel.password"
+        required
+        minlength="6"
+        placeholder="Contraseña"
+      />
+
+      <div *ngIf="formUsuario.submitted && !formModel.password"
+           class="text-danger small mt-1">
+        <i class="bi bi-exclamation-circle"></i>
+      </div>
+    </div>
+
+    <!-- Persona -->
+    <div class="mb-3 col-md-6">
+      <label class="form-label">
+        <i class="bi bi-person-lines-fill"></i>
+      </label>
+      <select
+        class="form-select"
+        name="idPersona"
+        [(ngModel)]="formModel.idPersona"
+        required
+      >
+        <option [ngValue]="null" disabled>👤</option>
+        <option *ngFor="let persona of personas" [ngValue]="persona.idPersona">
+          {{ persona.nombre }} {{ persona.apellido }} {{ persona.segundoApellido }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Acciones -->
+    <div class="d-flex justify-content-end gap-2">
+      <button type="button"
+              class="btn btn-outline-secondary"
+              data-bs-dismiss="modal"
+              title="Cancelar"> 
+        <i class="bi bi-x-circle"></i>
+        Cancelar
+      </button>
+
+      <button type="submit"
+              class="btn btn-primary"
+              [disabled]="formUsuario.invalid"
+              title="Guardar">
+        <i class="bi bi-check-circle"></i>
+        Guardar 
+      </button>
+    </div>
+
+  </form>
+</div>

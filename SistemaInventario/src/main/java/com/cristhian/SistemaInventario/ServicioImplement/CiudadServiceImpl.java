@@ -20,62 +20,92 @@ import java.util.Optional;
 @Transactional
 public class CiudadServiceImpl implements ICiudadService {
 
+    // Logger para trazabilidad de operaciones sobre ciudades
     private static final Logger logger = LoggerFactory.getLogger(CiudadServiceImpl.class);
+
+    // Repositorio para la gestión de ciudades
     @Autowired
     private CiudadRepository ciudadRepository;
 
-    // -----------------------------------------------------------
-    // 1. CONSULTAMOS TODOS LOS REGISTROS QUE ESTEN ACTIVOS
-    // -----------------------------------------------------------
+    /**
+     * Obtiene todas las ciudades activas.
+     *
+     * @return lista de ciudades con activo = true
+     */
     @Override
     public List<Ciudad> listarCiudadesActivas(){
-        return  ciudadRepository.findByActivoTrue();
+        return ciudadRepository.findByActivoTrue();
     }
 
-    // -----------------------------------------------------------
-    // 2. CONSULTAMOS LOS REGISTROS POR ID
-    // -----------------------------------------------------------
+    /**
+     * Busca una ciudad por su identificador.
+     *
+     * @param id identificador de la ciudad
+     * @return Optional con la ciudad encontrada
+     */
     @Override
     public Optional<Ciudad> buscarCiudadId(int id){
         return ciudadRepository.findById(id);
     }
 
-
-    // -----------------------------------------------------------
-    // 3. VALIDAMOS SI EXISTE LA CIUDAD Y SI ESTA ACTIVA, SI NO  CREAMOS LA CIUDAD
-    // -----------------------------------------------------------
+    /**
+     * Registra una ciudad nueva o reactiva una existente.
+     *
+     * Reglas de negocio:
+     * - Si la ciudad existe y está inactiva, se reactiva
+     * - Si la ciudad existe y está activa, se lanza error
+     * - Si no existe, se crea una nueva ciudad
+     *
+     * @param ciudadDTO datos de la ciudad
+     * @return ciudad creada o reactivada
+     * @throws DuplicadoException si la ciudad ya existe y está activa
+     */
     @Override
     public Ciudad guardarCiudad(CiudadDTO ciudadDTO) {
 
         logger.info("JSON recibido → ciudad: {}, activo: {}",
                 ciudadDTO.getCiudad(), ciudadDTO.isActivo());
 
-        Optional<Ciudad> ciudadExistente = ciudadRepository.findByCiudadIgnoreCase(ciudadDTO.getCiudad().trim());
+        // Búsqueda de ciudad por nombre (ignorando mayúsculas/minúsculas)
+        Optional<Ciudad> ciudadExistente =
+                ciudadRepository.findByCiudadIgnoreCase(ciudadDTO.getCiudad().trim());
 
-        // Si existe la ciudad
+        // Si la ciudad existe
         if (ciudadExistente.isPresent()) {
             Ciudad ciudad = ciudadExistente.get();
 
-            // Si existe pero está inactiva → Reactivar
+            // Si existe pero está inactiva → se reactiva
             if (!ciudad.isActivo()) {
                 logger.info("Ciudad encontrada inactiva. Se activará nuevamente.");
                 ciudad.setActivo(true);
-                return ciudadRepository.save(ciudad);   // ✔ IMPORTANTE: retornar
+                return ciudadRepository.save(ciudad);   // importante retornar
             }
 
-            // Si ya existe y está activa → Error
+            // Si ya existe y está activa → error
             logger.info("La ciudad ya existe y está activa.");
             throw new DuplicadoException("Ya existe una ciudad con ese nombre");
         }
 
-        // Si NO existe → Crear nueva
+        // Si no existe → se crea una nueva ciudad
         logger.info("Ciudad nueva. Se creará una nueva entrada.");
         Ciudad ciudad = new Ciudad(ciudadDTO);
         return ciudadRepository.save(ciudad);
     }
-    // -----------------------------------------------------------
-    // 3. ACTUALIZAMOS LA CIUDAD
-    // -----------------------------------------------------------
+
+    /**
+     * Actualiza los datos de una ciudad existente.
+     *
+     * Reglas de negocio:
+     * - La ciudad debe existir
+     * - No se permite duplicar el nombre con otra ciudad diferente
+     *
+     * @param id identificador de la ciudad
+     * @param ciudadDTO datos actualizados
+     * @return ciudad actualizada
+     * @throws RecursoNoEncontradoException si la ciudad no existe
+     * @throws DuplicadoException si el nombre ya está en uso por otra ciudad
+     */
+    @Override
     public Ciudad actualizarCiudad(int id, CiudadDTO ciudadDTO) {
 
         // Validar si existe la ciudad con ese ID
@@ -91,26 +121,35 @@ public class CiudadServiceImpl implements ICiudadService {
             throw new DuplicadoException("Ya existe otra ciudad con ese nombre");
         }
 
-        // Actualizar datos
+        // Actualización de campos
         ciudadExistente.setCiudad(ciudadDTO.getCiudad());
         ciudadExistente.setActivo(ciudadDTO.isActivo());
 
         return ciudadRepository.save(ciudadExistente);
     }
 
-
-    // -----------------------------------------------------------
-    // 5. INACTIVAMOS LA CIUDAD = "ES COMO SI SE FUERA A ELMINAR PERO EL REGISTRO QUEDA EN ESTADO FALSO"
-    // -----------------------------------------------------------
+    /**
+     * Elimina lógicamente una ciudad.
+     *
+     * La eliminación se realiza marcando el registro como inactivo.
+     *
+     * @param id identificador de la ciudad
+     */
     @Override
     public void eliminarCiudad(int id){
         Ciudad ciudad = ciudadRepository.findById(id).orElse(null);
         if (ciudad != null) {
-            ciudad.setActivo(false); // solo la marcamos como inactiva
+            ciudad.setActivo(false); // eliminación lógica
             ciudadRepository.save(ciudad);
         }
     }
 
+    /**
+     * Verifica si existe una ciudad por su nombre.
+     *
+     * @param ciudad nombre de la ciudad
+     * @return true si existe, false si no
+     */
     @Override
     public boolean existByCiudad(String ciudad){
         boolean existe = ciudadRepository.existsByCiudadIgnoreCase(ciudad);

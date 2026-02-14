@@ -1,22 +1,34 @@
 <div class="card mt-3">
 
   <div class="card-header fw-bold">
-    Pagos de la Compra
+    <i class="bi bi-cash-stack me-2"></i>Pagos de la Compra
   </div>
 
   <div class="card-body">
 
     <!-- Resumen -->
     <p class="text-success">
+      <i class="bi bi-cart-check me-1"></i>
       <strong>Registro de pago correspondiente a la Compra # {{ codigoCompra }}</strong>
     </p>
 
-    <p><strong>Total Compra:</strong> {{ totalCompra | currency:'COP' }}</p>
-    <p><strong>Total pagado:</strong> {{ totalPagado | currency:'COP' }}</p>
+    <p>
+      <i class="bi bi-calculator me-2"></i>
+      <strong>Total Compra:</strong> {{ totalCompra | currency:'COP' }}
+    </p>
+
+    <p>
+      <i class="bi bi-check-circle me-2 text-success"></i>
+      <strong>Total pagado:</strong> {{ totalPagado | currency:'COP' }}
+    </p>
+
     <p class="text-danger">
+      <i class="bi bi-exclamation-circle me-2"></i>
       <strong>Saldo pendiente:</strong> {{ saldoPendiente | currency:'COP' }}
     </p>
+
     <p>
+      <i class="bi bi-info-circle me-2"></i>
       <strong>Estado de Compra:</strong> {{ estado }}
     </p>
 
@@ -26,21 +38,27 @@
     <div class="row g-2 mb-3 align-items-end">
 
       <div class="col-md-3">
-        <label class="form-label">Monto</label>
+        <label class="form-label">
+          <i class="bi bi-cash-coin me-1"></i>Monto
+        </label>
         <input type="number"
                class="form-control"
                placeholder="Monto"
                min="1"
                step="0.01"
                [(ngModel)]="monto"
-               [ngModelOptions]="{ standalone: true }" [disabled]="soloLectura">
+               [ngModelOptions]="{ standalone: true }"
+               [disabled]="soloLectura">
       </div>
 
       <div class="col-md-3">
-        <label class="form-label">Estado del pago</label>
+        <label class="form-label">
+          <i class="bi bi-info-circle me-1"></i>Estado del pago
+        </label>
         <select class="form-select"
                 [(ngModel)]="estadoPago"
-                [ngModelOptions]="{ standalone: true }" [disabled]="soloLectura">
+                [ngModelOptions]="{ standalone: true }"
+                [disabled]="soloLectura">
           <option [ngValue]="EstadoPago.PENDIENTE_CONFIRMACION">
             Pendiente confirmación
           </option>
@@ -51,10 +69,13 @@
       </div>
 
       <div class="col-md-4">
-        <label class="form-label">Forma de pago</label>
+        <label class="form-label">
+          <i class="bi bi-credit-card me-1"></i>Forma de pago
+        </label>
         <select class="form-select"
                 [(ngModel)]="idFormaPago"
-                [ngModelOptions]="{ standalone: true }" [disabled]="soloLectura">
+                [ngModelOptions]="{ standalone: true }"
+                [disabled]="soloLectura">
           <option [ngValue]="null">Seleccione...</option>
           <option *ngFor="let forma of formaPagos"
                   [ngValue]="forma.idFormaPago">
@@ -67,7 +88,7 @@
         <button class="btn btn-success w-100"
                 [disabled]="!monto || monto <= 0 || !idFormaPago"
                 (click)="registrarPago()">
-          Registrar
+          <i class="bi bi-plus-circle me-1"></i>Registrar
         </button>
       </div>
 
@@ -78,9 +99,9 @@
 
       <thead class="table-light">
         <tr>
-          <th>Fecha</th>
-          <th>Monto</th>
-          <th>Estado</th>
+          <th><i class="bi bi-calendar-event me-1"></i>Fecha</th>
+          <th><i class="bi bi-cash-coin me-1"></i>Monto</th>
+          <th><i class="bi bi-info-circle me-1"></i>Estado</th>
           <th style="width: 160px;">Acciones</th>
         </tr>
       </thead>
@@ -88,7 +109,7 @@
       <tbody>
         <tr *ngFor="let p of pagos; trackBy: trackByPago">
 
-          <td>{{ p.fechaPago | date:'shortDate' }}</td>
+          <td>{{ p.fechaPago | date:'dd/MM/yyyy HH:mm' }}</td>
 
           <td>{{ p.montoCompra | currency:'COP' }}</td>
 
@@ -106,14 +127,14 @@
           <td>
             <button *ngIf="p.estadoPago === EstadoPago.PENDIENTE_CONFIRMACION"
                     class="btn btn-sm btn-success me-1"
-                    (click)="confirmarPago(p.idCompraPago!)">
-              Confirmar
+                    (click)="confirmacionPago(p.idCompraPago!)">
+              <i class="bi bi-check-lg"></i>
             </button>
 
             <button *ngIf="p.estadoPago === EstadoPago.PENDIENTE_CONFIRMACION"
                     class="btn btn-sm btn-danger"
-                    (click)="rechazarPago(p.idCompraPago!)">
-              Rechazar
+                    (click)="pagoRechazado(p.idCompraPago!)">
+              <i class="bi bi-x-lg"></i>
             </button>
           </td>
 

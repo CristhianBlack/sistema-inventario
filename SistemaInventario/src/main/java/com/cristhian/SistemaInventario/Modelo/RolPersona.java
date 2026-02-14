@@ -1,6 +1,7 @@
 package com.cristhian.SistemaInventario.Modelo;
 
 import com.cristhian.SistemaInventario.DTO.RolPersonaDTO;
+import com.cristhian.SistemaInventario.Enums.NombreRol;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -13,8 +14,9 @@ public class RolPersona {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idRolPersona;
-    @Column(nullable = false, length = 50)
-    private String nombreRol;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private NombreRol nombreRol;
     private String descripcion;
     @Column(nullable = false)
     private boolean activo = true;
@@ -40,11 +42,11 @@ public class RolPersona {
         this.idRolPersona = idRolPersona;
     }
 
-    public String getNombreRol() {
+    public NombreRol getNombreRol() {
         return nombreRol;
     }
 
-    public void setNombreRol(String nombreRol) {
+    public void setNombreRol(NombreRol nombreRol) {
         this.nombreRol = nombreRol;
     }
 
@@ -72,3 +74,4 @@ public class RolPersona {
         this.personaRoles = personaRoles;
     }
 }
+

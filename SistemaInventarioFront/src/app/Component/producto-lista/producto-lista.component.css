@@ -1,17 +1,15 @@
-/*  Fondo general 
-.persona-container {
-  background-color: #0d1117;
-  min-height: 100vh;
-}*/
+/* =====================================================
+   ENCABEZADO Y BOTONES GENERALES
+===================================================== */
 
-/*  Encabezado con gradiente */
+/* Encabezado con gradiente */
 .text-gradient {
   background: linear-gradient(90deg, #6c63ff, #00bcd4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/*  Botón principal */
+/* Botón principal */
 .btn-gradient {
   background: linear-gradient(45deg, #6c63ff, #00bcd4);
   border: none;
@@ -24,18 +22,68 @@
   box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
 }
 
-/*  Tarjetas */
+/* =====================================================
+   TARJETAS DE PRODUCTO
+===================================================== */
+
+/* Título */
+.persona-card .card-title,
+.persona-card h5 {
+  color: #1f2933;
+  font-weight: 700;
+}
+
+/* Descripción / textos */
+.persona-card p,
+.persona-card small,
+.persona-card .card-text {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* Iconos en la descripción */
+.persona-card p i {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Hover elegante */
 .persona-card {
-  background: linear-gradient(145deg, #161b22, #0d1117);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .persona-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-/*  Avatar circular */
+/* =====================================================
+   COLORES DE ESTADO (STOCK)
+===================================================== */
+
+.stock-ok {
+  background-color: #80bb85;
+  border-left: 6px solid #2e7d32;
+}
+
+.stock-warning {
+  background-color: #f9a825;
+  border-left: 6px solid #f57f17;
+}
+
+.stock-danger {
+  background-color: #d44f5a;
+  border-left: 6px solid #d32f2f;
+}
+
+/* Refuerzo de texto en rojo */
+.stock-danger p,
+.stock-danger small {
+  color: rgba(0, 0, 0, 0.75);
+}
+
+/* =====================================================
+   AVATAR
+===================================================== */
+
 .avatar {
   width: 45px;
   height: 45px;
@@ -49,18 +97,10 @@
   background: linear-gradient(45deg, #6c63ff, #00bcd4);
 }
 
-/*  Etiquetas de estado */
-.bg-gradient-success {
-  background: linear-gradient(45deg, #00c853, #4caf50);
-  color: white;
-}
+/* =====================================================
+   BOTONES
+===================================================== */
 
-.bg-gradient-secondary {
-  background: linear-gradient(45deg, #9e9e9e, #616161);
-  color: white;
-}
-
-/*  Botones */
 .btn-outline-warning {
   border-color: #ffc107;
   color: #ffc107;
@@ -82,7 +122,10 @@
   transform: scale(1.05);
 }
 
-/* Responsive */
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
 @media (max-width: 768px) {
   .persona-card {
     text-align: center;
@@ -98,38 +141,32 @@
   }
 }
 
-/*********************************/
+/* =====================================================
+   MODAL OSCURO
+===================================================== */
 
-/*  Modal oscuro */
 .modal-dark {
   background-color: #111827;
   color: #e5e7eb;
   border: 1px solid #1f2937;
-  max-height: 90vh; /* evita que el modal crezca más de la pantalla */
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
-}
-
-/* Sombra sutil */
-.modal-dark {
   box-shadow: 0 8px 30px rgba(59, 130, 246, 0.25);
 }
 
-/*  Cuerpo scrollable */
 .modal-scroll {
-  max-height: 70vh; /* altura interna del scroll */
+  max-height: 70vh;
   overflow-y: auto;
   padding-right: 10px;
 }
 
-/*  Header y Footer fijos */
 .modal-header,
 .modal-footer {
   background-color: #1e293b;
   z-index: 10;
 }
 
-/*  Scrollbar personalizada */
 .modal-scroll::-webkit-scrollbar {
   width: 8px;
 }
@@ -143,7 +180,6 @@
   background: #0f172a;
 }
 
-/* Efecto de entrada */
 .modal.fade .modal-dialog {
   transform: translateY(-20px);
   transition: all 0.3s ease-out;
@@ -153,7 +189,6 @@
   transform: translateY(0);
 }
 
-/* Cierre blanco */
 .btn-close-white {
   filter: invert(1) brightness(200%);
   opacity: 0.7;

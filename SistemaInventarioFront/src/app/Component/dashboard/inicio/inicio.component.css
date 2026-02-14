@@ -1,0 +1,20 @@
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.card {
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
+}
+
+.text-pink {
+  color: #e83e8c; /* rosa Bootstrap-like */
+}
+
+.border-left-pink{
+  color: #e83e8c;
+}

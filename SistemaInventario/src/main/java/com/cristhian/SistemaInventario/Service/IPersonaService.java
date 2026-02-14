@@ -24,4 +24,7 @@ public interface IPersonaService {
 
     void eliminarPersona(Integer id);
     List<PersonaDTO> listarPersonasConRolProveedor();
+
+    List<PersonaDTO> listarClientes();
 }
+

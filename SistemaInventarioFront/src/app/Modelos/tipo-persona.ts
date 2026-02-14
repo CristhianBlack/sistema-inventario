@@ -1,5 +1,5 @@
 export class TipoPersona {
     idTipoPersona?: number;
-    nombreTipoPersona: String = '';
+    nombreTipoPersona: string = '';
     activo: boolean = true;
 }

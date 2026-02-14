@@ -1,7 +1,7 @@
 package com.cristhian.SistemaInventario.DTO;
 
 import com.cristhian.SistemaInventario.Modelo.Devolucion;
-import com.cristhian.SistemaInventario.Modelo.TipoDevolucion;
+import com.cristhian.SistemaInventario.Enums.TipoDevolucion;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

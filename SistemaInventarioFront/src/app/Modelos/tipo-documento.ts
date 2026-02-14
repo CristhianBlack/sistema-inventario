@@ -1,7 +1,7 @@
 export class TipoDocumento {
 
     idTipoDocumento? : number;
-    nombreTipoDocumento : String = '';
+    nombreTipoDocumento : string = '';
     sigla : String = '';
     activo : boolean = true;
 }

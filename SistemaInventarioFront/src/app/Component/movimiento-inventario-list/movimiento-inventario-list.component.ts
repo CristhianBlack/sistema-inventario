@@ -9,83 +9,127 @@ import { MovimientoInventarioService } from 'src/app/Servicios/movimiento-invent
   styleUrls: ['./movimiento-inventario-list.component.css']
 })
 export class MovimientoInventarioListComponent implements OnInit{
-
+/**
+   * Constructor del componente
+   * @param movimientoInvetarioService Servicio para consultar movimientos de inventario
+   * @param toastr Servicio para mostrar notificaciones
+   */
   constructor(
-    private movimientoInvetarioService : MovimientoInventarioService,
-    private toastr : ToastrService
-  ){}
+    private movimientoInvetarioService: MovimientoInventarioService,
+    private toastr: ToastrService,
+  ) {}
 
-  movimientoInventarios : MovimientoInventario[] =[];
-  desde!: string;
-  hasta!: string;
- 
+  /** Lista de movimientos de inventario */
+  movimientoInventarios: MovimientoInventario[] = [];
+
+  /** Fecha inicial del filtro */
+  desde: string | null = null;
+
+  /** Fecha final del filtro */
+  hasta: string | null = null;
+
+  /**
+   * Método del ciclo de vida
+   * Se ejecuta al iniciar el componente
+   */
   ngOnInit(): void {
     this.cragarListaMovimientos();
   }
 
-  cragarListaMovimientos(){
+  /**
+   * Obtiene el listado completo de movimientos de inventario
+   */
+  cragarListaMovimientos(): void {
     this.movimientoInvetarioService.listarMovimientos().subscribe(
-      data =>{
+      (data) => {
         this.movimientoInventarios = data;
-        console.log("Datos recibidos en movimiento de inventario ", data);
-        
+        console.log('Datos recibidos en movimiento de inventario', data);
       },
-    error =>{
-          console.error('Error al obtener los movimientos:', error);
-          this.toastr.error('Error al cargar los movimientos', 'Error');
-    });
-      
+      (error) => {
+        console.error('Error al obtener los movimientos:', error);
+        this.toastr.error('Error al cargar los movimientos', 'Error');
+      },
+    );
   }
 
+  /**
+   * Filtra los movimientos por rango de fechas
+   */
   filtrar(): void {
-  if (!this.desde || !this.hasta) return;
+    if (!this.desde || !this.hasta) return;
 
-  this.movimientoInvetarioService
-    .getMovimientoInventarioPorFechas(this.desde, this.hasta)
-    .subscribe(datos => {
-      this.movimientoInventarios = datos;
-    });
-}
+    this.movimientoInvetarioService
+      .getMovimientoInventarioPorFechas(this.desde, this.hasta)
+      .subscribe((datos) => {
+        this.movimientoInventarios = datos;
+      });
+  }
 
-descargarExcel() {
-  this.movimientoInvetarioService.exportarExcel(this.desde, this.hasta)
-    .subscribe(blob => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'MovimientoInventario.xlsx';
-      a.click();
-      window.URL.revokeObjectURL(url);
-    });
-}
+  /**
+   * Exporta los movimientos de inventario a Excel
+   */
+  descargarExcel(): void {
+    this.movimientoInvetarioService
+      .exportarExcel(this.desde, this.hasta)
+      .subscribe((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'MovimientoInventario.xlsx';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+  }
 
-descargarPdf() {
-  this.movimientoInvetarioService.exportarPdf(this.desde, this.hasta)
-    .subscribe(blob => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'MovimientoInventario.pdf';
-      a.click();
-      window.URL.revokeObjectURL(url);
-    });
-}
+  /**
+   * Exporta los movimientos de inventario a PDF
+   */
+  descargarPdf(): void {
+    this.movimientoInvetarioService
+      .exportarPdf(this.desde, this.hasta)
+      .subscribe((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'MovimientoInventario.pdf';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+  }
 
-movimientoPorPagina = 12;
-paginaActual = 1;
+  /** Cantidad de movimientos por página */
+  movimientoPorPagina = 10;
 
-get totalPaginas(): number {
-  return Math.ceil(this.movimientoInventarios.length / this.movimientoPorPagina);
-}
+  /** Página actual */
+  paginaActual = 1;
 
-get movimientoPaginadas() {
-  const inicio = (this.paginaActual - 1) * this.movimientoPorPagina;
-  return this.movimientoInventarios.slice(inicio, inicio + this.movimientoPorPagina);
-}
+  /**
+   * Calcula el total de páginas
+   */
+  get totalPaginas(): number {
+    return Math.ceil(
+      this.movimientoInventarios.length / this.movimientoPorPagina,
+    );
+  }
 
-cambiarPagina(pagina: number) {
-  if (pagina < 1 || pagina > this.totalPaginas) return;
-  this.paginaActual = pagina;
-}
+  /**
+   * Retorna los movimientos correspondientes a la página actual
+   */
+  get movimientoPaginadas(): MovimientoInventario[] {
+    const inicio = (this.paginaActual - 1) * this.movimientoPorPagina;
+    return this.movimientoInventarios.slice(
+      inicio,
+      inicio + this.movimientoPorPagina,
+    );
+  }
+
+  /**
+   * Cambia la página del listado
+   * @param pagina número de página
+   */
+  cambiarPagina(pagina: number): void {
+    if (pagina < 1 || pagina > this.totalPaginas) return;
+    this.paginaActual = pagina;
+  }
 
 }

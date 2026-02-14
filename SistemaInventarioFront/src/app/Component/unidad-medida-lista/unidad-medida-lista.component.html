@@ -2,7 +2,7 @@
   <!-- Encabezado -->
   <div class="text-center mb-5">
     <h3 class="fw-bold text-gradient mb-2">
-      <i class="fa-solid fa-city text-white fs-4 me-2"></i>Listado de Unidades de Medidas
+      <i class="bi bi-rulers text-white fs-4 me-2"></i>Listado de Unidades de Medidas
     </h3>
     <p class="text-muted mb-4">Consulta rápida de unidades de medida</p>
 
@@ -31,57 +31,57 @@
           <!--  Cabecera de la tarjeta -->
           <div class="d-flex align-items-center mb-3">
             <div class="avatar bg-gradient me-3">
-              <i class="fa-solid fa-city text-white fs-5 "></i>
+              <i class="bi bi-rulers text-white fs-5"></i>
             </div>
             <div>
               <h5 class="fw-semibold text-light mb-0">{{ unidad.nombreMedida }}</h5>
             </div>
           </div>
 
-          
-            <div class="d-flex gap-2 justify-content-center">
-              <button class="btn btn-outline-warning btn-sm d-flex align-items-center px-3"
+          <div class="d-flex gap-2 justify-content-center">
+            <button class="btn btn-outline-warning btn-sm d-flex align-items-center px-3"
               (click)="abrirModalEditar(unidad)">
-                <i class="bi bi-pencil-square me-1"></i> Editar
-              </button>
-              <button class="btn btn-outline-danger btn-sm d-flex align-items-center px-3"
-                      (click)="eliminarCiudad(unidad.idUnidadMedida!)">
-                <i class="bi bi-trash me-1"></i> Eliminar
-              </button>
-            </div>
+              <i class="bi bi-pencil-square me-1"></i> Editar
+            </button>
+            <button class="btn btn-outline-danger btn-sm d-flex align-items-center px-3"
+              (click)="eliminarCiudad(unidad.idUnidadMedida!)">
+              <i class="bi bi-trash me-1"></i> Eliminar
+            </button>
+          </div>
+
         </div>
       </div>
     </div>
   </div>
-<!-- 🔹 Modal -->
-  <div #modalUnidad class="modal fade" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content modal-dark rounded-4 shadow-lg">
-      
-      <!-- 🔹 Header fijo -->
-      <div class="modal-header border-0 pb-0 sticky-top">
-        <h5 class="modal-title text-white fw-bold">
-          <i class="fa-solid fa-city text-white fs-4 me-2"></i>
-          {{ unidadSeleccionada ? 'Editar Unidad Medida' : 'Agregar Unidad Medida' }}
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
 
-      <!-- 🔹 Cuerpo scrollable -->
-      <div class="modal-body modal-scroll">
-        <app-unidad-medida-form
+  <!-- 🔹 Modal -->
+  <div #modalUnidad class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content modal-dark rounded-4 shadow-lg">
+        
+        <!-- 🔹 Header fijo -->
+        <div class="modal-header border-0 pb-0 sticky-top">
+          <h5 class="modal-title text-white fw-bold">
+            <i class="bi bi-rulers text-white fs-4 me-2"></i>
+            {{ unidadSeleccionada ? 'Editar Unidad Medida' : 'Agregar Unidad Medida' }}
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <!-- 🔹 Cuerpo scrollable -->
+        <div class="modal-body modal-scroll">
+          <app-unidad-medida-form
             [unidadMedida]="unidadSeleccionada"
             (formGuardado)="cerrarModalYActualizarLista()">
           </app-unidad-medida-form>
-      </div>
+        </div>
 
-      <!-- 🔹 Footer fijo -->
-      <div class="modal-footer border-0 pt-0 sticky-bottom">
-        <small class="text-muted">Sistema de Inventario © 2025</small>
-      </div>
+        <!-- 🔹 Footer fijo -->
+        <div class="modal-footer border-0 pt-0 sticky-bottom">
+          <small class="text-muted">© 2026 SIGCO</small>
+        </div>
 
+      </div>
     </div>
   </div>
 </div>
-</div>
-

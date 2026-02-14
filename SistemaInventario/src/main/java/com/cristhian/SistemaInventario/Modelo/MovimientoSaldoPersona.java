@@ -1,6 +1,7 @@
 package com.cristhian.SistemaInventario.Modelo;
 
 import com.cristhian.SistemaInventario.DTO.MovimientoSaldoPersonaDTO;
+import com.cristhian.SistemaInventario.Enums.TipoMovimientoSaldo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;

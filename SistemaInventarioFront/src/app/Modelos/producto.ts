@@ -12,6 +12,16 @@ export class Producto {
     descripcion : String ="";
     fechaCreacion : Date = new Date();
     activo : boolean = true;
+    costoPromedio : number = 0;
+    
+    nombreCategoria?: String;
+    nombreMedida?: String;
+    porcentaje?: number = 0;
+    nombre?: String;
+    apellido?: String;
+    segundoApellido?: String;
+    razonSocial?: String;
+    estadoStock : string = ""; 
 
     // Relaciones
     idCategoria : number | null = null;

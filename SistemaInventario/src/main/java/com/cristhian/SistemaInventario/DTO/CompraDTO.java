@@ -2,7 +2,7 @@ package com.cristhian.SistemaInventario.DTO;
 
 import com.cristhian.SistemaInventario.Modelo.Compra;
 
-import com.cristhian.SistemaInventario.Modelo.EstadoCompra;
+import com.cristhian.SistemaInventario.Enums.EstadoCompra;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
@@ -10,7 +10,6 @@ import jakarta.persistence.Enumerated;
 
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

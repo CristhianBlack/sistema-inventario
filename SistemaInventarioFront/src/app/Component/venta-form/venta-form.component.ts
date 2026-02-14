@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { forkJoin } from 'rxjs';
+import { TIPO_PERSONA } from 'src/app/Constantes/tipo-persona.const';
 import { Impuesto } from 'src/app/Modelos/impuesto';
 import { Persona } from 'src/app/Modelos/persona';
 import { Producto } from 'src/app/Modelos/producto';
@@ -25,6 +26,7 @@ export class VentaFormComponent implements OnInit{
     formModel: Venta = new Venta();
   
    personas : Persona[] = []
+   listadoCliente : Persona[] =[];
   
     // ============================
     // NUEVAS VARIABLES DETALLE
@@ -53,10 +55,21 @@ export class VentaFormComponent implements OnInit{
 
     personaSeleccionada: any = null;
 
-    usarSaldoFavor: boolean = true;
+    usarSaldoFavor: boolean = false;
 
     saldoAplicado: number = 0;
     totalPagar: number = 0;
+    precio: number = 0;
+
+    // ============================
+          // AUTOCOMPLETE / BÚSQUEDA
+          // ============================
+          searchTerm: string = '';          // lo que escribe el usuario
+          mostrarResultados: boolean = false; // dropdown abierto/cerrado
+          textoBusqueda: string = "";
+          personasFiltradas: Persona[] = [];
+          readonly TIPO_PERSONA_NATURAL = TIPO_PERSONA.NATURAL;
+          readonly TIPO_PERSONA_JURIDICA = TIPO_PERSONA.JURIDICA;
   
     // ============================
   
@@ -93,12 +106,12 @@ export class VentaFormComponent implements OnInit{
     // ============================
     private cargarListas(): void {
       forkJoin({
-        personas: this.personaService.obtenerListaPersona(),
+        listadoCliente: this.personaService.obtenerPersonasConRolCliente(),
         productos: this.productoService.obtenerListaProductos(),
         impuestos : this.impuestoService.listarImpuestos()
       }).subscribe({
         next: data => {
-          this.personas = data.personas;
+          this.listadoCliente = data.listadoCliente;
           this.productos = data.productos;
           this.impuestos = data.impuestos;
           console.log('Datos de la persona', this.personas);
@@ -121,7 +134,7 @@ export class VentaFormComponent implements OnInit{
   
     // ←← CARGAR DETALLES EN LA TABLA
     this.detalleVenta = this.venta.detalles?.map(d => ({
-       idProducto: d.idProducto,
+      idProducto: d.idProducto,
   nombreProducto: d.nombreProducto,
   cantidad: d.cantidad,
   precioUnitario: d.precioUnitario,
@@ -162,53 +175,74 @@ export class VentaFormComponent implements OnInit{
         this.toastr.warning("Complete todos los campos del detalle");
         return;
       }
+
+      // Usar precio manual o precio del producto
+    const precioUnitario =
+      this.precio > 0
+        ? this.precio
+        : this.productoSeleccionado.precioVenta ?? 0;
+
+    /*if (precioUnitario <= 0) {
+      this.toastr.warning('El producto no tiene precio válido');
+      return;
+    }*/
      
-  
-      const precio = this.productoSeleccionado.precioVenta;
-      this.impuestoSeleccionado = this.obtenerImpuestoPorProducto(this.productoSeleccionado);
+    // Obtener impuesto del producto
+    this.impuestoSeleccionado = this.obtenerImpuestoPorProducto(this.productoSeleccionado);
+     // const precio = this.productoSeleccionado.precioVenta;
+      
 
       const impuestoPct = this.impuestoSeleccionado?.porcentaje ?? 0;
-      const subtotalLinea = precio * this.cantidad;
-      const impuestoValor = subtotalLinea * impuestoPct;
-      const totalLinea = subtotalLinea + impuestoValor - this.descuento;
+
+      // Cálculos
+      const subtotalLinea = precioUnitario * this.cantidad;
+      const impuestoLinea = subtotalLinea * impuestoPct;
+      const totalLinea = subtotalLinea + impuestoLinea - this.descuento;
   
     // Si estamos editando un ítem
     if (this.indiceEditando !== null) {
       this.detalleVenta[this.indiceEditando] = {
         idProducto: this.productoSeleccionado.idProducto,
+        codigoProducto: this.productoSeleccionado.codigoProducto,
         nombreProducto: this.productoSeleccionado.nombreProducto,
         cantidad: this.cantidad,
-        precioVenta: precio,
+        precioUnitario,
         impuestoPct,
-        impuestoValor,
+        impuestoLinea,
         descuento: this.descuento,
         subtotalLinea,
         totalLinea
+        
       };
-  
+
+      
       this.indiceEditando = null;
       this.toastr.success("Ítem actualizado");
     } else {
       // Crear nuevo ítem
       this.detalleVenta.push({
         idProducto: this.productoSeleccionado.idProducto,
+        codigoProducto: this.productoSeleccionado.codigoProducto,
         nombreProducto: this.productoSeleccionado.nombreProducto,
         cantidad: this.cantidad,
-        precioVenta: precio,
+        precioUnitario,
         impuestoPct,
-        impuestoValor,
+        impuestoLinea,
         descuento: this.descuento,
         subtotalLinea,
         totalLinea
       });
     }
   
+    console.log("precio de venta en editar item ", this.productoSeleccionado.codigoProducto)
+    console.log("iva en porcentaje ",impuestoPct)
     this.calcularTotal();
   
       // Limpiar
       this.productoSeleccionado = null;
       this.cantidad = 0;
       this.descuento = 0;
+      this.precio = 0;
     }
   
     eliminarItem(i: number) {
@@ -257,7 +291,11 @@ export class VentaFormComponent implements OnInit{
         this.toastr.warning("Debe agregar al menos un producto");
         return;
       }
-  
+
+      if (!this.usarSaldoFavor) {
+    this.saldoAplicado = 0;
+  }
+
       const request = this.mapDatoToRequest();
       console.log("JSON FINAL:", request);
   
@@ -294,6 +332,7 @@ export class VentaFormComponent implements OnInit{
     limpiarFormulario(formVenta?: NgForm): void {
       this.formModel = new Venta();
       this.venta = null;
+      this.personaSeleccionada = null
   
       // limpiar detalle
       this.detalleVenta = [];
@@ -320,6 +359,7 @@ export class VentaFormComponent implements OnInit{
 
   this.productoSeleccionado = producto;
   this.cantidad = item.cantidad;
+  this.precio = item.precioUnitario;
   this.descuento = item.descuento ?? 0;
   this.impuestoSeleccionado = this.obtenerImpuestoPorProducto(this.productoSeleccionado);
 }
@@ -337,17 +377,26 @@ export class VentaFormComponent implements OnInit{
 recalcularTotales() {
 
   this.total = this.detalleVenta
-    .reduce((acc, item) => acc + (Number(item.totalLinea)|| 0), 0);
+    .reduce((acc, item) => acc + (Number(item.totalLinea) || 0), 0);
 
-  if (this.usarSaldoFavor && this.personaSeleccionada) {
-  const saldo = Number(this.personaSeleccionada.saldoFavor) || 0;
-  this.saldoAplicado = Math.min(saldo, this.total);
-} else {
+  // Reset por defecto
   this.saldoAplicado = 0;
-}
+
+  if (
+    this.usarSaldoFavor &&
+    this.personaSeleccionada &&
+    Number(this.personaSeleccionada.saldoFavor) > 0
+  ) {
+    this.saldoAplicado = Math.min(
+      Number(this.personaSeleccionada.saldoFavor),
+      this.total
+    );
+  }
+
+  this.totalPagar = this.total - this.saldoAplicado;
+
+  console.log("Usar saldo:", this.usarSaldoFavor);
   console.log("Saldo Aplicado:", this.saldoAplicado);
-  console.log("Total:", this.total);
-  this.totalPagar = (Number(this.total) || 0) - (Number(this.saldoAplicado) || 0);
   console.log("Total a pagar:", this.totalPagar);
 }
 
@@ -356,7 +405,96 @@ onPersonaChange(idPersona: number) {
   this.personaSeleccionada =
     this.personas.find(p => p.idPersona === idPersona) || null;
 
+    this.usarSaldoFavor = false;
+  this.saldoAplicado = 0;
+
   this.recalcularTotales();
+}
+
+onProductoSeleccionado(): void {
+    if (this.productoSeleccionado) {
+      this.precio = this.productoSeleccionado.precioVenta ?? 0;
+
+    }
+  }
+
+  // ============================
+  // AUTOCOMPLETE / FILTRADO
+  // ============================
+onBuscar(valor: string) {
+  console.log("Lista proveedores:", this.listadoCliente);
+  console.log("Valor buscado:", valor);
+  this.searchTerm = valor;
+
+  if (!valor || valor.trim().length === 0) {
+    this.personasFiltradas = [];
+    this.mostrarResultados = false;
+    return;
+  }
+
+  this.personasFiltradas = this.listadoCliente.filter(p =>
+    this.obtenerNombrePersona(p)
+      .toLowerCase()
+      .includes(valor.toLowerCase())
+  );
+
+  this.mostrarResultados = true;
+  this.personaSeleccionada = null;
+}
+
+// ============================
+  // OBTENEMOS EL NOMBRE SEA DE PERSONA NATURAL O PERSONA JURIDICA EL NOMBRE DEL CONTACTO
+  // ============================
+obtenerNombreParaInput(p: Persona | null): string {
+  if (!p) return '';
+
+  // Intentar CONTACTO (persona jurídica)
+  const contacto = `${p.nombreContacto ?? ''} ${p.apellidoContacto ?? ''} ${p.segundoApellidoContacto ?? ''}`.trim();
+  if (contacto) {
+    return contacto;
+  }
+
+  // Fallback → PERSONA NATURAL
+  const persona = `${p.nombre ?? ''} ${p.apellido ?? ''} ${p.segundoApellido ?? ''}`.trim();
+  if (persona) {
+    return persona;
+  }
+
+  return '';
+}
+
+// ============================
+  // UTILIDADES
+  // ============================
+
+  // Obtiene el nombre a mostrar según el tipo de persona
+obtenerNombrePersona(p: any): string {
+  console.log(
+  p.idTipoPersona,
+  p.idTipoPersona === this.TIPO_PERSONA_NATURAL ? p.nombre : p.razonSocial,
+  p.idTipoPersona === this.TIPO_PERSONA_JURIDICA ? p.razonSocial : p.nombreContacto
+  
+);
+   // PERSONA JURÍDICA
+  if (p.idTipoPersona === this.TIPO_PERSONA_JURIDICA) {
+    return p.razonSocial?.trim()
+      || p.nombre?.trim()
+      || '(Empresa sin nombre)';
+  }
+
+  // PERSONA NATURAL
+  return `${p.nombre ?? ''} ${p.apellido ?? ''} ${p.segundoApellido ?? ''}`.trim();
+}
+
+seleccionarPersona(persona: Persona) {
+  this.personaSeleccionada = persona;
+  this.formModel.idPersona = persona.idPersona;
+  // Mostrar texto correcto en el input
+  this.searchTerm = this.obtenerNombrePersona(persona);
+   // Cerrar dropdown
+  this.mostrarResultados = false;
+  // Limpiar lista
+  this.personasFiltradas = [];
 }
 
 

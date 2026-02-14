@@ -1,6 +1,7 @@
 package com.cristhian.SistemaInventario.Modelo;
 
 import com.cristhian.SistemaInventario.DTO.TipoDocumentoDTO;
+import com.cristhian.SistemaInventario.Enums.NombreTipoDocumento;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -13,8 +14,9 @@ public class TipoDocumento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idTipoDocumento;
 
-    @Column(nullable = false, length = 45)
-    private String nombreTipoDocumento;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private NombreTipoDocumento nombreTipoDocumento;
 
     @Column(nullable = false, length = 10)
     private String sigla;
@@ -43,11 +45,11 @@ public class TipoDocumento {
         this.idTipoDocumento = idTipoDocumento;
     }
 
-    public String getNombreTipoDocumento() {
+    public NombreTipoDocumento getNombreTipoDocumento() {
         return nombreTipoDocumento;
     }
 
-    public void setNombreTipoDocumento(String nombreTipoDocumento) {
+    public void setNombreTipoDocumento(NombreTipoDocumento nombreTipoDocumento) {
         this.nombreTipoDocumento = nombreTipoDocumento;
     }
 

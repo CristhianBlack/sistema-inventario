@@ -2,6 +2,7 @@ package com.cristhian.SistemaInventario.ServicioImplement;
 
 import com.cristhian.SistemaInventario.DTO.ProveedorDTO;
 import com.cristhian.SistemaInventario.DTO.ProveedorPersonaDTO;
+import com.cristhian.SistemaInventario.Excepciones.DuplicadoException;
 import com.cristhian.SistemaInventario.Excepciones.RecursoNoEncontradoException;
 import com.cristhian.SistemaInventario.Excepciones.ValidacionException;
 import com.cristhian.SistemaInventario.Mensaje.Mensaje;
@@ -24,67 +25,102 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
-
+/**
+ * Servicio encargado de la gestión de proveedores.
+ * Maneja creación, actualización, eliminación lógica
+ * y consultas relacionadas con proveedor-persona.
+ */
 @Service
 @Transactional
 public class ProveedorServiceImpl implements IProveedorService {
-
     @Autowired
     private ProveedorRepository proveedorRepository;
+
     @Autowired
     private PersonaRepository personaRepository;
+
     @Autowired
     private PersonaRolRepository personaRolRepository;
 
-
+    /**
+     * Listar todos los proveedores activos.
+     */
     @Override
     public List<Proveedor> listarProveedoresActivos(){
         return proveedorRepository.findByActivoTrue();
     }
 
+    /**
+     * Buscar proveedor por ID.
+     */
     @Override
     public Optional<Proveedor> buscarProveedorId(int id){
         return proveedorRepository.findById(id);
     }
 
+    /**
+     * Crear un proveedor asociado a una persona existente.
+     * Si el proveedor ya existe y está inactivo, se reactiva.
+     */
     @Override
     public Proveedor guardarProveedor(ProveedorDTO proveedorDTO){
 
-            Integer idPersona = proveedorDTO.getIdPersona();
-            Integer ROL_PROVEEDOR = 3; // Cambia según tu BD
+        Integer idPersona = proveedorDTO.getIdPersona();
 
-            //Validar existencia en persona
-            Persona persona = personaRepository.findById(idPersona)
-                    .orElseThrow(() -> new RecursoNoEncontradoException("La persona no existe"));
+        // Validar que la persona exista
+        Persona persona = personaRepository.findById(idPersona)
+                .orElseThrow(() -> new RecursoNoEncontradoException("La persona no existe"));
 
+        // Validar si ya existe proveedor asociado a la persona
+        Optional<Proveedor> proveedorExistente =
+                proveedorRepository.findByPersonaIdPersona(idPersona);
 
+        if (proveedorExistente.isPresent()) {
+            Proveedor proveedor1 = proveedorExistente.get();
 
-            // Guardar proveedor
-            Proveedor proveedor = new Proveedor(proveedorDTO);
-            proveedor.setPersona(persona);
-            return proveedorRepository.save(proveedor);
+            // Si existe pero está inactivo → reactivar
+            if (!proveedor1.isActivo()) {
+                System.out.println("Proveedor encontrado inactivo. Se activará nuevamente.");
+                proveedor1.setActivo(true);
+                return proveedorRepository.save(proveedor1);
+            }
+
+            // Si existe y está activo → error
+            throw new DuplicadoException("Ya existe ese proveedor.");
         }
 
-        @Override
-    public Proveedor actualizarProveedor( int id, ProveedorDTO proveedorDTO){
-
-        Proveedor proveedor = proveedorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("La persona no existe."));
-
-        //Obtener entidades relacionadas
-        Persona persona = personaRepository.findById(proveedorDTO.getIdPersona())
-                .orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
-
-
-        // Datos
-        proveedor.setDescripcionProveedor(proveedorDTO.getDescripcionProveedor());
+        // Crear y guardar proveedor
+        Proveedor proveedor = new Proveedor(proveedorDTO);
         proveedor.setPersona(persona);
-        //proveedor.setFechaCreacion(proveedorDTO.getFechaCreacion());
 
         return proveedorRepository.save(proveedor);
     }
 
-        @Override
+    /**
+     * Actualizar los datos de un proveedor existente.
+     */
+    @Override
+    public Proveedor actualizarProveedor(int id, ProveedorDTO proveedorDTO){
+
+        // Validar que el proveedor exista
+        Proveedor proveedor = proveedorRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("La persona no existe."));
+
+        // Obtener la persona asociada
+        Persona persona = personaRepository.findById(proveedorDTO.getIdPersona())
+                .orElseThrow(() -> new RuntimeException("Tipo de documento no encontrado"));
+
+        // Actualizar datos
+        proveedor.setDescripcionProveedor(proveedorDTO.getDescripcionProveedor());
+        proveedor.setPersona(persona);
+
+        return proveedorRepository.save(proveedor);
+    }
+
+    /**
+     * Eliminación lógica del proveedor.
+     */
+    @Override
     public void borrarProveedor(int id){
         Proveedor proveedor = proveedorRepository.findById(id).orElse(null);
         if (proveedor != null){
@@ -93,6 +129,9 @@ public class ProveedorServiceImpl implements IProveedorService {
         }
     }
 
+    /**
+     * Obtener listado combinado de proveedor con datos de persona.
+     */
     public List<ProveedorPersonaDTO> obtenerListadoProveedorPersona() {
         return proveedorRepository.listarProveedorPersona();
     }

@@ -1,0 +1,117 @@
+/* =========================
+   BASE
+========================= */
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden; /* Evita doble scroll */
+  font-family: "Nunito", sans-serif;
+}
+
+/* =========================
+   WRAPPER GENERAL
+========================= */
+#wrapper {
+  display: flex;
+  height: 100vh;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  background: linear-gradient(180deg, #4e73df 0%, #224abe 100%);
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 1000;
+}
+
+/* Scroll bonito del sidebar */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+}
+
+/* =========================
+   CONTENIDO
+========================= */
+#content-wrapper {
+  margin-left: 250px; /* mismo ancho del sidebar */
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fc;
+}
+
+/* Área principal */
+#content {
+  flex: 1 0 auto;
+  padding: 1.5rem;
+}
+
+/* =========================
+   TOPBAR
+========================= */
+.topbar {
+  flex-shrink: 0;
+  height: 70px;
+  background-color: #fff;
+  box-shadow: 0 0.15rem 1.75rem rgba(58, 59, 69, 0.15);
+}
+
+/* =========================
+   FOOTER
+========================= */
+.sticky-footer {
+  flex-shrink: 0;
+  background-color: #fff;
+  box-shadow: 0 -0.15rem 1.75rem rgba(58, 59, 69, 0.1);
+}
+
+/* =========================
+   DARK MODE
+========================= */
+.dark-mode {
+  background-color: #0f1724;
+}
+
+.dark-mode #content-wrapper {
+  background-color: #0f1724;
+}
+
+.dark-mode .sidebar {
+  background: linear-gradient(180deg, #0f1724 0%, #1b2233 100%);
+}
+
+.dark-mode .topbar,
+.dark-mode .sticky-footer {
+  background-color: #1b2233;
+  color: #fff;
+}
+
+/* =========================
+   RESPONSIVE (MÓVIL)
+========================= */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  #content-wrapper {
+    margin-left: 220px;
+  }
+
+.cursor-pointer {
+  cursor: pointer;
+}
+}

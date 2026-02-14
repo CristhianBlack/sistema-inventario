@@ -1,92 +1,152 @@
 <div class="container">
-    <form (ngSubmit)="onSubmit(formProveedor)" #formProveedor="ngForm" novalidate>
-        
-        <!--Titulo dinamico-->
-        <div class="text-center mb-4">
-            <h4 class="fw-bold"> <i class="fa-solid fa-city text-white fs-5 me-2"></i>
-                {{formModel.idProveedor ? 'Editar Proveedor' : 'Nuevo Proveedor' }}
-            </h4>
+  <form (ngSubmit)="onSubmit(formProveedor)" #formProveedor="ngForm" novalidate>
+
+    <!-- Título dinámico -->
+    <div class="text-center mb-4">
+      <h4 class="fw-bold">
+        <i class="bi bi-building-fill text-white fs-5 me-2"></i>
+        {{ formModel.idProveedor ? 'Editar Proveedor' : 'Nuevo Proveedor' }}
+      </h4>
+    </div>
+
+    <!-- FIELDSET: PROVEEDOR -->
+    <fieldset class="fieldset-modern mb-4">
+      <legend>
+        <i class="bi bi-search me-1"></i>
+        Proveedor
+      </legend>
+
+      <div class="row">
+        <input
+          class="form-control"
+          #inputBusqueda
+          type="text"
+          id="buscar"
+          name="buscar"
+          placeholder="Buscar persona..."
+          [value]="searchTerm"
+          (input)="onBuscar(inputBusqueda.value)"
+          (focus)="mostrarResultados = true" />
+      </div>
+    </fieldset>
+
+    <!-- Resultados -->
+    <ul class="list-group mt-2" *ngIf="mostrarResultados && personasFiltradas.length > 0">
+      <li
+        class="list-group-item list-group-item-action"
+        *ngFor="let p of personasFiltradas"
+        (click)="seleccionarPersona(p)">
+        <i class="bi bi-person-circle me-2"></i>
+        {{ obtenerNombrePersona(p) }}
+      </li>
+    </ul>
+
+    <div class="text-muted mt-2" *ngIf="mostrarResultados && personasFiltradas.length === 0">
+      <i class="bi bi-info-circle me-1"></i>
+      No hay resultados
+    </div>
+
+    <div *ngIf="proveedorSeleccionado">
+      <!-- FIELDSET: DATOS DEL PROVEEDOR -->
+      <fieldset class="fieldset-modern mb-4">
+        <legend>
+          <i class="bi bi-card-checklist me-1"></i>
+          Datos del Proveedor
+        </legend>
+
+        <div class="row g-4">
+
+          <div class="col-md-4">
+            <label>
+              <i class="bi bi-upc-scan me-1"></i>
+              NIT
+            </label>
+            <input type="text" class="form-control"
+                   [value]="proveedorSeleccionado.documentoPersona" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label>
+              <i class="bi bi-person-lines-fill me-1"></i>
+              Contacto del proveedor
+            </label>
+            <input type="text" class="form-control"
+                   [value]="obtenerNombreParaInput(proveedorSeleccionado)" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label>
+              <i class="bi bi-telephone me-1"></i>
+              Teléfono
+            </label>
+            <input type="text" class="form-control"
+                   [value]="proveedorSeleccionado.telefono" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label>
+              <i class="bi bi-geo-alt me-1"></i>
+              Dirección
+            </label>
+            <input type="text" class="form-control"
+                   [value]="proveedorSeleccionado.direccion" readonly>
+          </div>
+
+          <div class="col-md-4">
+            <label>
+              <i class="bi bi-envelope me-1"></i>
+              Email
+            </label>
+            <input type="text" class="form-control"
+                   [value]="proveedorSeleccionado.email" readonly>
+          </div>
+
         </div>
+      </fieldset>
+    </div>
 
-       <input class="form-control"
-       type="text"
-       id="buscar" name="buscar"
-       placeholder="Buscar persona..."
-       [(ngModel)]="textoBusqueda"
-       (ngModelChange)="filtrarPersonas()">
-
-<ul class="list-group mt-2" *ngIf="personasFiltradas.length > 0">
-  <li class="list-group-item list-group-item-action"
-      *ngFor="let p of personasFiltradas"
-      (click)="seleccionarPersona(p)">
-    {{ p.nombre }} {{ p.apellido }} {{ p.segundoApellido }}
-  </li>
-</ul>
-
-<div class="text-muted mt-2" *ngIf="personasFiltradas.length === 0">
-  No hay resultados
-</div>
-
-
-<div *ngIf="proveedorSeleccionado">
-
-  <div class="mb-3">
-    <label>NIT</label>
-    <input type="text" class="form-control" 
-           [value]="proveedorSeleccionado.documentoPersona" readonly>
-  </div>
-
-  <div class="mb-3">
-    <label>Teléfono</label>
-    <input type="text" class="form-control" 
-           [value]="proveedorSeleccionado.telefono" readonly>
-  </div>
-
-  <div class="mb-3">
-    <label>Dirección</label>
-    <input type="text" class="form-control" 
-           [value]="proveedorSeleccionado.direccion" readonly>
-  </div>
-
-  <div class="mb-3">
-    <label>Email</label>
-    <input type="text" class="form-control" 
-           [value]="proveedorSeleccionado.email" readonly>
-  </div>
-
-</div>
-
-
-        <div class="mb-3">
-            <label for="descripcion" class="form-label">Descripcion Proveedor</label>
-            <input type="text" id="descripcion" name="descripcion" class="form-control"
-            [(ngModel)]="formModel.descripcionProveedor" required minlength="3" placeholder="EJ: proveedor que vende cacharreria">
-
-            <!-- Mensajes de error -->
-             <div *ngIf="formProveedor.submitted && !formModel.descripcionProveedor" class="text-danger small mt-1">
-                La descripcion es obligatoria
-             </div>
-        </div>
-
-        <!-- Campo: Activo (opcional)
-    <div class="form-check mb-4">
-      <input 
-        class="form-check-input" 
-        type="checkbox" 
-        id="activo" 
-        name="activo"
-        [(ngModel)]="formModel.activo">
-      <label class="form-check-label" for="activo">
-        Activo
+    <!-- Descripción -->
+    <div class="mb-3">
+      <label for="descripcion" class="form-label">
+        <i class="bi bi-card-text me-1"></i>
+        Descripcion Proveedor
       </label>
-    </div>-->
 
-        <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-secondary me-2"  data-bs-dismiss="modal" >Cancelar</button>
+      <textarea
+        id="descripcion"
+        name="descripcion"
+        class="form-control"
+        [(ngModel)]="formModel.descripcionProveedor"
+        required
+        rows="3"
+        placeholder="Ej: proveedor que vende cacharreria">
+      </textarea>
 
-            <button type="submit" class="btn btn-primary" [disabled]="formProveedor.invalid">
-                {{formModel.idProveedor ? 'Guardar cambios' : 'Agregar Proveedor'}}
-            </button>
-        </div>
-    </form>
+      <div *ngIf="formProveedor.submitted && !formModel.descripcionProveedor"
+           class="text-danger small mt-1">
+        <i class="bi bi-exclamation-circle me-1"></i>
+        La descripcion es obligatoria
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="d-flex justify-content-end">
+      <button
+        type="button"
+        class="btn btn-secondary me-2"
+        data-bs-dismiss="modal">
+        <i class="bi bi-x-circle me-1"></i>
+        Cancelar
+      </button>
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="formProveedor.invalid">
+        <i class="bi bi-check-circle me-1"></i>
+        {{ formModel.idProveedor ? 'Guardar cambios' : 'Agregar Proveedor' }}
+      </button>
+    </div>
+
+  </form>
 </div>

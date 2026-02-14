@@ -1,160 +1,206 @@
 <div class="container">
   <form (ngSubmit)="onSubmit(formProducto)" #formProducto="ngForm" novalidate>
-    
-    <!-- Título dinámico -->
+
+    <!-- 🔹 Título dinámico -->
     <div class="text-center mb-4">
-      <h4 class="fw-bold"> <i class="bi bi-tags-fill text-white fs-4 me-2"></i>
+      <h4 class="fw-bold">
+        <i class="bi bi-tags-fill text-white fs-4 me-2"></i>
         {{ formModel.idProducto ? 'Editar Producto' : 'Nuevo Producto' }}
       </h4>
     </div>
 
-    <!-- Campo: Nombre -->
-    <div class="mb-3">
-      <label for="nombreProducto" class="form-label">Nombre de Producto</label>
-      <input 
-        type="text"
-        id="nombreProducto"
-        name="nombreProducto"
-        class="form-control"
-        [(ngModel)]="formModel.nombreProducto"
-        [ngModelOptions]="{standalone: true}"
-        required
-        minlength="3"
-        placeholder="Ej: Celular Xiaomi">
+    <!-- FIELDSET: PRODUCTO -->
+    <fieldset class="fieldset-modern mb-4">
+      <legend>
+        <i class="bi bi-box-seam me-1"></i>
+        Datos Producto
+      </legend>
 
-      <!-- Mensajes de error -->
-      <div *ngIf="formProducto.submitted && !formModel.nombreProducto" class="text-danger small mt-1">
-        El nombre es obligatorio.
+      <div class="row g-4">
+        <!-- Nombre -->
+        <div class="col-md-4">
+          <label for="nombreProducto" class="form-label">
+            <i class="bi bi-tag me-1"></i>
+            Nombre de Producto
+          </label>
+          <input
+            type="text"
+            id="nombreProducto"
+            name="nombreProducto"
+            class="form-control"
+            [(ngModel)]="formModel.nombreProducto"
+            [ngModelOptions]="{standalone: true}"
+            required
+            minlength="3"
+            placeholder="Ej: Celular Xiaomi">
+
+          <div *ngIf="formProducto.submitted && !formModel.nombreProducto"
+               class="text-danger small mt-1">
+            El nombre es obligatorio.
+          </div>
+        </div>
+
+        <!-- Stock mínimo -->
+        <div class="col-md-4">
+          <label for="stockMinimo" class="form-label">
+            <i class="bi bi-archive me-1"></i>
+            Stock minimo de producto
+          </label>
+          <input
+            type="text"
+            id="stockMinimo"
+            name="stockMinimo"
+            class="form-control"
+            [(ngModel)]="formModel.stockMinimo"
+            [disabled]="deshabilitarStockMinimo"
+            [ngModelOptions]="{standalone: true}"
+            required
+            minlength="3"
+            placeholder="Ej: 50">
+
+          <div *ngIf="formProducto.submitted && !formModel.stockMinimo"
+               class="text-danger small mt-1">
+            El stock minimo es obligatorio.
+          </div>
+        </div>
+
+        <!-- Código -->
+        <div class="col-md-4" *ngIf="!tieneCodigoProducto">
+          <label for="codigoProducto" class="form-label">
+            <i class="bi bi-upc-scan me-1"></i>
+            Codigo de Producto
+          </label>
+          <input
+            type="text"
+            id="codigoProducto"
+            name="codigoProducto"
+            class="form-control"
+            [(ngModel)]="formModel.codigoProducto"
+            [ngModelOptions]="{standalone: true}"
+            [disabled]="tieneCodigoProducto"
+            placeholder="El codigo se generara de forma automatica"
+            readonly>
+
+          <div *ngIf="formProducto.submitted && !formModel.codigoProducto"
+               class="text-danger small mt-1">
+            El codigo es obligatorio.
+          </div>
+        </div>
+
+        <!-- Precio Venta -->
+        <div class="col-md-4" *ngIf="esAdminSistema" >
+          <label for="precioVenta" class="form-label">
+            <i class="bi bi-cash-coin me-1"></i>
+            Precio de venta del Producto
+          </label>
+          <input
+            type="number"
+            id="precioVenta"
+            name="precioVenta"
+            class="form-control"
+            [(ngModel)]="formModel.precioVenta"
+            [ngModelOptions]="{standalone: true}"
+            placeholder="Ingrese el precio de venta correspondiente">
+        </div>
       </div>
-    </div>
+    </fieldset>
 
-    <!-- Campo: codigo -->
-    <div class="mb-3">
-      <label for="codigoProducto" class="form-label">Codigo de Producto</label>
-      <input 
-        type="text"
-        id="codigoProducto"
-        name="codigoProducto"
-        class="form-control"
-        [(ngModel)]="formModel.codigoProducto"
-        [ngModelOptions]="{standalone: true}"
-        required
-        minlength="3"
-        placeholder="Ej: 0001">
+    <!-- FIELDSET: OTROS DATOS -->
+    <fieldset class="fieldset-modern mb-4">
+      <legend>
+        <i class="bi bi-sliders me-1"></i>
+        Otros datos de producto
+      </legend>
 
-      <!-- Mensajes de error -->
-      <div *ngIf="formProducto.submitted && !formModel.codigoProducto" class="text-danger small mt-1">
-        El codigo es obligatorio.
-      </div>
-    </div>
-
-    <!-- Campo: precio compra -->
-    <div class="mb-3">
-      <label for="precioCompra" class="form-label">Precio de Compra</label>
-      <input 
-        type="text"
-        id="precioCompra"
-        name="precioCompra"
-        class="form-control"
-        [(ngModel)]="formModel.precioCompra" disabled="true"
-        [ngModelOptions]="{standalone: true}"
-        required
-        minlength="3"
-        placeholder="Ej: $25.000">
-
-      <!-- Mensajes de error -->
-      <div *ngIf="formProducto.submitted && !formModel.precioCompra" class="text-danger small mt-1">
-        El precio de compra es obligatorio.
-      </div>
-    </div>
-
-    <!-- Campo: precio de venta -->
-    <div class="mb-3">
-      <label for="precioVenta" class="form-label">Precio de Venta</label>
-      <input 
-        type="text"
-        id="precioVenta"
-        name="precioVenta"
-        class="form-control"
-        [(ngModel)]="formModel.precioVenta"
-        [ngModelOptions]="{standalone: true}"
-        required
-        minlength="3"
-        placeholder="Ej: $28.000">
-
-      <!-- Mensajes de error -->
-      <div *ngIf="formProducto.submitted && !formModel.precioVenta" class="text-danger small mt-1">
-        El precio de venta es obligatorio.
-      </div>
-    </div>
-
-    <!-- Categoria -->
+      <div class="row g-4">
+        <!-- Categoría -->
         <div class="col-md-6">
-          <label class="form-label">Categoria del Producto</label>
+          <label class="form-label">
+            <i class="bi bi-folder2-open me-1"></i>
+            Categoria del Producto
+          </label>
           <select
             class="form-select"
             name="idCategoria"
             [(ngModel)]="formModel.idCategoria"
-            required
-          >
+            required>
             <option [ngValue]="null" disabled>Seleccione...</option>
-            <option *ngFor="let categoria of categorias" [ngValue]="categoria.idCategoria">
+            <option *ngFor="let categoria of categorias"
+                    [ngValue]="categoria.idCategoria">
               {{ categoria.nombreCategoria }}
             </option>
           </select>
         </div>
 
-        <!-- Unidad Medida -->
+        <!-- Unidad de medida -->
         <div class="col-md-6">
-          <label class="form-label">Unidad de Medida del Producto</label>
+          <label class="form-label">
+            <i class="bi bi-rulers me-1"></i>
+            Unidad de Medida del Producto
+          </label>
           <select
             class="form-select"
             name="idUnidadMedida"
             [(ngModel)]="formModel.idUnidadMedida"
-            required
-          >
+            required>
             <option [ngValue]="null" disabled>Seleccione...</option>
-            <option *ngFor="let unidad of unidadMedida" [ngValue]="unidad.idUnidadMedida">
+            <option *ngFor="let unidad of unidadMedida"
+                    [ngValue]="unidad.idUnidadMedida">
               {{ unidad.nombreMedida }}
             </option>
           </select>
         </div>
 
-        <!-- proveedores -->
+        <!-- Proveedor -->
         <div class="col-md-6">
-          <label class="form-label">Proveedor del Producto</label>
+          <label class="form-label">
+            <i class="bi bi-truck me-1"></i>
+            Proveedor del Producto
+          </label>
           <select
             class="form-select"
             name="idProveedor"
             [(ngModel)]="formModel.idProveedor"
-            required
-          >
+            required>
             <option [ngValue]="null" disabled>Seleccione...</option>
-            <option *ngFor="let proveedor of proveedores" [ngValue]="proveedor.idProveedor">
-              {{ proveedor.nombre }} {{proveedor.apellido}} {{proveedor.segundoApellido}}
+            <option *ngFor="let proveedor of proveedores"
+                    [ngValue]="proveedor.idProveedor">
+              {{
+                proveedor.razonSocial.trim()
+                  ? proveedor.razonSocial
+                  : (proveedor.nombre + ' ' + proveedor.apellido + ' ' + proveedor.segundoApellido)
+              }}
             </option>
           </select>
         </div>
 
-        <!-- impuestos -->
+        <!-- Impuesto -->
         <div class="col-md-6">
-          <label class="form-label">Impuesto del Producto</label>
+          <label class="form-label">
+            <i class="bi bi-percent me-1"></i>
+            Impuesto del Producto
+          </label>
           <select
             class="form-select"
             name="idImpuesto"
             [(ngModel)]="formModel.idImpuesto"
-            required
-          >
+            required>
             <option [ngValue]="null" disabled>Seleccione...</option>
-            <option *ngFor="let impuesto of impuestos" [ngValue]="impuesto.idImpuesto">
-              {{ impuesto.tipoImpuesto }} {{impuesto.porcentaje * 100 +' %'}}
+            <option *ngFor="let impuesto of impuestos"
+                    [ngValue]="impuesto.idImpuesto">
+              {{ impuesto.tipoImpuesto }} {{ impuesto.porcentaje * 100 + ' %' }}
             </option>
           </select>
         </div>
+      </div>
+    </fieldset>
 
-    <!-- Campo: Descripción -->
+    <!-- Descripción -->
     <div class="mb-3">
-      <label for="descripcion" class="form-label">Descripción</label>
+      <label for="descripcion" class="form-label">
+        <i class="bi bi-card-text me-1"></i>
+        Descripción
+      </label>
       <textarea
         id="descripcion"
         name="descripcion"
@@ -166,24 +212,27 @@
         placeholder="Breve descripción del producto">
       </textarea>
 
-      <div *ngIf="formProducto.submitted && !formModel.descripcion" class="text-danger small mt-1">
+      <div *ngIf="formProducto.submitted && !formModel.descripcion"
+           class="text-danger small mt-1">
         La descripción es obligatoria.
       </div>
     </div>
 
     <!-- Botones -->
     <div class="d-flex justify-content-end">
-      <button 
-        type="button" 
+      <button
+        type="button"
         class="btn btn-secondary me-2"
-        data-bs-dismiss="modal" >
+        data-bs-dismiss="modal">
+        <i class="bi bi-x-circle me-1"></i>
         Cancelar
       </button>
 
-      <button 
-        type="submit" 
+      <button
+        type="submit"
         class="btn btn-primary"
         [disabled]="formProducto.invalid">
+        <i class="bi bi-save me-1"></i>
         {{ formModel.idProducto ? 'Guardar cambios' : 'Agregar Producto' }}
       </button>
     </div>

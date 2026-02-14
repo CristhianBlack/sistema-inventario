@@ -12,7 +12,36 @@
     <!-- Campo: Cliente -->
     <div class="mb-4">
       <label class="form-label">Cliente</label>
-      <select
+
+      <div class="row">
+        <input
+          class="form-control"
+          #inputBusqueda
+          type="text"
+          id="buscar"
+          name="buscar"
+          placeholder="Buscar persona..."
+          [value]="searchTerm"
+          (input)="onBuscar(inputBusqueda.value)"
+          (focus)="mostrarResultados = true" />
+      </div>
+
+    <!-- Resultados -->
+    <ul class="list-group mt-2" *ngIf="mostrarResultados && personasFiltradas.length > 0">
+      <li
+        class="list-group-item list-group-item-action"
+        *ngFor="let p of personasFiltradas"
+        (click)="seleccionarPersona(p)">
+        <i class="bi bi-person-circle me-2"></i>
+        {{ obtenerNombrePersona(p) }}
+      </li>
+    </ul>
+
+    <div class="text-muted mt-2" *ngIf="mostrarResultados && personasFiltradas.length === 0">
+      <i class="bi bi-info-circle me-1"></i>
+      No hay resultados
+    </div>
+     <!-- <select
         class="form-select"
         name="idPersona"
         [(ngModel)]="formModel.idPersona"
@@ -22,9 +51,15 @@
 
         <option [ngValue]="null" disabled>Seleccione...</option>
         <option *ngFor="let persona of personas" [ngValue]="persona.idPersona">
-          {{ persona.nombre }} {{ persona.apellido }}
+          {{
+                  (persona.razonSocial || '').trim()
+                    ? persona.razonSocial
+                    : ((persona.nombre ) + ' ' + (persona.apellido || '')+ ' ' + (persona.segundoApellido || ''))
+                }}
+
+          
         </option>
-      </select>
+      </select>-->
     </div>
 <!-- ========================= -->
 <!-- SALDO A FAVOR -->
@@ -69,14 +104,21 @@
     <!-- AGREGAR PRODUCTO -->
     <!-- ========================= -->
     <div class="card bg-dark text-white p-3 mb-4 mt-3">
-      <h5 class="mb-3">Agregar Productos a la Venta</h5>
+      <h5 class="mb-3 fw-semibold">
+        <i class="bi bi-box-seam me-2"></i>
+        Agregar Productos a la Venta
+      </h5>
 
-      <div class="row g-3">
+      <div class="row g-3 align-items-center">
 
         <!-- Producto -->
         <div class="col-md-5">
-          <label class="form-label">Producto</label>
+          <label class="form-label">
+            <i class="bi bi-tag me-1"></i>
+            Producto
+          </label>
           <select class="form-select" [(ngModel)]="productoSeleccionado" [ngModelOptions]="{standalone: true}"
+          (change)="onProductoSeleccionado()"
             [disabled]="modoSoloLectura">
             <option value="">Seleccione...</option>
             <option *ngFor="let p of productos" [ngValue]="p">
@@ -86,30 +128,42 @@
         </div>
 
         <!-- Cantidad -->
-        <div class="col-md-3">
-          <label class="form-label">Cantidad</label>
+        <div class="col-md-2">
+          <label class="form-label">
+            <i class="bi bi-123 me-1"></i>
+            Cantidad
+          </label>
           <input type="number" class="form-control"
             [(ngModel)]="cantidad" [ngModelOptions]="{standalone: true}" 
   [disabled]="modoSoloLectura">
         </div>
 
         <!-- Precio -->
-        <div class="col-md-3">
-          <label class="form-label">Precio</label>
-          <input type="text" class="form-control"
-           [ngModel]="productoSeleccionado?.precioVenta"
-  (ngModelChange)="productoSeleccionado && (productoSeleccionado.precioVenta = $event)" [ngModelOptions]="{standalone: true}"  
+        <div class="col-md-2">
+          <label class="form-label">
+            <i class="bi bi-cash-coin me-1"></i>
+            Precio Actual
+          </label>
+          <input type="number" class="form-control"
+           [(ngModel)]="precio"
+   [ngModelOptions]="{standalone: true}"  
+   min="0"
   [disabled]="modoSoloLectura">
+
+  <!--(ngModelChange)="productoSeleccionado && (productoSeleccionado.precioVenta = $event)"-->
 
   <!-- Texto formateado con comas -->
   <!--<div class="mt-1 text-muted" *ngIf="precioUnitario">
     {{ precio | number:'1.0-0' }}-->
   </div>
-  <div class="col-md-3">
-          <label class="form-label">Impuesto</label>
-          <input type="text" class="form-control"
-            [value]="obtenerImpuestoPorProducto(productoSeleccionado)?.porcentaje || 0"  
-  [disabled]="modoSoloLectura">
+  <div class="col-md-2">
+          <label class="form-label">
+            <i class="bi bi-percent me-1"></i>
+            Impuesto
+          </label>
+          <div class="form-control bg-secondary text-center fw-bold">
+            {{ (obtenerImpuestoPorProducto(productoSeleccionado)?.porcentaje ?? 0) | percent:'1.0-0' }}
+          </div>
         </div>
 
         <!-- Descuento -->
@@ -123,10 +177,10 @@
         
 
         <!-- Botón agregar -->
-        <div class="col-md-1 d-flex align-items-end">
-          <button type="button" class="btn btn-primary w-100" (click)="agregarItem()"
-          [disabled]="modoSoloLectura">
-            +
+        <div class="col-md-1 ">
+          <button type="button" class="btn btn-success w-100 mt-4" (click)="agregarItem()"
+          [disabled]="modoSoloLectura" title="Agregar Producto">
+            <i class="bi bi-plus-circle"></i>
           </button>
         </div>
 
@@ -136,43 +190,49 @@
     <!-- ========================= -->
     <!-- TABLA DETALLE -->
     <!-- ========================= -->
-    <table class="table table-dark table-striped align-middle" *ngIf="detalleVenta.length > 0">
+     <div class="table-responsive" *ngIf="detalleVenta.length > 0">
+    <table class="table table-dark table-striped align-middle">
       <thead>
         <tr>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Decuento</th>
-          <th>Precio Unit.</th>
-          <th>IVA %</th>
-          <th>Subtotal</th>
-          <th>IVA</th>
-          <th>Total</th>
-          <th>Acciones</th>
+          <th><i class="bi bi-upc-scan"></i></th>
+          <th class="text-end">Producto</th>
+          <th class="text-end">Cantidad</th>
+          <th class="text-end">Decuento</th>
+          <th class="text-end">Precio Unit.</th>
+          <th class="text-end">IVA %</th>
+          <th class="text-end">Subtotal</th>
+          <th class="text-end">IVA</th>
+          <th class="text-end">Total</th>
+          <th class="text-center">
+              <i class="bi bi-gear"></i>
+            </th>
         </tr>
       </thead>
 
       <tbody>
         <tr *ngFor="let item of detalleVenta; let i = index">
+          <!--<td>{{ item | json }}</td>-->
+          <td>{{ item.codigoProducto }}</td>
           <td>{{ item.nombreProducto }}</td>
-          <td>{{ item.cantidad }}</td>
-          <td>{{ item.descuento}}</td>
-          <td>{{ item.precioUnitario | number }}</td>
-          <td>{{ item.ivaPorcentaje * 100 }}%</td>
-          <td>{{ item.subtotalLinea | number }}</td>
-          <td>{{ item.impuestoLinea | number }}</td>
-          <td>{{ item.totalLinea | number }}</td>
-      
-          <td>
-            <button type="button" class="btn btn-warning btn-sm me-3" 
+          <td class="text-end">{{ item.cantidad }}</td>
+          <td class="text-end">{{ item.descuento}}</td>
+          <td class="text-end">{{ item.precioUnitario | number }}</td>
+          <td class="text-end">{{ item.impuestoPct * 100 }}%</td>
+          <td class="text-end">{{ item.subtotalLinea | number }}</td>
+          <td class="text-end">{{ item.impuestoLinea | number }}</td>
+          <td class="text-end">{{ item.totalLinea | number }}</td>
+          <td class="text-center">
+            <button type="button" class="btn btn-warning btn-sm me-2" 
             (click)="editarItem(i)"      
-            [disabled]="modoSoloLectura"> <i class="bi bi-pencil-square me-1"></i> </button>
+            [disabled]="modoSoloLectura" title="Editar"> <i class="bi bi-pencil"></i> </button>
             <button type="button" class="btn btn-danger btn-sm" 
             (click)="eliminarItem(i)"
-            [disabled]="modoSoloLectura"><i class="bi bi-trash me-1"></i></button>
+            [disabled]="modoSoloLectura" title="Eliminar"><i class="bi bi-trash-fill"></i></button>
           </td>
         </tr>
       </tbody>
     </table>
+  </div>
 
     <div *ngIf="personaSeleccionada?.saldoFavor > 0"
      class="alert alert-info mt-3">
@@ -216,6 +276,7 @@
         type="button" 
         class="btn btn-secondary me-2"
         data-bs-dismiss="modal">
+        <i class="bi bi-x-circle me-1"></i>
         Cancelar
       </button>
 
@@ -223,6 +284,7 @@
         type="submit" 
         class="btn btn-primary"
         [disabled]="formVenta.invalid || detalleVenta.length === 0 || modoSoloLectura">
+        <i class="bi bi-save me-1"></i>
         {{ formModel.idVenta ? 'Guardar cambios' : 'Agregar Venta' }}
       </button>
     </div>

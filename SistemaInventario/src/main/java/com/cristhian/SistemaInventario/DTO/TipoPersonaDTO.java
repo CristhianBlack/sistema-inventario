@@ -1,14 +1,14 @@
 package com.cristhian.SistemaInventario.DTO;
 
+import com.cristhian.SistemaInventario.Enums.NombreTipoPersona;
 import com.cristhian.SistemaInventario.Modelo.TipoPersona;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 
 public class TipoPersonaDTO {
 
     private int idTipoPersona;
     @NotBlank(message = "El nombre del tipo de persona es obligatorio")
-    private String nombreTipoPersona;
+    private NombreTipoPersona nombreTipoPersona;
 
     private boolean activo = true;
 
@@ -29,11 +29,11 @@ public class TipoPersonaDTO {
         this.idTipoPersona = idTipoPersona;
     }
 
-    public String getNombreTipoPersona() {
+    public NombreTipoPersona getNombreTipoPersona() {
         return nombreTipoPersona;
     }
 
-    public void setNombreTipoPersona(String nombreTipoPersona) {
+    public void setNombreTipoPersona(NombreTipoPersona nombreTipoPersona) {
         this.nombreTipoPersona = nombreTipoPersona;
     }
 

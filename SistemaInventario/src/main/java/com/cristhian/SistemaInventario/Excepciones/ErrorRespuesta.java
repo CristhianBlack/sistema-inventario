@@ -5,18 +5,24 @@ import java.time.LocalDateTime;
 public class ErrorRespuesta {
 
     private String mensaje;
-    private LocalDateTime timestamp;
+    private int status;
+    private LocalDateTime fecha;
 
-    public ErrorRespuesta(String mensaje) {
+    public ErrorRespuesta(String mensaje, int status) {
         this.mensaje = mensaje;
-        this.timestamp = LocalDateTime.now();
+        this.status = status;
+        this.fecha = LocalDateTime.now();
     }
 
     public String getMensaje() {
         return mensaje;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public LocalDateTime getFecha() {
+        return fecha;
+    }
+
+    public int getStatus() {
+        return status;
     }
 }

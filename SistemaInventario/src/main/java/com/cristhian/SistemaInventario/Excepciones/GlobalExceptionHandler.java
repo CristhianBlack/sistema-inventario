@@ -26,27 +26,91 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(RecursoNoEncontradoException.class)
     public ResponseEntity<ErrorRespuesta> manejarNoEncontrado(RecursoNoEncontradoException ex) {
-        ErrorRespuesta error = new ErrorRespuesta(ex.getMessage());
+        ErrorRespuesta error = new ErrorRespuesta(
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND.value()
+        );
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(DuplicadoException.class)
     public ResponseEntity<ErrorRespuesta> manejarDuplicado(DuplicadoException ex) {
-        ErrorRespuesta error = new ErrorRespuesta(ex.getMessage());
+        ErrorRespuesta error = new ErrorRespuesta(
+                ex.getMessage(),
+                HttpStatus.CONFLICT.value()
+        );
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorRespuesta> manejarGenerico(Exception ex) {
-        ErrorRespuesta error = new ErrorRespuesta("Error interno del servidor");
+        ErrorRespuesta error = new ErrorRespuesta(
+                ex.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value()
+        );
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(ValidacionException.class)
     public ResponseEntity<ErrorRespuesta> manejarValidacion(ValidacionException ex) {
-        ErrorRespuesta error = new ErrorRespuesta(ex.getMessage());
+        ErrorRespuesta error = new ErrorRespuesta(
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value()
+        );
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(AperturaNoExisteException.class)
+    public ResponseEntity<ErrorRespuesta> manejarAperturaNoExiste(
+            AperturaNoExisteException ex
+    ) {
+        ErrorRespuesta error = new ErrorRespuesta(
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND.value()
+        );
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AperturaYaExisteException.class)
+    public ResponseEntity<ErrorRespuesta> manejarAperturaYaExiste(
+            AperturaYaExisteException ex
+    ) {
+        ErrorRespuesta error = new ErrorRespuesta(
+                ex.getMessage(),
+                HttpStatus.CONFLICT.value()
+        );
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(ConflictoRolException.class)
+    public ResponseEntity<ErrorRespuesta> manejarConflictoRol(
+            ConflictoRolException ex) {
+
+        ErrorRespuesta error = new ErrorRespuesta(
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PasswordException.class)
+    public ResponseEntity<?> handlePasswordException(PasswordException ex){
+       /* ErrorRespuesta error = new ErrorRespuesta(
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);*/
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Map.of(
+                        "mensaje", ex.getMessage()
+                ));
+    }
+
+
 }
 
 

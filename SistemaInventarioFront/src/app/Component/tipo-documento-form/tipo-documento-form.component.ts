@@ -44,8 +44,8 @@ export class TipoDocumentoFormComponent implements OnInit{
 
     onSubmit(formTipoDocumento : NgForm): void{
         if(this.formModel.idTipoDocumento){
-          // Editamos nuestra ciudad
-          this.tipoDocumentService.editarTipoDocumento(this.formModel.idTipoDocumento, this.formModel).subscribe({
+          // mostramos nuestro tipo de documento por id
+          this.tipoDocumentService.obtenerTipoDocumento(this.formModel.idTipoDocumento).subscribe({
             next: () =>{
               this.toastr.success('Tipo de documento actualizado correctamente', 'Éxito');
               // Emite el evento hacia el componente padre.
@@ -53,21 +53,7 @@ export class TipoDocumentoFormComponent implements OnInit{
               this.limpiarFormulario(formTipoDocumento); // limpiar al editar
             },
             error: (err) =>{
-              this.toastr.error('Error al editar tipo de documento', 'Error');
-            }
-          });
-        }else{
-          // Creamos nuestra ciudad
-          console.log(' Datos que se envían:', this.formModel);
-          this.tipoDocumentService.agregarTipoDocumento(this.formModel).subscribe({
-            next: () =>{
-              this.toastr.success('Tipo de documento agregado correctamente', 'Éxito');
-              // Emite el evento hacia el componente padre.
-              this.formGuardado.emit();
-              this.limpiarFormulario(formTipoDocumento); //  limpiar al editar
-            },
-            error: (err) =>{
-              this.toastr.error(err.message, 'Error'); // muestra el mensaje del backend
+              this.toastr.error('Error al consultar el tipo de documento', 'Error');
             }
           });
         }
@@ -76,5 +62,13 @@ export class TipoDocumentoFormComponent implements OnInit{
       limpiarFormulario(formTipoDocumento?: NgForm): void {
       this.formModel = new TipoDocumento(); //  reinicia el modelo
       formTipoDocumento?.resetForm();       //  limpia visualmente los inputs
-    }    
+    }   
+    
+    formatearTipoDocumento(valor?: string): string {
+  if (!valor) return '';
+  return valor
+    .toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, l => l.toUpperCase());
+}
 }

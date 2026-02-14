@@ -9,12 +9,12 @@ export class Venta {
     totalImpuestos : number = 0;
     totalVenta: number = 0;
     estado : string = ""; // Pendiente, parcial , pagada
-    pagos?: VentaPago[] | null;
+    //pagos?: VentaPago[] | null;
     saldoAplicado: number = 0;
     totalPagar: number = 0;
 
     //Relaciones
-    idPersona : number | null = null;
+    idPersona? : number | null = null;
     detalles?: DetalleVenta[];
 }
 

@@ -1,23 +1,23 @@
 package com.cristhian.SistemaInventario.ServicioImplement;
 
-import com.cristhian.SistemaInventario.DTO.TipoPersonaDTO;
-import com.cristhian.SistemaInventario.Excepciones.DuplicadoException;
-import com.cristhian.SistemaInventario.Excepciones.RecursoNoEncontradoException;
-import com.cristhian.SistemaInventario.Mensaje.Mensaje;
-import com.cristhian.SistemaInventario.Modelo.TipoDocumento;
+
+import com.cristhian.SistemaInventario.Enums.NombreTipoPersona;
 import com.cristhian.SistemaInventario.Modelo.TipoPersona;
 import com.cristhian.SistemaInventario.Repositorio.TipoPersonaRepository;
 import com.cristhian.SistemaInventario.Service.ITipoPersonaService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+
+
 
 import java.util.List;
 import java.util.Optional;
-
+/**
+ * Servicio encargado de la gestión de los tipos de persona.
+ * Controla la creación automática, listado, búsqueda y
+ * desactivación lógica de los tipos de persona del sistema.
+ */
 @Service
 @Transactional
 public class TipoPersonaImpl implements ITipoPersonaService {
@@ -28,78 +28,71 @@ public class TipoPersonaImpl implements ITipoPersonaService {
         this.tipoPersonaRepository = tipoPersonaRepository;
     }
 
+    /**
+     * Inicializa los tipos de persona por defecto
+     * al iniciar la aplicación.
+     */
+    @PostConstruct
+    public void inicializarTipoPersona() {
+        guardarTipoPersonaPorDefecto();
+    }
+
+    /**
+     * Lista todos los tipos de persona activos.
+     */
     @Override
     public List<TipoPersona> listarTipoPersonaActiva() {
         return tipoPersonaRepository.findByActivoTrue();
     }
 
+    /**
+     * Busca un tipo de persona por su ID.
+     */
     @Override
     public Optional<TipoPersona> buscarTipoPersonaId(int id) {
         return tipoPersonaRepository.findById(id);
     }
 
+    /**
+     * Crea automáticamente los tipos de persona permitidos
+     * cuando se ejecuta la aplicación.
+     *
+     * Esta lógica evita que el usuario cree tipos de persona
+     * que no existen o no son válidos dentro del sistema.
+     */
     @Override
-    public TipoPersona guardarTipoPersona(TipoPersonaDTO tipoPersonaDTO) {
+    @Transactional
+    public void guardarTipoPersonaPorDefecto() {
 
-        // Normalizar el nombre
-        String nombreNormalizado = tipoPersonaDTO.getNombreTipoPersona().trim();
+        List<NombreTipoPersona> nombresPermitidos = List.of(
+                NombreTipoPersona.PERSONA_NATURAL,
+                NombreTipoPersona.PERSONA_JURIDICA,
+                NombreTipoPersona.OTRO
+        );
 
-        // Buscar por nombre ignorando mayúsculas/minúsculas
-        Optional<TipoPersona> existente =
-                tipoPersonaRepository.findByNombreTipoPersonaIgnoreCase(nombreNormalizado);
+        for (NombreTipoPersona tipoPersona : nombresPermitidos) {
 
-        if (existente.isPresent()) {
-            TipoPersona tipoPersona = existente.get();
+            if (!tipoPersonaRepository.existsByNombreTipoPersona(tipoPersona)) {
 
-            // Si existe pero está inactivo, lo reactivamos
-            if (!tipoPersona.isActivo()) {
-                tipoPersona.setActivo(true);
-                return tipoPersonaRepository.save(tipoPersona);
+                TipoPersona tipo = new TipoPersona();
+                tipo.setNombreTipoPersona(tipoPersona);
+                tipo.setActivo(true);
+
+                tipoPersonaRepository.save(tipo);
             }
-
-            // Si existe y está activo → error
-            throw new DuplicadoException("Ya existe un tipo de persona con ese nombre");
         }
-
-        // Crear nueva entidad
-        TipoPersona tipoPersonaNuevo = new TipoPersona(tipoPersonaDTO);
-        tipoPersonaNuevo.setNombreTipoPersona(nombreNormalizado); // ← importante
-
-        return tipoPersonaRepository.save(tipoPersonaNuevo);
     }
 
-    @Override
-    public TipoPersona actualizarTipoPersona(int id, TipoPersonaDTO tipoPersonaDTO) {
-
-        //Validar existencia
-        TipoPersona tipoPersonaExistente = tipoPersonaRepository.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("El tipo de persona no existe"));
-
-        // Normalizar nombre
-        String nombreNormalizado = tipoPersonaDTO.getNombreTipoPersona().trim();
-
-        //Validar duplicados
-        Optional<TipoPersona> duplicado = tipoPersonaRepository
-                .findByNombreTipoPersonaIgnoreCase(nombreNormalizado);
-
-        if (duplicado.isPresent() && duplicado.get().getIdTipoPersona() != id) {
-            throw new DuplicadoException("Ya existe ese tipo de persona");
-        }
-
-        // Actualizar valores
-        tipoPersonaExistente.setNombreTipoPersona(nombreNormalizado);
-
-        return tipoPersonaRepository.save(tipoPersonaExistente);
-    }
-
+    /**
+     * Desactiva un tipo de persona de forma lógica.
+     * No elimina el registro de la base de datos.
+     */
     @Override
     public void desactivarTipoDocumento(int id) {
         TipoPersona tipoPersona = tipoPersonaRepository.findById(id).orElse(null);
-        if (tipoPersona != null){
+        if (tipoPersona != null) {
             tipoPersona.setActivo(false);
             tipoPersonaRepository.save(tipoPersona);
         }
     }
-
-
 }
